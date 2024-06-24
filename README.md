@@ -1,11 +1,12 @@
-# tube [![GoDoc](https://godoc.org/github.com/wybiral/tube?status.svg)](https://godoc.org/github.com/wybiral/tube)
+# tube
 
-This is a Golang project to build a self hosted "tube"-style video player for watching your own video collection over HTTP or hosting your own channel for others to watch.
+Tube is a Golang project to build a self hosted "tube"-style video player for watching your own video collection over HTTP or hosting your own channel for others to watch.
+
+The main difference between the original project and this one is the video control based on JavaScript. Although being JS-Free is great for both security and privacy, it makes controls rely on browser native controller which usually doesn't really provide a good user experience. Also it becomes pointless when you want to use it for a local video streaming server rather than for a public channel.
 
 Some of the key features include:
 - Easy to add videos (just move a file into the folder)
 - No database (video info pulled from file metadata)
-- No JavaScript (the player UI is entirely HTML)
 - Easy to customize CSS and HTML template
 - Automatically generates RSS feed (at `/feed.xml`)
 - Builtin Tor onion service support

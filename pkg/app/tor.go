@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/wybiral/torgo"
-	"github.com/wybiral/tube/pkg/onionkey"
+	"github.com/178619/tube/pkg/onionkey"
 )
 
 type tor struct {

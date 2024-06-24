@@ -1,9 +1,9 @@
 :root {
-    --main-title-color: #ae81ff;
-    --link-hover-color: #ae81ff;
+    --main-color: #7F3FFF;
+    --date-color: #7F7F7F;
+    --text-color: #DFDFDF;
 }
 
-/* normalize */
 * {
     font-weight: inherit;
     font-size: inherit;
@@ -23,23 +23,24 @@ body {
     font-family: Arial, sans-serif;
     font-size: 16px;
     font-weight: 400;
-    color: #c5c8c6;
-    background: #1e1e1e;
+    color: var(--text-color);
+    background: #171717;
     padding-bottom: 10px;
 }
 
 nav {
     z-index: 100;
-    color: var(--main-title-color);
-    text-shadow: -2px 2px 3px rgba(0, 0, 0, 0.7);
-    font-weight: 700;
+    color: var(--main-color);
+    font-weight: bold;
     font-size: 20px;
     text-indent: 20px;
     line-height: 50px;
     width: 100%;
     height: 50px;
-    background: #171717;
-    border-bottom: 1px solid #272727;
+    background: #000000;
+    border-bottom: 1px solid #3F3F3F;
+    position: relative;
+    overflow: hidden;
 }
 
 main {
@@ -60,16 +61,31 @@ main {
     width: 100%;
     height: 480px;
     background: #000;
-    box-shadow: 0 3px 7px 0 rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+#mask {
+    width: inherit;
+    height: 480px;
+    position: absolute;
+    user-select: none;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 200ms ease-in-out;
+}
+
+#mask:hover {
+    opacity: 1;
 }
 
 #player > h1 {
     margin-top: 10px;
+    font-weight: bold;
 }
 
 #player > h2 {
     margin-top: 5px;
-    color: #676867;
+    color: var(--date-color);
     font-size: 90%;
 }
 
@@ -80,13 +96,28 @@ main {
     white-space: normal;
 }
 
+#player > details {
+    margin-top: 10px;
+    font-size: 80%;
+    width: fit-content;
+    transition: width 200ms;
+    white-space: normal;
+}
+
+details > summary {
+    cursor: pointer;
+}
+
 #playlist {
     font-size: 13px;
     display: inline-block;
     margin-left: 10px;
-    width: 290px;
-    background: #282a2e;
-    box-shadow: 0 3px 7px 0 rgba(0, 0, 0, 0.2);
+    width: 300px;
+    height: 600px;
+    background: #1F1F1F;
+    box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.25);
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 #playlist > a {
@@ -97,19 +128,23 @@ main {
 }
 
 #playlist > a:hover {
-    color: var(--link-hover-color);
+    color: #9FBFDF;
+}
+
+#playlist > a:hover:visited {
+    color: #DFBFFF;
 }
 
 #playlist > a.playing {
-    background: #383a3e;
+    background: #2F2F2F;
 }
 
 #playlist > a + a {
-    border-top: 1px solid #1e1e1e;
+    border-top: 1px solid #000000;
 }
 
 #playlist > a > img {
-    width: 70px;
+    width: 72px;
 }
 
 #playlist > a > div {
@@ -122,12 +157,23 @@ main {
 
 #playlist > a > div > h1 {
     white-space: normal;
+    overflow-y: hidden;
+    max-height: 2lh;
+    line-height: 150%;
 }
 
 #playlist > a > div > h2 {
     margin-top: 5px;
-    color: #676867;
+    color: var(--date-color);
     font-size: 90%;
+}
+
+p.description {
+    display: block;
+}
+
+details.description {
+    display: none;
 }
 
 /* 360p */
@@ -139,6 +185,9 @@ main {
         width: 640px;
     }
     #video {
+        height: 360px;
+    }
+    #mask {
         height: 360px;
     }
 }
@@ -154,6 +203,9 @@ main {
     #video {
         height: 240px;
     }
+    #mask {
+        height: 240px;
+    }
 }
 
 /* 240p with shifted playlist */
@@ -167,10 +219,19 @@ main {
     #video {
         height: 240px;
     }
+    #mask {
+        height: 240px;
+    }
     #playlist {
         width: 426px;
         margin-top: 10px;
         margin-left: 0;
+        display: block;
+    }
+    p.description {
+        display: none;
+    }
+    details.description {
         display: block;
     }
 }
@@ -192,4 +253,238 @@ main {
         margin-left: 0;
         display: block;
     }
+    p.description {
+        display: none;
+    }
+    details.description {
+        display: block;
+    }
+}
+
+#player.fullscreen #video {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+#player.fullscreen #mask {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    z-index: 1001;
+}
+
+#player.embed {
+    overflow: hidden;
+}
+
+#player.embed #video {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+#player.embed #mask {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    z-index: 1001;
+}
+
+#mask #center {
+    position: absolute;
+    background: rgba(255,255,255,0.5);
+    width: 96px;
+    height: 96px;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    background-image: url(/static/play-pause.png);
+    background-size: 80px;
+    filter: invert(1);
+    border-radius: 50%;
+    background-repeat: no-repeat;
+    background-position: 8px;
+    opacity: 0.75;
+    display: none;
+    transition: background 250ms, transform 100ms;
+}
+
+#mask #center:active {
+    transform: scale(0.875);
+}
+
+
+#mask.shown #center {
+    display: block;
+}
+
+#mask #control {
+    position: absolute;
+    bottom: 0;
+    height: 80px;
+    width: 100%;
+    padding-inline: 12px;
+    background: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0.75), rgba(0,0,0,1));
+    display: none;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+#mask.shown #control {
+    display: flex;
+}
+
+#mask #control div {
+    display: flex;
+    align-items: center;
+}
+
+#mask #control input[type="range"] {
+    accent-color: var(--main-color);
+    cursor: pointer;
+    height: 4px;
+    border-radius: 2px;
+    padding: 0;
+    border: none;
+    background: none;
+    transition: height 200ms ease-in-out;
+}
+
+#mask #control input[type="range"]:hover {
+    height: 6px;
+}
+
+#mask #control input[type="range"]:focus {
+    height: 6px;
+}
+
+#mask #control input[type="range"]::-moz-range-thumb {
+    height: 12px;
+    width: 12px;
+    opacity: 0;
+    background: var(--main-color);
+    border: none;
+    transition: opacity 200ms ease-in-out;
+    cursor: pointer;
+}
+
+#mask #control input[type="range"]:hover::-moz-range-thumb {
+    opacity: 1;
+}
+
+#mask #control input[type="range"]:focus::-moz-range-thumb {
+    opacity: 1;
+}
+
+#mask #control input[type="range"]::-moz-range-track {
+    height: 4px;
+    padding: 10px;
+}
+
+#mask #control input[type="range"]::-moz-range-track {
+    background: transparent;
+}
+
+#mask #control input[type="range"]::-webkit-slider-thumb {
+    height: 12px;
+    width: 12px;
+    opacity: 0;
+    background: var(--main-color);
+    border: none;
+    transition: opacity 200ms ease-in-out;
+    -webkit-appearance: none;
+    cursor: pointer;
+    border-radius: 50%;
+    margin-top: -6px;
+}
+
+#mask #control input[type="range"]:hover::-webkit-slider-thumb {
+    opacity: 1;
+}
+
+#mask #control input[type="range"]:focus::-webkit-slider-thumb {
+    opacity: 1;
+}
+
+#mask #control input[type="range"]::-webkit-slider-runnable-track {
+    -webkit-appearance: none;
+    height: 4px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+#mask #control #seeker {
+    position: absolute;
+    width: calc(100% - 12px);
+    left: 6px;
+    bottom: 36px;
+}
+
+#mask #control a.button {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    background-size: contain;
+    background-repeat: no-repeat;
+    transition: background 250ms, transform 100ms;
+}
+
+#mask #control a.button:active {
+    transform: scale(0.875);
+}
+
+#mask #control #play-pause {
+    background-image: url('/static/play-pause.png');
+    filter: invert(1);
+}
+
+#mask #control #current {
+    align-self: center;
+    margin-inline: 4px;
+    font-family: 'Lato', 'Roboto Mono', 'Consolas', 'Lucida Console', monospace
+}
+
+#mask #control #volume-icon {
+    background-image: url('/static/volume-high.png');
+    filter: invert(1);
+}
+
+#mask #control #volume {
+    width: 80px;
+}
+
+#mask #control #embedlink {
+    background-image: url('/static/open-in-app.png');
+    filter: invert(1);
+}
+
+#player.embed #embedlink {
+    display: none !important;
+}
+
+#mask #control #filelink {
+    background-image: url('/static/download.png');
+    filter: invert(1);
+}
+
+#mask #control #fullscreen {
+    background-image: url('/static/fullscreen.png');
+    filter: invert(1);
+}
+
+.fullscreen #mask #control #fullscreen {
+    background-image: url('/static/fullscreen-exit.png');
 }

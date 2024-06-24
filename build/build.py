@@ -5,12 +5,22 @@ import os
 import zipfile
 
 def build(pkg, bin, env):
-    src = 'github.com/wybiral/tube'
-    x = os.system('{env} go build -o bin/{bin} {src}'.format(
-        env=env,
-        bin=bin,
-        src=src,
-    ))
+    src = 'github.com/178619/tube'
+    if os.name == 'nt':
+        e = ''
+        for y in env.split(' '):
+            e += 'set '+y+'&&'
+        x = os.system('{env} go build -o bin/{bin} {src}'.format(
+            env=e,
+            bin=bin,
+            src=src,
+        ))
+    else:
+        x = os.system('{env} go build -o bin/{bin} {src}'.format(
+            env=env,
+            bin=bin,
+            src=src,
+        ))
     if x != 0:
         print('Error building ' + pkg)
         return
@@ -51,4 +61,4 @@ build(
     env='GOOS=linux GOARCH=arm GOARM=6',
 )
 
-print('Done.')
+input('Done.')

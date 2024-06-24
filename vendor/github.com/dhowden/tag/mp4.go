@@ -45,6 +45,12 @@ var atoms = atomNames(map[string]string{
 	"disk":    "disc",
 })
 
+var means = map[string]bool{
+	"com.apple.iTunes":          true,
+	"com.mixedinkey.mixedinkey": true,
+	"com.serato.dj":             true,
+}
+
 // Detect PNG image if "implicit" class is used
 var pngHeader = []byte{137, 80, 78, 71, 13, 10, 26, 10}
 
@@ -138,7 +144,7 @@ func (m metadataMP4) readAtomData(r io.ReadSeeker, name string, size uint32, pro
 		contentType = "text"
 	} else {
 		// read the data
-		b, err = readBytes(r, int(size))
+		b, err = readBytes(r, uint(size))
 		if err != nil {
 			return err
 		}
@@ -149,8 +155,8 @@ func (m metadataMP4) readAtomData(r io.ReadSeeker, name string, size uint32, pro
 		// "data" + size (4 bytes each)
 		b = b[8:]
 
-		if len(b) < 3 {
-			return fmt.Errorf("invalid encoding: expected at least %d bytes, for class, got %d", 3, len(b))
+		if len(b) < 4 {
+			return fmt.Errorf("invalid encoding: expected at least %d bytes, for class, got %d", 4, len(b))
 		}
 		class := getInt(b[1:4])
 		var ok bool
@@ -226,7 +232,7 @@ func readAtomHeader(r io.ReadSeeker) (name string, size uint32, err error) {
 
 // Generic atom.
 // Should have 3 sub atoms : mean, name and data.
-// We check that mean is "com.apple.iTunes" and we use the subname as
+// We check that mean is "com.apple.iTunes" or others and we use the subname as
 // the name, and move to the data atom.
 // Data atom could have multiple data values, each with a header.
 // If anything goes wrong, we jump at the end of the "----" atom.
@@ -246,7 +252,7 @@ func readCustomAtom(r io.ReadSeeker, size uint32) (_ string, data []string, _ er
 			return "", nil, errors.New("--- invalid size")
 		}
 
-		b, err := readBytes(r, int(subSize-8))
+		b, err := readBytes(r, uint(subSize-8))
 		if err != nil {
 			return "", nil, err
 		}
@@ -268,9 +274,10 @@ func readCustomAtom(r io.ReadSeeker, size uint32) (_ string, data []string, _ er
 		return "", nil, err
 	}
 
-	if subNames["mean"] != "com.apple.iTunes" || subNames["name"] == "" || len(data) == 0 {
+	if !means[subNames["mean"]] || subNames["name"] == "" || len(data) == 0 {
 		return "----", nil, nil
 	}
+
 	return subNames["name"], data, nil
 }
 

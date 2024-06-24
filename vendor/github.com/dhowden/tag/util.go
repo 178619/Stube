@@ -5,6 +5,7 @@
 package tag
 
 import (
+	"bytes"
 	"encoding/binary"
 	"io"
 )
@@ -32,16 +33,26 @@ func getInt(b []byte) int {
 	return n
 }
 
-func getIntLittleEndian(b []byte) int {
-	var n int
-	for i := len(b) - 1; i >= 0; i-- {
-		n = n << 8
-		n |= int(b[i])
+func readUint64LittleEndian(r io.Reader) (uint64, error) {
+	b, err := readBytes(r, 8)
+	if err != nil {
+		return 0, err
 	}
-	return n
+	return binary.LittleEndian.Uint64(b), nil
 }
 
-func readBytes(r io.Reader, n int) ([]byte, error) {
+// readBytesMaxUpfront is the max up-front allocation allowed
+const readBytesMaxUpfront = 10 << 20 // 10MB
+
+func readBytes(r io.Reader, n uint) ([]byte, error) {
+	if n > readBytesMaxUpfront {
+		b := &bytes.Buffer{}
+		if _, err := io.CopyN(b, r, int64(n)); err != nil {
+			return nil, err
+		}
+		return b.Bytes(), nil
+	}
+
 	b := make([]byte, n)
 	_, err := io.ReadFull(r, b)
 	if err != nil {
@@ -50,7 +61,7 @@ func readBytes(r io.Reader, n int) ([]byte, error) {
 	return b, nil
 }
 
-func readString(r io.Reader, n int) (string, error) {
+func readString(r io.Reader, n uint) (string, error) {
 	b, err := readBytes(r, n)
 	if err != nil {
 		return "", err
@@ -58,7 +69,15 @@ func readString(r io.Reader, n int) (string, error) {
 	return string(b), nil
 }
 
-func readInt(r io.Reader, n int) (int, error) {
+func readUint(r io.Reader, n uint) (uint, error) {
+	x, err := readInt(r, n)
+	if err != nil {
+		return 0, err
+	}
+	return uint(x), nil
+}
+
+func readInt(r io.Reader, n uint) (int, error) {
 	b, err := readBytes(r, n)
 	if err != nil {
 		return 0, err
@@ -66,16 +85,18 @@ func readInt(r io.Reader, n int) (int, error) {
 	return getInt(b), nil
 }
 
-func read7BitChunkedInt(r io.Reader, n int) (int, error) {
+func read7BitChunkedUint(r io.Reader, n uint) (uint, error) {
 	b, err := readBytes(r, n)
 	if err != nil {
 		return 0, err
 	}
-	return get7BitChunkedInt(b), nil
+	return uint(get7BitChunkedInt(b)), nil
 }
 
-func readInt32LittleEndian(r io.Reader) (int, error) {
-	var n int32
-	err := binary.Read(r, binary.LittleEndian, &n)
-	return int(n), err
+func readUint32LittleEndian(r io.Reader) (uint32, error) {
+	b, err := readBytes(r, 4)
+	if err != nil {
+		return 0, err
+	}
+	return binary.LittleEndian.Uint32(b), nil
 }

@@ -12,8 +12,8 @@ import (
 
 	"github.com/fsnotify/fsnotify"
 	"github.com/gorilla/mux"
-	"github.com/wybiral/tube/pkg/media"
-	"github.com/wybiral/tube/pkg/onionkey"
+	"github.com/178619/tube/pkg/media"
+	"github.com/178619/tube/pkg/onionkey"
 )
 
 // App represents main application.
@@ -69,6 +69,10 @@ func NewApp(cfg *Config) (*App, error) {
 	r.HandleFunc("/t/{prefix}/{id}", a.thumbHandler).Methods("GET")
 	r.HandleFunc("/v/{id}", a.pageHandler).Methods("GET")
 	r.HandleFunc("/v/{prefix}/{id}", a.pageHandler).Methods("GET")
+	r.HandleFunc("/e/{id}", a.embedHandler).Methods("GET")
+	r.HandleFunc("/e/{prefix}/{id}", a.embedHandler).Methods("GET")
+	r.HandleFunc("/n/{id}", a.nativeHandler).Methods("GET")
+	r.HandleFunc("/n/{prefix}/{id}", a.nativeHandler).Methods("GET")
 	r.HandleFunc("/feed.xml", a.rssHandler).Methods("GET")
 	// Static file handler
 	fsHandler := http.StripPrefix(
@@ -171,6 +175,66 @@ func (a *App) pageHandler(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// HTTP handler for /e/id
+func (a *App) embedHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id := vars["id"]
+	prefix, ok := vars["prefix"]
+	if ok {
+		id = path.Join(prefix, id)
+	}
+	log.Printf("/e/%s", id)
+	playing, ok := a.Library.Videos[id]
+	if !ok {
+		a.Templates.ExecuteTemplate(w, "embed.html", &struct {
+			Playing  *media.Video
+			Playlist media.Playlist
+		}{
+			Playing:  &media.Video{ID: ""},
+			Playlist: a.Library.Playlist(),
+		})
+		return
+	}
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	a.Templates.ExecuteTemplate(w, "embed.html", &struct {
+		Playing  *media.Video
+		Playlist media.Playlist
+	}{
+		Playing:  playing,
+		Playlist: a.Library.Playlist(),
+	})
+}
+
+// HTTP handler for /n/id
+func (a *App) nativeHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id := vars["id"]
+	prefix, ok := vars["prefix"]
+	if ok {
+		id = path.Join(prefix, id)
+	}
+	log.Printf("/n/%s", id)
+	playing, ok := a.Library.Videos[id]
+	if !ok {
+		a.Templates.ExecuteTemplate(w, "native.html", &struct {
+			Playing  *media.Video
+			Playlist media.Playlist
+		}{
+			Playing:  &media.Video{ID: ""},
+			Playlist: a.Library.Playlist(),
+		})
+		return
+	}
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	a.Templates.ExecuteTemplate(w, "native.html", &struct {
+		Playing  *media.Video
+		Playlist media.Playlist
+	}{
+		Playing:  playing,
+		Playlist: a.Library.Playlist(),
+	})
+}
+
 // HTTP handler for /v/id.mp4
 func (a *App) videoHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
@@ -179,7 +243,7 @@ func (a *App) videoHandler(w http.ResponseWriter, r *http.Request) {
 	if ok {
 		id = path.Join(prefix, id)
 	}
-	log.Printf("/v/%s", id)
+	log.Printf("/v/%s.mp4", id)
 	m, ok := a.Library.Videos[id]
 	if !ok {
 		return
@@ -206,8 +270,8 @@ func (a *App) thumbHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Cache-Control", "public, max-age=7776000")
 	if m.ThumbType == "" {
-		w.Header().Set("Content-Type", "image/jpeg")
-		http.ServeFile(w, r, "static/defaulticon.jpg")
+		w.Header().Set("Content-Type", "image/png")
+		http.ServeFile(w, r, "static/defaulticon.png")
 	} else {
 		w.Header().Set("Content-Type", m.ThumbType)
 		w.Write(m.Thumb)

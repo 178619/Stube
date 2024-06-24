@@ -1,40 +1,65 @@
 {{ $playing := .Playing }}
+<!DOCTYPE html>
 <html>
-<head>
-    <title>Tube</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="shortcut icon" type="image/x-icon" href="/static/favicon.ico">
-    <link rel="stylesheet" type="text/css" href="/static/theme.css">
-</head>
-<body>
-    <nav><a href="/">Tube</a></nav>
-    <main>
-        <div id="player">
-            {{ if $playing.ID }}
-            <video id="video" controls poster="/t/{{ $playing.ID}}" src="/v/{{ $playing.ID }}.mp4"></video>
-            <h1>{{ $playing.Title }}</h1>
-            <h2>{{ $playing.Modified }}</h2>
-            <p>{{ $playing.Description }}</p>
-            {{ else }}
-            <video id="video" controls></video>
-            {{ end }}
-        </div>
-        <div id="playlist">
-            {{ range $m := .Playlist }}
-            {{ if eq $m.ID $playing.ID }}
-            <a href="/v/{{ $m.ID }}" class="playing">
-            {{ else }}
-            <a href="/v/{{ $m.ID }}">
-            {{ end }}
-                <img src="/t/{{ $m.ID }}">
-                <div>
-                    <h1>{{ $m.Title }}</h1>
-                    <h2>{{ $m.Modified }}</h2>
+    <head>
+        <title>Tube</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="shortcut icon" type="image/x-icon" href="/static/favicon.ico">
+        <link rel="stylesheet" type="text/css" href="/static/theme.css">
+        <script type="application/javascript" src="/static/index.js"></script>
+    </head>
+    <body onload="init()">
+        <nav><a href="/">Tube</a></nav>
+        <main>
+            <div id="player">
+                {{ if $playing.ID }}
+                <div id="mask">
+                    <div id="center"></div>
+                        <div id="control">
+                        <input id="seeker" type="range" value="0" min="0" max="0">
+                        <div>
+                            <a class="button" id="play-pause"></a>
+                            <div id="current"></div>
+                            <a class="button" id="volume-icon"></a>
+                            <input id="volume" type="range" value="0" min="0" max="1" step="0.000001">
+                        </div>
+                        <div>
+                            <a class="button" id="embedlink" target="_blank" href="/e/{{ $playing.ID }}"></a>
+                            <a class="button" id="filelink" target="_blank" href="/v/{{ $playing.ID }}.mp4"></a>
+                            <a class="button" id="fullscreen"></a>
+                        </div>
+                    </div>
                 </div>
-            </a>
-            {{ end }}
-        </div>
-    </main>
-</body>
+                <video id="video" poster="/t/{{ $playing.ID }}">
+                    <source src="/v/{{ $playing.ID }}.mp4" />
+                </video>
+                <h1>{{ $playing.Title }}</h1>
+                <h2>{{ $playing.Modified }}</h2>
+                <p class="description">{{ $playing.Description }}</p>
+                <details class="description">
+                    <summary>Description</summary>
+                    {{ $playing.Description }}
+                </details>
+                {{ else }}
+                <video id="video" controls></video>
+                {{ end }}
+            </div>
+            <div id="playlist">
+                {{ range $m := .Playlist }}
+                    {{ if eq $m.ID $playing.ID }}
+                    <a href="/v/{{ $m.ID }}" title="{{ $m.Title }}" class="playing">
+                    {{ else }}
+                    <a href="/v/{{ $m.ID }}" title="{{ $m.Title }}">
+                    {{ end }}
+                    <img src="/t/{{ $m.ID }}">
+                    <div>
+                        <h1>{{ $m.Title }}</h1>
+                        <h2>{{ $m.Modified }}</h2>
+                    </div>
+                </a>
+                {{ end }}
+            </div>
+        </main>
+    </body>
 </html>
