@@ -1,12 +1,16 @@
+const tempStyle = document.createElement('style')
+tempStyle.innerHTML = 'video {visibility: hidden;}'
+document.head.appendChild(tempStyle)
 const init = () => {
     const keyList = [
         " ", "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", ",", ".", ">", "<", "Home", "End",
         "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "/", "f", "c", "k", "m", "j", "l"
     ]
     const mask = document.getElementById("mask")
+    mask.style.display = 'block'
     const video = document.getElementById("video")
+    if (video.hasAttribute('controls')) video.removeAttribute('controls')
     const player = document.getElementById("player")
-    if (location.pathname.startsWith('/e/')) player.classList.add('embed')
     const playOrPause = () => {
         if (!!(video.currentTime > 0 && !video.paused && !video.ended && video.readyState > 2)) {
             video.pause()
@@ -204,6 +208,7 @@ const init = () => {
     }
     const repeat = () => setTimeout(()=>{updateSeeker(); pointerWaitTime -= 20; repeat()}, 20)
     updateVolume()
+    tempStyle.remove()
     const current = document.querySelector('a.playing')
     if (current) current.scrollIntoView()
     repeat()

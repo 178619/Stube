@@ -71,8 +71,6 @@ func NewApp(cfg *Config) (*App, error) {
 	r.HandleFunc("/v/{prefix}/{id}", a.pageHandler).Methods("GET")
 	r.HandleFunc("/e/{id}", a.embedHandler).Methods("GET")
 	r.HandleFunc("/e/{prefix}/{id}", a.embedHandler).Methods("GET")
-	r.HandleFunc("/n/{id}", a.nativeHandler).Methods("GET")
-	r.HandleFunc("/n/{prefix}/{id}", a.nativeHandler).Methods("GET")
 	r.HandleFunc("/feed.xml", a.rssHandler).Methods("GET")
 	// Static file handler
 	fsHandler := http.StripPrefix(
@@ -135,7 +133,7 @@ func (a *App) indexHandler(w http.ResponseWriter, r *http.Request) {
 	if len(pl) > 0 {
 		http.Redirect(w, r, "/v/"+pl[0].ID, 302)
 	} else {
-		a.Templates.ExecuteTemplate(w, "index.html", &struct {
+		a.Templates.ExecuteTemplate(w, "video.html", &struct {
 			Playing  *media.Video
 			Playlist media.Playlist
 		}{
@@ -156,7 +154,7 @@ func (a *App) pageHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("/v/%s", id)
 	playing, ok := a.Library.Videos[id]
 	if !ok {
-		a.Templates.ExecuteTemplate(w, "index.html", &struct {
+		a.Templates.ExecuteTemplate(w, "video.html", &struct {
 			Playing  *media.Video
 			Playlist media.Playlist
 		}{
@@ -166,7 +164,7 @@ func (a *App) pageHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	a.Templates.ExecuteTemplate(w, "index.html", &struct {
+	a.Templates.ExecuteTemplate(w, "video.html", &struct {
 		Playing  *media.Video
 		Playlist media.Playlist
 	}{
@@ -197,36 +195,6 @@ func (a *App) embedHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	a.Templates.ExecuteTemplate(w, "embed.html", &struct {
-		Playing  *media.Video
-		Playlist media.Playlist
-	}{
-		Playing:  playing,
-		Playlist: a.Library.Playlist(),
-	})
-}
-
-// HTTP handler for /n/id
-func (a *App) nativeHandler(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	id := vars["id"]
-	prefix, ok := vars["prefix"]
-	if ok {
-		id = path.Join(prefix, id)
-	}
-	log.Printf("/n/%s", id)
-	playing, ok := a.Library.Videos[id]
-	if !ok {
-		a.Templates.ExecuteTemplate(w, "native.html", &struct {
-			Playing  *media.Video
-			Playlist media.Playlist
-		}{
-			Playing:  &media.Video{ID: ""},
-			Playlist: a.Library.Playlist(),
-		})
-		return
-	}
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	a.Templates.ExecuteTemplate(w, "native.html", &struct {
 		Playing  *media.Video
 		Playlist media.Playlist
 	}{

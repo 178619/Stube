@@ -10,8 +10,9 @@
         <script type="application/javascript" src="/static/video.js"></script>
     </head>
     <body onload="init()">
+        <nav><a href="/">Tube</a></nav>
         <main>
-            <div id="player" class="embed">
+            <div id="player">
                 {{ if $playing.ID }}
                 <div id="mask">
                     <div id="center"></div>
@@ -33,8 +34,30 @@
                 <video id="video" controls poster="/t/{{ $playing.ID }}">
                     <source src="/v/{{ $playing.ID }}.mp4" />
                 </video>
+                <h1>{{ $playing.Title }}</h1>
+                <h2>{{ $playing.Modified }}</h2>
+                <p class="description">{{ $playing.Description }}</p>
+                <details class="description">
+                    <summary>Description</summary>
+                    {{ $playing.Description }}
+                </details>
                 {{ else }}
                 <video id="video" controls></video>
+                {{ end }}
+            </div>
+            <div id="playlist">
+                {{ range $m := .Playlist }}
+                    {{ if eq $m.ID $playing.ID }}
+                    <a href="/v/{{ $m.ID }}" title="{{ $m.Title }}" class="playing">
+                    {{ else }}
+                    <a href="/v/{{ $m.ID }}" title="{{ $m.Title }}">
+                    {{ end }}
+                    <img src="/t/{{ $m.ID }}">
+                    <div>
+                        <h1>{{ $m.Title }}</h1>
+                        <h2>{{ $m.Modified }}</h2>
+                    </div>
+                </a>
                 {{ end }}
             </div>
         </main>
