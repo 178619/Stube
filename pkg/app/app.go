@@ -63,14 +63,14 @@ func NewApp(cfg *Config) (*App, error) {
 	// Setup Router
 	r := mux.NewRouter().StrictSlash(true)
 	r.HandleFunc("/", a.indexHandler).Methods("GET")
-	r.HandleFunc("/v/{id}.mp4", a.videoHandler).Methods("GET")
-	r.HandleFunc("/v/{prefix}/{id}.mp4", a.videoHandler).Methods("GET")
+	r.HandleFunc("/f/{id}", a.videoHandler).Methods("GET")
+	r.HandleFunc("/f/{prefix:.*}/{id}", a.videoHandler).Methods("GET")
 	r.HandleFunc("/t/{id}", a.thumbHandler).Methods("GET")
-	r.HandleFunc("/t/{prefix}/{id}", a.thumbHandler).Methods("GET")
+	r.HandleFunc("/t/{prefix:.*}/{id}", a.thumbHandler).Methods("GET")
 	r.HandleFunc("/v/{id}", a.pageHandler).Methods("GET")
-	r.HandleFunc("/v/{prefix}/{id}", a.pageHandler).Methods("GET")
+	r.HandleFunc("/v/{prefix:.*}/{id}", a.pageHandler).Methods("GET")
 	r.HandleFunc("/e/{id}", a.embedHandler).Methods("GET")
-	r.HandleFunc("/e/{prefix}/{id}", a.embedHandler).Methods("GET")
+	r.HandleFunc("/e/{prefix:.*}/{id}", a.embedHandler).Methods("GET")
 	r.HandleFunc("/feed.xml", a.rssHandler).Methods("GET")
 	// Static file handler
 	fsHandler := http.StripPrefix(
@@ -203,7 +203,7 @@ func (a *App) embedHandler(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// HTTP handler for /v/id.mp4
+// HTTP handler for /f/id
 func (a *App) videoHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
@@ -211,15 +211,16 @@ func (a *App) videoHandler(w http.ResponseWriter, r *http.Request) {
 	if ok {
 		id = path.Join(prefix, id)
 	}
-	log.Printf("/v/%s.mp4", id)
+	log.Printf("/f/%s", id)
 	m, ok := a.Library.Videos[id]
 	if !ok {
 		return
 	}
-	title := m.Title
-	disposition := "attachment; filename=\"" + title + ".mp4\""
+	name := m.FileName
+	disposition := "attachment; filename=\"" + name + "\""
+	mimeType := m.MIMEType
 	w.Header().Set("Content-Disposition", disposition)
-	w.Header().Set("Content-Type", "video/mp4")
+	w.Header().Set("Content-Type", mimeType)
 	http.ServeFile(w, r, m.Path)
 }
 

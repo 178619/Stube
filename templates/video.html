@@ -26,13 +26,13 @@
                         </div>
                         <div>
                             <a class="button" id="embedlink" target="_blank" href="/e/{{ $playing.ID }}"></a>
-                            <a class="button" id="filelink" target="_blank" href="/v/{{ $playing.ID }}.mp4"></a>
+                            <a class="button" id="filelink" target="_blank" href="/f/{{ $playing.ID }}"></a>
                             <a class="button" id="fullscreen"></a>
                         </div>
                     </div>
                 </div>
                 <video id="video" controls poster="/t/{{ $playing.ID }}">
-                    <source src="/v/{{ $playing.ID }}.mp4" />
+                    <source src="/f/{{ $playing.ID }}" />
                 </video>
                 <h1>{{ $playing.Title }}</h1>
                 <h2>{{ $playing.Modified }}</h2>

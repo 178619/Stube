@@ -60,7 +60,7 @@ func buildFeed(a *App) {
 			Enclosure: &feeds.Enclosure{
 				Url:    id + ".mp4",
 				Length: strconv.FormatInt(v.Size, 10),
-				Type:   "video/mp4",
+				Type:   v.MIMEType,
 			},
 			Author: &feeds.Author{
 				Name:  cfg.Author.Name,

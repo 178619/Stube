@@ -3,9 +3,7 @@ package media
 import (
 	"os"
 	"path"
-	"strings"
 	"time"
-
 	"github.com/dhowden/tag"
 )
 
@@ -21,6 +19,10 @@ type Video struct {
 	Size        int64
 	Path        string
 	Timestamp   time.Time
+	FileName	string
+	Format		tag.Format
+	FileType	tag.FileType
+	MIMEType	string
 }
 
 // ParseVideo parses a video file's metadata and returns a Video.
@@ -38,15 +40,10 @@ func ParseVideo(p *Path, name string) (*Video, error) {
 	size := info.Size()
 	timestamp := info.ModTime()
 	modified := timestamp.Format("2006-01-02 03:04 PM")
-	// ID is name without extension
-	idx := strings.LastIndex(name, ".")
-	if idx == -1 {
-		idx = len(name)
-	}
-	id := name[:idx]
+	id := name
 	if len(p.Prefix) > 0 {
 		// if there's a prefix prepend it to the ID
-		id = path.Join(p.Prefix, name[:idx])
+		id = path.Join(p.Prefix, name)
 	}
 	m, err := tag.ReadFrom(f)
 	if err != nil {
@@ -57,6 +54,22 @@ func ParseVideo(p *Path, name string) (*Video, error) {
 	if title == "" {
 		title = name
 	}
+	format := m.Format()
+	filetype := m.FileType()
+	mimeType := ""
+	switch filetype {
+		case "MP3":
+			mimeType = "audio/mpeg"
+		case "M4A", "M4B", "M4P":
+			mimeType = "audio/aac"
+		case "FLAC":
+			mimeType = "audio/flac"
+		case "OGG":
+			mimeType = "audio/ogg"
+	}
+	if format == "MP4" {
+		mimeType = "video/mp4"
+	}
 	v := &Video{
 		ID:          id,
 		Title:       title,
@@ -66,6 +79,10 @@ func ParseVideo(p *Path, name string) (*Video, error) {
 		Size:        size,
 		Path:        pth,
 		Timestamp:   timestamp,
+		FileName:    name,
+		Format:      format,
+		FileType:    filetype,
+		MIMEType:    mimeType,
 	}
 	// Add thumbnail (if exists)
 	pic := m.Picture()

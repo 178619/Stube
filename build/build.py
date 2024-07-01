@@ -37,28 +37,25 @@ def build(pkg, bin, env):
     os.remove('bin/' + bin)
     print('Built ' + pkg)
 
-build(
-    pkg='tube_linux.zip',
-    bin='tube',
-    env='GOOS=linux GOARCH=amd64',
-)
-
-build(
-    pkg='tube_windows.zip',
-    bin='tube.exe',
-    env='GOOS=windows GOARCH=amd64',
-)
-
-build(
-    pkg='tube_osx.zip',
-    bin='tube',
-    env='GOOS=darwin GOARCH=amd64',
-)
-
-build(
-    pkg='tube_arm6.zip',
-    bin='tube',
-    env='GOOS=linux GOARCH=arm GOARM=6',
-)
-
-input('Done.')
+if __name__ == "__main__":
+    build(
+        pkg='tube_linux.zip',
+        bin='tube',
+        env='GOOS=linux GOARCH=amd64',
+    )
+    build(
+        pkg='tube_windows.zip',
+        bin='tube.exe',
+        env='GOOS=windows GOARCH=amd64',
+    )
+    build(
+        pkg='tube_osx.zip',
+        bin='tube',
+        env='GOOS=darwin GOARCH=amd64',
+    )
+    build(
+        pkg='tube_arm6.zip',
+        bin='tube',
+        env='GOOS=linux GOARCH=arm GOARM=6',
+    )
+    input('Done.')

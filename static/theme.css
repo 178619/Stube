@@ -129,6 +129,7 @@ details > summary {
 }
 
 #playlist > a:hover {
+    backdrop-filter: brightness(1.25);
     color: #9FBFDF;
 }
 
@@ -146,6 +147,8 @@ details > summary {
 
 #playlist > a > img {
     width: 72px;
+    height: 54px;
+    object-fit: contain;
 }
 
 #playlist > a > div {

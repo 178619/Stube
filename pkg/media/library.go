@@ -51,9 +51,19 @@ func (lib *Library) Import(p *Path) error {
 		return err
 	}
 	for _, info := range files {
+		if info.IsDir() {
+			n := &Path{
+				Path:   path.Join(p.Path, info.Name()),
+				Prefix: path.Join(p.Prefix, info.Name()),
+			}
+			lib.AddPath(n)
+			lib.Import(n)
+			continue
+		}
 		err = lib.Add(path.Join(p.Path, info.Name()))
 		if err != nil {
 			// Ignore files that can't be parsed
+			log.Println("Ignored:", path.Join(p.Path, info.Name()))
 			continue
 		}
 	}
