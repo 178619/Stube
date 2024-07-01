@@ -63,6 +63,7 @@ func NewApp(cfg *Config) (*App, error) {
 	// Setup Router
 	r := mux.NewRouter().StrictSlash(true)
 	r.HandleFunc("/", a.indexHandler).Methods("GET")
+	r.HandleFunc("/v", a.homeHandler).Methods("GET")
 	r.HandleFunc("/f/{id}", a.videoHandler).Methods("GET")
 	r.HandleFunc("/f/{prefix:.*}/{id}", a.videoHandler).Methods("GET")
 	r.HandleFunc("/t/{id}", a.thumbHandler).Methods("GET")
@@ -129,18 +130,17 @@ func (a *App) Run() error {
 // HTTP handler for /
 func (a *App) indexHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("/")
-	pl := a.Library.Playlist()
-	if len(pl) > 0 {
-		http.Redirect(w, r, "/v/"+pl[0].ID, 302)
-	} else {
-		a.Templates.ExecuteTemplate(w, "video.html", &struct {
-			Playing  *media.Video
-			Playlist media.Playlist
-		}{
-			Playing:  &media.Video{ID: ""},
-			Playlist: a.Library.Playlist(),
-		})
-	}
+	http.Redirect(w, r, "/v", 302)
+}
+
+// HTTP handler for /v
+func (a *App) homeHandler(w http.ResponseWriter, r *http.Request) {
+	log.Printf("/v")
+	a.Templates.ExecuteTemplate(w, "home.html", &struct {
+		Playlist media.Playlist
+	}{
+		Playlist: a.Library.Playlist(),
+	})
 }
 
 // HTTP handler for /v/id

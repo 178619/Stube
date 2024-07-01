@@ -17,15 +17,17 @@ Since all of the video info comes from metadata it's also useful to have a metad
 
 By default the server is configured to run on 127.0.0.1:0 which will assign a random port every time you run it. This is to avoid conflicting with other applications and to ensure privacy. You can configure this to be any specific host:port by editing `config.json` before running the server. You can also change the RSS feed details and library path from `config.json`.
 
-## Stube
+## About this repository
 
-Stube is a fork of the original repository tube.
+This one is a fork of the original repository tube. I personally like to call it Stube.
+
+This project is rather for myself but you are free to use it (if you ever wanted to). I was looking for a way to host some video files in my local network without having to install annoying stuff on neither side of servers and clients, and I found this simple and good enough. Since I am a beginner in programming I'm also using this as my playground to mess with GitHub and some basic codes.
 
 The main difference between the original project and this one is the video controls based on JavaScript. Although being JS-Free is great for both security and privacy, it makes controls rely on browser native controller which usually doesn't really provide a good user experience. Also it becomes pointless when you want to use it for a local video streaming server rather than for a public channel.
 
-Still, it will not use any third-party script or CDN, to maintain an isolated enviroment so it can prevent any leak. You also can still play videos without Javscript. Turning off JavaScript will make you able to use browser native controls.
+Still, it will not use any third-party script or CDN, to maintain an isolated environment so it can prevent any leak. You also can still play videos without Javscript. Turning off JavaScript will make you able to use browser native controls.
 
-While Stube currently is just a fork repository that adds barely more than some Javascripts, its ultimate goal is to create a complete personal media streaming server while being light-weighted, portable and simple enough. You will be able to access all the media files you own in your Stube.
+While Stube currently is just a fork repository that adds barely more than some Javascripts, its ultimate goal is to create a complete personal media streaming server while being light-weighted, portable and simple enough. You will be able to access all the media files you own in your Stube (in a million years).
 
 Supported Video Files: MP4
 Supported Audio Files: MP3, FLAC, OGG
@@ -33,10 +35,11 @@ Supported Audio Files: MP3, FLAC, OGG
 All differences from the original work:
 - Has a video controller based on Javascript, for both pointers and keyboards. Enabled when Javascript is on.
 - Loads files in subfolders.
+- Basic Search Function.
 - Video-only page for embeds (iframes).
 
 Todo:
-- Home (/) with a sitemap and a searcher
+- Home (/) with a sitemap and a better searching
 - Books (/b/) ePub/PDF
 - Games (/g/) Browser Based Games
 - Images (/i/) png/jpeg/gif/webp

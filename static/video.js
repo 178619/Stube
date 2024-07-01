@@ -26,7 +26,8 @@ const init = () => {
         }
     }
     document.body.onkeydown = (e) => {
-        if (keyList.includes(e.key)) e.preventDefault(); else return;
+        if (!keyList.includes(e.key) || e.target.id == 'search' || e.ctrlKey) return;
+        e.preventDefault();
         switch(e.key) {
             case " ":
             case "k":
@@ -70,6 +71,7 @@ const init = () => {
                 break
             case "m":
                 video.muted = !video.muted
+                updateVolume()
                 break
             case "ArrowUp":
                 if (video.volume < 0.95) video.volume = video.volume + 1 / 20; else video.volume = 1;
@@ -169,6 +171,12 @@ const init = () => {
         } else {
             player.classList.remove('fullscreen')
         }
+    }
+    document.getElementById('search').onkeyup = () => {
+        const key = document.getElementById('search').value
+        document.querySelectorAll('#playlist > a').forEach((v)=>{
+            if (v.title.includes(key) || v.name.includes(key)) v.className = ''; else v.className = 'hidden';
+        })
     }
     const updateSeeker = () => {
         document.getElementById("seeker").max = video.duration * 1000

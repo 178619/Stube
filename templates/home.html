@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Tube</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="shortcut icon" type="image/x-icon" href="/static/favicon.ico">
+        <link rel="stylesheet" type="text/css" href="/static/theme.css">
+        <script type="application/javascript" src="/static/home.js"></script>
+    </head>
+    <body onload="init()">
+        <nav><a href="/">Tube</a></nav>
+        <main>
+            <div id="homeview">
+                {{ range $m := .Playlist }}
+                    <a href="/v/{{ $m.ID }}" title="{{ $m.Title }}" name="{{ $m.ID }}">
+                        <img src="/t/{{ $m.ID }}">
+                        <div>
+                            <h1>{{ $m.Title }}</h1>
+                            <h2>{{ $m.Modified }}</h2>
+                        </div>
+                    </a>
+                {{ end }}
+            </div>
+        </main>
+    </body>
+</html>
