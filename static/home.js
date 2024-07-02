@@ -5,9 +5,9 @@ const init = () => {
     input.type = 'text'
     input.placeholder = "Search..."
     input.onkeyup = () => {
-        const key = input.value
+        const key = input.value.toLocaleLowerCase()
         document.querySelectorAll('#homeview > a').forEach((v)=>{
-            if (v.title.includes(key) || v.name.includes(key)) v.className = ''; else v.className = 'hidden';
+            if (v.title.toLocaleLowerCase().includes(key) || v.name.toLocaleLowerCase().includes(key)) v.className = ''; else v.className = 'hidden';
         })
     }
     document.querySelector('nav').appendChild(input)

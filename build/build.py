@@ -24,6 +24,12 @@ def build(pkg, bin, env):
     if x != 0:
         print('Error building ' + pkg)
         return
+    f = zipfile.ZipFile('bin/patch_' + pkg, mode='w')
+    f.write('bin/' + bin, arcname=bin)
+    for filename in os.listdir('../static'):
+        f.write('../static/' + filename, 'static/' + filename)
+    for filename in os.listdir('../templates'):
+        f.write('../templates/' + filename, 'templates/' + filename)
     z = zipfile.ZipFile('bin/' + pkg, mode='w')
     z.write('bin/' + bin, arcname=bin)
     z.write('../config.json', arcname='config.json')
@@ -58,4 +64,4 @@ if __name__ == "__main__":
         bin='tube',
         env='GOOS=linux GOARCH=arm GOARM=6',
     )
-    input('Done.')
+    print('Done.')

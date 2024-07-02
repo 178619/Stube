@@ -29,8 +29,18 @@ Still, it will not use any third-party script or CDN, to maintain an isolated en
 
 While Stube currently is just a fork repository that adds barely more than some Javascripts, its ultimate goal is to create a complete personal media streaming server while being light-weighted, portable and simple enough. You will be able to access all the media files you own in your Stube (in a million years).
 
-Supported Video Files: MP4
-Supported Audio Files: MP3, FLAC, OGG
+Supported File Formats:
+- Video
+    - MP4
+    - OGG (OGV)
+- Audio 
+    - MP3
+    - FLAC
+    - WAV
+    - OGG (OGA)
+- Playable Files (Metadata are ignored)
+    - WEBA
+    - WEBM
 
 All differences from the original work:
 - Has a video controller based on Javascript, for both pointers and keyboards. Enabled when Javascript is on.

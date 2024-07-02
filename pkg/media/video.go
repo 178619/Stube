@@ -4,6 +4,7 @@ import (
 	"os"
 	"path"
 	"time"
+	"strings"
 	"github.com/dhowden/tag"
 )
 
@@ -45,36 +46,73 @@ func ParseVideo(p *Path, name string) (*Video, error) {
 		// if there's a prefix prepend it to the ID
 		id = path.Join(p.Prefix, name)
 	}
+	var title, mimeType, album, comment string
+	var format tag.Format
+	var filetype tag.FileType
+	var pic *tag.Picture
 	m, err := tag.ReadFrom(f)
 	if err != nil {
-		return nil, err
-	}
-	title := m.Title()
-	// Default title is filename
-	if title == "" {
-		title = name
-	}
-	format := m.Format()
-	filetype := m.FileType()
-	mimeType := ""
-	switch filetype {
-		case "MP3":
-			mimeType = "audio/mpeg"
-		case "M4A", "M4B", "M4P":
-			mimeType = "audio/aac"
-		case "FLAC":
-			mimeType = "audio/flac"
-		case "OGG":
-			mimeType = "audio/ogg"
-	}
-	if format == "MP4" {
-		mimeType = "video/mp4"
+		idx := strings.LastIndex(name, ".") + 1
+		if idx == 0 {
+			return nil, err
+		}
+		ext := strings.ToUpper(name[idx:])
+		if ext == "WAV" {
+			title = name
+			format = "WAVE"
+			filetype = "WAV"
+			mimeType = "audio/wav"
+			album = ""
+			comment = ""
+		} else if ext == "WEBA" {
+			title = name
+			format = ""
+			filetype = "WEBA"
+			mimeType = "audio/webm"
+			album = ""
+			comment = ""
+		} else if ext == "WEBM" {
+			title = name
+			format = ""
+			filetype = "WEBM"
+			mimeType = "video/webm"
+			album = ""
+			comment = ""
+		} else {
+			return nil, err
+		}
+	} else {
+		title = m.Title()
+		// Default title is filename
+		if title == "" {
+			title = name
+		}
+		format = m.Format()
+		filetype = m.FileType()
+		switch filetype {
+			case "MP3":
+				mimeType = "audio/mpeg"
+			case "M4A", "M4B", "M4P":
+				mimeType = "audio/aac"
+			case "FLAC":
+				mimeType = "audio/flac"
+			case "OGG":
+				mimeType = "audio/ogg"
+			default:
+				mimeType = ""
+		}
+		if format == "MP4" {
+			mimeType = "video/mp4"
+		}
+		album = m.Album()
+		comment = m.Comment()
+		pic = m.Picture()
 	}
 	v := &Video{
 		ID:          id,
 		Title:       title,
-		Album:       m.Album(),
-		Description: m.Comment(),
+		Album:       album,
+		Description: comment,
 		Modified:    modified,
 		Size:        size,
 		Path:        pth,
@@ -85,7 +123,6 @@ func ParseVideo(p *Path, name string) (*Video, error) {
 		MIMEType:    mimeType,
 	}
 	// Add thumbnail (if exists)
-	pic := m.Picture()
 	if pic != nil {
 		v.Thumb = pic.Data
 		v.ThumbType = pic.MIMEType

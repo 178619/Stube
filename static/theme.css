@@ -150,7 +150,7 @@ details > summary {
 }
 
 #playlist > a {
-    display: block;
+    display: flex;
     padding: 10px;
     position: relative;
     min-height: 54px;
@@ -183,25 +183,22 @@ details > summary {
     width: 72px;
     height: 54px;
     object-fit: contain;
+    margin-right: 6px;
 }
 
 #playlist > a > div {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    bottom: 10px;
-    left: 90px;
+    flex: 1;
 }
 
 #playlist > a > div > h1 {
     white-space: normal;
     overflow-y: hidden;
     max-height: 2lh;
-    line-height: 150%;
+    line-height: 140%;
 }
 
 #playlist > a > div > h2 {
-    margin-top: 5px;
+    margin-top: 2px;
     color: var(--date-color);
     font-size: 90%;
 }
