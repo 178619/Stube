@@ -64,12 +64,14 @@ func NewApp(cfg *Config) (*App, error) {
 	r := mux.NewRouter().StrictSlash(true)
 	r.HandleFunc("/", a.indexHandler).Methods("GET")
 	r.HandleFunc("/v", a.homeHandler).Methods("GET")
-	r.HandleFunc("/f/{id}", a.videoHandler).Methods("GET")
-	r.HandleFunc("/f/{prefix:.*}/{id}", a.videoHandler).Methods("GET")
+	r.HandleFunc("/f/{id}", a.fileHandler).Methods("GET")
+	r.HandleFunc("/f/{prefix:.*}/{id}", a.fileHandler).Methods("GET")
 	r.HandleFunc("/t/{id}", a.thumbHandler).Methods("GET")
 	r.HandleFunc("/t/{prefix:.*}/{id}", a.thumbHandler).Methods("GET")
 	r.HandleFunc("/v/{id}", a.pageHandler).Methods("GET")
 	r.HandleFunc("/v/{prefix:.*}/{id}", a.pageHandler).Methods("GET")
+	r.HandleFunc("/m/{id}", a.musicHandler).Methods("GET")
+	r.HandleFunc("/m/{prefix:.*}/{id}", a.musicHandler).Methods("GET")
 	r.HandleFunc("/e/{id}", a.embedHandler).Methods("GET")
 	r.HandleFunc("/e/{prefix:.*}/{id}", a.embedHandler).Methods("GET")
 	r.HandleFunc("/feed.xml", a.rssHandler).Methods("GET")
@@ -154,7 +156,7 @@ func (a *App) pageHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("/v/%s", id)
 	playing, ok := a.Library.Videos[id]
 	if !ok {
-		a.Templates.ExecuteTemplate(w, "video.html", &struct {
+		a.Templates.ExecuteTemplate(w, "player.html", &struct {
 			Playing  *media.Video
 			Playlist media.Playlist
 		}{
@@ -164,7 +166,37 @@ func (a *App) pageHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	a.Templates.ExecuteTemplate(w, "video.html", &struct {
+	a.Templates.ExecuteTemplate(w, "player.html", &struct {
+		Playing  *media.Video
+		Playlist media.Playlist
+	}{
+		Playing:  playing,
+		Playlist: a.Library.Playlist(),
+	})
+}
+
+// HTTP handler for /m/id
+func (a *App) musicHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id := vars["id"]
+	prefix, ok := vars["prefix"]
+	if ok {
+		id = path.Join(prefix, id)
+	}
+	log.Printf("/m/%s", id)
+	playing, ok := a.Library.Videos[id]
+	if !ok {
+		a.Templates.ExecuteTemplate(w, "player_music.html", &struct {
+			Playing  *media.Video
+			Playlist media.Playlist
+		}{
+			Playing:  &media.Video{ID: ""},
+			Playlist: a.Library.Playlist(),
+		})
+		return
+	}
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	a.Templates.ExecuteTemplate(w, "player_music.html", &struct {
 		Playing  *media.Video
 		Playlist media.Playlist
 	}{
@@ -204,7 +236,7 @@ func (a *App) embedHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // HTTP handler for /f/id
-func (a *App) videoHandler(w http.ResponseWriter, r *http.Request) {
+func (a *App) fileHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
 	prefix, ok := vars["prefix"]

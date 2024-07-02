@@ -13,10 +13,13 @@
         <main>
             <div id="homeview">
                 {{ range $m := .Playlist }}
-                    <a href="/v/{{ $m.ID }}" title="{{ $m.Title }}" name="{{ $m.ID }}">
+                    <a href="/v/{{ $m.ID }}" title="{{ $m.Title }}" name="{{ $m.ID }}" key="{{ $m.ID }}￨{{ $m.Title }}￨{{ $m.Album }}￨{{ $m.Artist }}">
                         <img src="/t/{{ $m.ID }}">
                         <div>
                             <h1>{{ $m.Title }}</h1>
+                            {{ if $m.Album }}
+                                <h2>{{ $m.Album }}</h2>
+                            {{ end }}
                             <h2>{{ $m.Modified }}</h2>
                         </div>
                     </a>

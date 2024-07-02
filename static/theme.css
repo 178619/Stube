@@ -42,6 +42,10 @@ nav {
     position: relative;
     overflow: hidden;
 }
+nav > #album {
+    position: absolute;
+    right: 10px;
+}
 
 nav > #search {
     height: 30px;

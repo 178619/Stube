@@ -1,0 +1,86 @@
+{{ $playing := .Playing }}
+{{ $playlist := .Playlist }}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Tube</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="shortcut icon" type="image/x-icon" href="/static/favicon.ico">
+        <link rel="stylesheet" type="text/css" href="/static/theme.css">
+        <script type="application/javascript" src="/static/video.js"></script>
+    </head>
+    <body onload="init()">
+        <nav><a href="/">Tube</a></nav>
+        <main>
+            <div id="player">
+                {{ if $playing.ID }}
+                <div id="mask">
+                    <div id="center"></div>
+                        <div id="control">
+                        <input id="seeker" type="range" value="0" min="0" max="0">
+                        <div>
+                            <a class="button" id="play-pause"></a>
+                            <div id="current"></div>
+                            <a class="button" id="volume-icon"></a>
+                            <input id="volume" type="range" value="0" min="0" max="1" step="0.000001">
+                        </div>
+                        <div>
+                            <a class="button" id="embedlink" target="_blank" href="/e/{{ $playing.ID }}"></a>
+                            <a class="button" id="filelink" target="_blank" href="/f/{{ $playing.ID }}"></a>
+                            <a class="button" id="fullscreen"></a>
+                        </div>
+                    </div>
+                </div>
+                <video id="video" controls poster="/t/{{ $playing.ID }}">
+                    <source src="/f/{{ $playing.ID }}" />
+                </video>
+                <h1>{{ $playing.Title }}</h1>
+                <h2>{{ $playing.Modified }}</h2>
+                <p class="description">{{ $playing.Description }}</p>
+                <details class="description">
+                    <summary>Description</summary>
+                    {{ $playing.Description }}
+                </details>
+                {{ else }}
+                <video id="video" controls></video>
+                {{ end }}
+            </div>
+            <div id="playlist">
+                <input id="search" type="text" placeholder="Search...">
+                {{ if gt (len $playlist) 256 }}
+                    {{ range $m := $playlist }}
+                        {{ if eq $m.MediaType $playing.MediaType }}
+                            {{ if eq $m.ID $playing.ID }}
+                            <a href="/v/{{ $m.ID }}" title="{{ $m.Title }}" name="{{ $m.ID }}" class="playing">
+                            {{ else }}
+                            <a href="/v/{{ $m.ID }}" title="{{ $m.Title }}" name="{{ $m.ID }}">
+                            {{ end }}
+                                <div>
+                                    <h1>{{ $m.Title }}</h1>
+                                    <h2>{{ $m.Modified }}</h2>
+                                </div>
+                            </a>
+                        {{ end }}
+                    {{ end }}
+                {{ else }}
+                    {{ range $m := $playlist }}
+                        {{ if eq $m.MediaType "VIDEO" }}
+                            {{ if eq $m.ID $playing.ID }}
+                            <a href="/v/{{ $m.ID }}" title="{{ $m.Title }}" name="{{ $m.ID }}" class="playing">
+                            {{ else }}
+                            <a href="/v/{{ $m.ID }}" title="{{ $m.Title }}" name="{{ $m.ID }}">
+                            {{ end }}
+                                <img src="/t/{{ $m.ID }}">
+                                <div>
+                                    <h1>{{ $m.Title }}</h1>
+                                    <h2>{{ $m.Modified }}</h2>
+                                </div>
+                            </a>
+                        {{ end }}
+                    {{ end }}
+                {{ end }}
+            </div>
+        </main>
+    </body>
+</html>

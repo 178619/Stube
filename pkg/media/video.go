@@ -8,11 +8,20 @@ import (
 	"github.com/dhowden/tag"
 )
 
+type MediaType string
+
+const (
+	AUDIO MediaType = "AUDIO"
+	VIDEO MediaType = "VIDEO"
+)
+
 // Video represents metadata for a single video.
 type Video struct {
 	ID          string
 	Title       string
 	Album       string
+	Artist      string
+	Track       int
 	Description string
 	Thumb       []byte
 	ThumbType   string
@@ -24,6 +33,7 @@ type Video struct {
 	Format		tag.Format
 	FileType	tag.FileType
 	MIMEType	string
+	MediaType   MediaType
 }
 
 // ParseVideo parses a video file's metadata and returns a Video.
@@ -46,10 +56,13 @@ func ParseVideo(p *Path, name string) (*Video, error) {
 		// if there's a prefix prepend it to the ID
 		id = path.Join(p.Prefix, name)
 	}
+	var track int = 0
 	var title, mimeType, album, comment string
 	var format tag.Format
 	var filetype tag.FileType
 	var pic *tag.Picture
+	var artist string = ""
+	var mediaType MediaType
 	m, err := tag.ReadFrom(f)
 	if err != nil {
 		idx := strings.LastIndex(name, ".") + 1
@@ -64,6 +77,7 @@ func ParseVideo(p *Path, name string) (*Video, error) {
 			mimeType = "audio/wav"
 			album = ""
 			comment = ""
+			mediaType = AUDIO
 		} else if ext == "WEBA" {
 			title = name
 			format = ""
@@ -71,6 +85,7 @@ func ParseVideo(p *Path, name string) (*Video, error) {
 			mimeType = "audio/webm"
 			album = ""
 			comment = ""
+			mediaType = AUDIO
 		} else if ext == "WEBM" {
 			title = name
 			format = ""
@@ -78,6 +93,7 @@ func ParseVideo(p *Path, name string) (*Video, error) {
 			mimeType = "video/webm"
 			album = ""
 			comment = ""
+			mediaType = VIDEO
 		} else {
 			return nil, err
 		}
@@ -101,17 +117,25 @@ func ParseVideo(p *Path, name string) (*Video, error) {
 			default:
 				mimeType = ""
 		}
+		mediaType = AUDIO
 		if format == "MP4" {
 			mimeType = "video/mp4"
+			mediaType = VIDEO
 		}
 		album = m.Album()
+		artist = m.Artist()
 		comment = m.Comment()
 		pic = m.Picture()
+		disc, _ := m.Disc()
+		track, _ = m.Track()
+		track += disc * 1000
 	}
 	v := &Video{
 		ID:          id,
 		Title:       title,
 		Album:       album,
+		Artist:      artist,
+		Track:       track,
 		Description: comment,
 		Modified:    modified,
 		Size:        size,
@@ -121,6 +145,7 @@ func ParseVideo(p *Path, name string) (*Video, error) {
 		Format:      format,
 		FileType:    filetype,
 		MIMEType:    mimeType,
+		MediaType:   mediaType,
 	}
 	// Add thumbnail (if exists)
 	if pic != nil {

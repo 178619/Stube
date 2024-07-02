@@ -7,7 +7,7 @@ const init = () => {
     input.onkeyup = () => {
         const key = input.value.toLocaleLowerCase()
         document.querySelectorAll('#homeview > a').forEach((v)=>{
-            if (v.title.toLocaleLowerCase().includes(key) || v.name.toLocaleLowerCase().includes(key)) v.className = ''; else v.className = 'hidden';
+            if (v.getAttribute('key').toLocaleLowerCase().includes(key)) v.className = ''; else v.className = 'hidden';
         })
     }
     document.querySelector('nav').appendChild(input)

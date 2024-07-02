@@ -11,7 +11,12 @@
         <script type="application/javascript" src="/static/video.js"></script>
     </head>
     <body onload="init()">
-        <nav><a href="/">Tube</a></nav>
+        <nav>
+            <a href="/">Tube</a>
+            {{ if $playing.Album }}
+            <a id="album" href="/m/{{ $playing.ID }}">Album</a>
+            {{ end }}
+        </nav>
         <main>
             <div id="player">
                 {{ if $playing.ID }}
@@ -36,6 +41,9 @@
                     <source src="/f/{{ $playing.ID }}" />
                 </video>
                 <h1>{{ $playing.Title }}</h1>
+                {{ if $playing.Album }}
+                    <h2>{{ $playing.Album }}</h2>
+                {{ end }}
                 <h2>{{ $playing.Modified }}</h2>
                 <p class="description">{{ $playing.Description }}</p>
                 <details class="description">
