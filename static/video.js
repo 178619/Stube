@@ -172,7 +172,7 @@ const init = () => {
             player.classList.remove('fullscreen')
         }
     }
-    document.getElementById('search').onkeyup = () => {
+    if (document.getElementById('search')) document.getElementById('search').onkeyup = () => {
         const key = document.getElementById('search').value.toLocaleLowerCase()
         document.querySelectorAll('#playlist > a').forEach((v)=>{
             if (v.title.toLocaleLowerCase().includes(key) || v.name.toLocaleLowerCase().includes(key)) v.className = ''; else v.className = 'hidden';

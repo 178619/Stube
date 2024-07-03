@@ -101,12 +101,16 @@ main {
 #player > h1 {
     margin-top: 10px;
     font-weight: bold;
+    text-overflow: ellipsis;
+    overflow-x: clip;
 }
 
 #player > h2 {
     margin-top: 5px;
     color: var(--date-color);
     font-size: 90%;
+    text-overflow: ellipsis;
+    overflow-x: clip;
 }
 
 #player > p {
@@ -199,12 +203,17 @@ details > summary {
     overflow-y: hidden;
     max-height: 2lh;
     line-height: 140%;
+    text-overflow: ellipsis;
+    overflow-x: clip;
 }
 
 #playlist > a > div > h2 {
     margin-top: 2px;
     color: var(--date-color);
     font-size: 90%;
+    max-height: 1lh;
+    text-overflow: ellipsis;
+    overflow-x: clip;
 }
 
 p.description {
@@ -264,12 +273,17 @@ details.description {
     overflow-y: hidden;
     max-height: 2lh;
     line-height: 150%;
+    text-overflow: ellipsis;
+    overflow-x: clip;
 }
 
 #homeview > a > div > h2 {
     margin-top: 5px;
     color: var(--date-color);
     font-size: 90%;
+    max-height: 1lh;
+    text-overflow: ellipsis;
+    overflow-x: clip;
 }
 
 /* 360p */
@@ -350,6 +364,9 @@ details.description {
         right: 10px;
         bottom: 10px;
         left: 90px;
+    }
+    #homeview > a > div > h1 {
+        max-height: 1lh;
     }
 }
 
@@ -599,4 +616,12 @@ details.description {
 
 .fullscreen #mask #control #fullscreen {
     background-image: url('/static/fullscreen-exit.png');
+}
+
+.fullscreen #mask #control {
+    padding-bottom: 8px;
+}
+
+.fullscreen #mask #control #seeker {
+    bottom: 44px;
 }

@@ -18,6 +18,7 @@ const (
 // Video represents metadata for a single video.
 type Video struct {
 	ID          string
+	Ref         string
 	Title       string
 	Album       string
 	Artist      string
@@ -35,6 +36,8 @@ type Video struct {
 	MIMEType	string
 	MediaType   MediaType
 }
+
+var replacer = strings.NewReplacer("#", "%23")
 
 // ParseVideo parses a video file's metadata and returns a Video.
 func ParseVideo(p *Path, name string) (*Video, error) {
@@ -56,6 +59,7 @@ func ParseVideo(p *Path, name string) (*Video, error) {
 		// if there's a prefix prepend it to the ID
 		id = path.Join(p.Prefix, name)
 	}
+	ref := replacer.Replace(id)
 	var track int = 0
 	var title, mimeType, album, comment string
 	var format tag.Format
@@ -132,6 +136,7 @@ func ParseVideo(p *Path, name string) (*Video, error) {
 	}
 	v := &Video{
 		ID:          id,
+		Ref:         ref,
 		Title:       title,
 		Album:       album,
 		Artist:      artist,

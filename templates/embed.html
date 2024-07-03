@@ -24,14 +24,14 @@
                             <input id="volume" type="range" value="0" min="0" max="1" step="0.000001">
                         </div>
                         <div>
-                            <a class="button" id="embedlink" target="_blank" href="/e/{{ $playing.ID }}"></a>
-                            <a class="button" id="filelink" target="_blank" href="/f/{{ $playing.ID }}"></a>
+                            <a class="button" id="embedlink" target="_blank" href="/e/{{ $playing.Ref }}"></a>
+                            <a class="button" id="filelink" target="_blank" href="/f/{{ $playing.Ref }}"></a>
                             <a class="button" id="fullscreen"></a>
                         </div>
                     </div>
                 </div>
-                <video id="video" controls poster="/t/{{ $playing.ID }}">
-                    <source src="/f/{{ $playing.ID }}" />
+                <video id="video" controls poster="/t/{{ $playing.Ref }}">
+                    <source src="/f/{{ $playing.Ref }}" />
                 </video>
                 {{ else }}
                 <video id="video" controls></video>

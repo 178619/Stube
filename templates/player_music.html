@@ -26,14 +26,14 @@
                             <input id="volume" type="range" value="0" min="0" max="1" step="0.000001">
                         </div>
                         <div>
-                            <a class="button" id="embedlink" target="_blank" href="/e/{{ $playing.ID }}"></a>
-                            <a class="button" id="filelink" target="_blank" href="/f/{{ $playing.ID }}"></a>
+                            <a class="button" id="embedlink" target="_blank" href="/e/{{ $playing.Ref }}"></a>
+                            <a class="button" id="filelink" target="_blank" href="/f/{{ $playing.Ref }}"></a>
                             <a class="button" id="fullscreen"></a>
                         </div>
                     </div>
                 </div>
-                <video id="video" controls poster="/t/{{ $playing.ID }}">
-                    <source src="/f/{{ $playing.ID }}" />
+                <video id="video" controls poster="/t/{{ $playing.Ref }}">
+                    <source src="/f/{{ $playing.Ref }}" />
                 </video>
                 <h1>{{ $playing.Title }}</h1>
                 <h2>{{ $playing.Artist }} - {{ $playing.Album }}</h2>
@@ -52,11 +52,11 @@
                 {{ range $m := $playlist }}
                     {{ if eq $m.Album $playing.Album }}
                         {{ if eq $m.ID $playing.ID }}
-                        <a href="/m/{{ $m.ID }}" title="{{ $m.Title }}" name="{{ $m.ID }}" class="playing">
+                        <a href="/m/{{ $m.Ref }}" title="{{ $m.Title }}" name="{{ $m.ID }}" class="playing">
                         {{ else }}
-                        <a href="/m/{{ $m.ID }}" title="{{ $m.Title }}" name="{{ $m.ID }}">
+                        <a href="/m/{{ $m.Ref }}" title="{{ $m.Title }}" name="{{ $m.ID }}">
                         {{ end }}
-                            <img src="/t/{{ $m.ID }}">
+                            <img src="/t/{{ $m.Ref }}">
                             <div>
                                 <h1>{{ $m.Track }}. {{ $m.Title }}</h1>
                                 <h2>{{ $m.Modified }}</h2>
