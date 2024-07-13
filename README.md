@@ -41,12 +41,25 @@ Supported File Formats:
 - Playable Files (Metadata are ignored)
     - WEBA
     - WEBM
+- Captions / Subtitles
+    - VTT
 
 All differences from the original work:
 - Has a video controller based on Javascript, for both pointers and keyboards. Enabled when Javascript is on.
 - Loads files in subfolders.
 - Basic Search Function.
 - Video-only page for embeds (iframes).
+- Loads WebVTT files.
+
+To load VTT files, they have to be in the same folder with the video, and have the filename in the appropriate format.
+```
+- videos
+    - video1.mp4        - MP4 File
+    - video1.webm       - MP4 File
+    - video1.en.vtt     - VTT File, works for both files
+    - video1.mp4.en.vtt - VTT File, works for video.mp4 file
+    - video1.vtt        - VTT File, works for both files, not recommended
+```
 
 Todo:
 - Home (/) with a sitemap and a better searching
@@ -56,17 +69,17 @@ Todo:
 - Comics (/c/) Listed Images
 - Series (/s/) Listed Videos/Audios
 
-# installation
+# Installation
 
-## from release
+## From release
 
-1. Download [release](https://github.com/wybiral/tube/releases) for your platform
+1. Download [release](https://github.com/178619/tube/releases) for your platform
 2. Extract zip archive
 3. Run `tube` executable to start server (this will output the URL for accessing from a browser)
 4. Move videos to `videos` directory
 5. Open the URL from step 3 and enjoy!
 
-## from source
+## From source
 
 1. [Install Golang](https://golang.org/doc/install) if you don't already have it
 2. `go get github.com/wybiral/tube`

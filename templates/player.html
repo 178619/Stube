@@ -21,8 +21,9 @@
             <div id="player">
                 {{ if $playing.ID }}
                 <div id="mask">
+                    <h1>{{ $playing.Title }}</h1>
                     <div id="center"></div>
-                        <div id="control">
+                    <div id="control">
                         <input id="seeker" type="range" value="0" min="0" max="0">
                         <div>
                             <a class="button" id="play-pause"></a>
@@ -31,14 +32,22 @@
                             <input id="volume" type="range" value="0" min="0" max="1" step="0.000001">
                         </div>
                         <div>
+                            <a class="button" id="captions"></a>
+                            <a class="button" id="screenshot"></a>
                             <a class="button" id="embedlink" target="_blank" href="/e/{{ $playing.Ref }}"></a>
                             <a class="button" id="filelink" target="_blank" href="/f/{{ $playing.Ref }}"></a>
                             <a class="button" id="fullscreen"></a>
                         </div>
                     </div>
                 </div>
-                <video id="video" controls poster="/t/{{ $playing.Ref }}">
+                <video id="video" controls poster="/t/{{ $playing.Ref }}" preload="metadata">
+                    {{ range $m := .Captions }}
+                        {{ if eq $m.Origin $playing.FileName $playing.BaseName }}
+                            <track kind="captions" srclang="{{ $m.SrcLang }}" src="/f/{{ $m.Ref }}" label="{{ $m.SrcLang }}" />
+                        {{ end }}
+                    {{ end }}
                     <source src="/f/{{ $playing.Ref }}" />
+                    Your browser does not support this file format. ({{ $playing.FileType }} {{ $playing.Format }})
                 </video>
                 <h1>{{ $playing.Title }}</h1>
                 {{ if $playing.Album }}

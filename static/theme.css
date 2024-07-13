@@ -595,6 +595,16 @@ details.description {
     width: 80px;
 }
 
+#mask #control #captions {
+    background-image: url('/static/closed-caption.png');
+    filter: invert(1);
+}
+
+#mask #control #screenshot {
+    background-image: url('/static/camera.png');
+    filter: invert(1);
+}
+
 #mask #control #embedlink {
     background-image: url('/static/open-in-app.png');
     filter: invert(1);
@@ -624,4 +634,21 @@ details.description {
 
 .fullscreen #mask #control #seeker {
     bottom: 44px;
+}
+
+#mask h1 {
+    display: none;
+    padding: 8px;
+    text-shadow: 0px 0px 4px black;
+    font-weight: bold;
+    text-overflow: ellipsis;
+    overflow-x: clip;
+}
+
+.embed #mask.shown h1 {
+    display: block;
+}
+
+.fullscreen #mask.shown h1 {
+    display: block;
 }

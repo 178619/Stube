@@ -17,3 +17,5 @@ func (p Playlist) Swap(i, j int) {
 func (p Playlist) Less(i, j int) bool {
 	return p[i].Timestamp.After(p[j].Timestamp)
 }
+
+type CaptionList []*Caption

@@ -35,6 +35,7 @@ type Video struct {
 	FileType	tag.FileType
 	MIMEType	string
 	MediaType   MediaType
+	BaseName    string
 }
 
 var replacer = strings.NewReplacer("#", "%23")
@@ -60,6 +61,13 @@ func ParseVideo(p *Path, name string) (*Video, error) {
 		id = path.Join(p.Prefix, name)
 	}
 	ref := replacer.Replace(id)
+	idx := strings.LastIndex(name, ".") + 1
+	var ext string
+	if idx == 0 {
+		ext = name
+	} else {
+		ext = strings.ToUpper(name[idx:])
+	}
 	var track int = 0
 	var title, mimeType, album, comment string
 	var format tag.Format
@@ -69,11 +77,6 @@ func ParseVideo(p *Path, name string) (*Video, error) {
 	var mediaType MediaType
 	m, err := tag.ReadFrom(f)
 	if err != nil {
-		idx := strings.LastIndex(name, ".") + 1
-		if idx == 0 {
-			return nil, err
-		}
-		ext := strings.ToUpper(name[idx:])
 		if ext == "WAV" {
 			title = name
 			format = "WAVE"
@@ -151,6 +154,7 @@ func ParseVideo(p *Path, name string) (*Video, error) {
 		FileType:    filetype,
 		MIMEType:    mimeType,
 		MediaType:   mediaType,
+		BaseName:	 name[:idx-1],
 	}
 	// Add thumbnail (if exists)
 	if pic != nil {

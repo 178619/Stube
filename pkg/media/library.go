@@ -13,16 +13,18 @@ import (
 
 // Library manages importing and retrieving video data.
 type Library struct {
-	mu     sync.RWMutex
-	Paths  map[string]*Path
-	Videos map[string]*Video
+	mu       sync.RWMutex
+	Paths    map[string]*Path
+	Videos   map[string]*Video
+	Captions map[string]*Caption
 }
 
 // NewLibrary returns new instance of Library.
 func NewLibrary() *Library {
 	lib := &Library{
-		Paths:  make(map[string]*Path),
-		Videos: make(map[string]*Video),
+		Paths:    make(map[string]*Path),
+		Videos:   make(map[string]*Video),
+		Captions: make(map[string]*Caption),
 	}
 	return lib
 }
@@ -81,6 +83,15 @@ func (lib *Library) Add(fp string) error {
 		return errors.New("media: path not found")
 	}
 	n := path.Base(fp)
+	if strings.HasSuffix(strings.ToUpper(n), ".VTT") {
+		v, err := ParseCaption(p, n)
+		if err != nil {
+			return err
+		}
+		lib.Captions[v.ID] = v
+		log.Println("Added:", v.Path)
+		return nil
+	}
 	v, err := ParseVideo(p, n)
 	if err != nil {
 		return err
@@ -101,14 +112,16 @@ func (lib *Library) Remove(fp string) {
 		return
 	}
 	n := path.Base(fp)
-	// ID is name without extension
-	idx := strings.LastIndex(n, ".")
-	if idx == -1 {
-		idx = len(n)
-	}
-	id := n[:idx]
+	id := n
 	if len(p.Prefix) > 0 {
 		id = path.Join(p.Prefix, id)
+	}
+	if strings.HasSuffix(strings.ToUpper(n), ".VTT") {
+		v, ok := lib.Captions[id]
+		if ok {
+			delete(lib.Captions, id)
+			log.Println("Removed:", v.Path)
+		}
 	}
 	v, ok := lib.Videos[id]
 	if ok {
@@ -128,5 +141,18 @@ func (lib *Library) Playlist() Playlist {
 		i++
 	}
 	sort.Sort(pl)
+	return pl
+}
+
+// Playlist returns a sorted Playlist of all videos.
+func (lib *Library) CaptionList() CaptionList {
+	lib.mu.RLock()
+	defer lib.mu.RUnlock()
+	pl := make(CaptionList, len(lib.Captions))
+	i := 0
+	for _, v := range lib.Captions {
+		pl[i] = v
+		i++
+	}
 	return pl
 }

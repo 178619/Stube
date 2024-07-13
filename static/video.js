@@ -26,8 +26,8 @@ const init = () => {
         }
     }
     document.body.onkeydown = (e) => {
-        if (!keyList.includes(e.key) || e.target.id == 'search' || e.ctrlKey) return;
-        e.preventDefault();
+        if (!keyList.includes(e.key) || e.target.id == 'search' || e.ctrlKey) return
+        e.preventDefault()
         switch(e.key) {
             case " ":
             case "k":
@@ -163,6 +163,39 @@ const init = () => {
     document.getElementById('volume').oninput = () => {
         video.volume = document.getElementById('volume').value
         updateVolume()
+    }
+    if (!video.textTracks.length) document.getElementById('captions').style.display = 'none'
+    document.getElementById('captions').onmousedown = () => {
+        const tracks = Array.from(video.textTracks)
+        const index = tracks.findIndex((v)=>{return v.mode=="showing"})
+        if (index == -1) {
+            tracks[0].mode = 'showing'
+        } else {
+            tracks[index].mode = 'disabled'
+            if (index+1 != tracks.length) tracks[index+1].mode = 'showing'
+        }
+    }
+    document.getElementById('screenshot').onmousedown = () => {
+        if (!video.videoWidth || !video.videoHeight) {
+            const a = document.createElement('a')
+            a.href = '/t/' + location.pathname.slice(3)
+            a.download = decodeURIComponent(location.pathname.split('/').pop())+'.png'
+            document.body.appendChild(a)
+            a.click()
+            a.remove()
+            return
+        }
+        const canvas = document.createElement('canvas')
+        canvas.width = video.videoWidth
+        canvas.height = video.videoHeight
+        const ctx = canvas.getContext('2d')
+        ctx.drawImage(video, 0, 0, video.videoWidth, video.videoHeight)
+        const a = document.createElement('a')
+        a.href = canvas.toDataURL('image/png')
+        a.download = decodeURIComponent(location.pathname.split('/').pop())+'-'+video.currentTime+'.png'
+        document.body.appendChild(a)
+        a.click()
+        a.remove()
     }
     document.getElementById('fullscreen').onmousedown = getFullscreen
     document.body.onfullscreenchange = (e) => {

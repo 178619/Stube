@@ -156,12 +156,15 @@ func (a *App) pageHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("/v/%s", id)
 	playing, ok := a.Library.Videos[id]
 	if !ok {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		a.Templates.ExecuteTemplate(w, "player.html", &struct {
 			Playing  *media.Video
 			Playlist media.Playlist
+			Captions media.CaptionList
 		}{
 			Playing:  &media.Video{ID: ""},
 			Playlist: a.Library.Playlist(),
+			Captions: a.Library.CaptionList(),
 		})
 		return
 	}
@@ -169,9 +172,11 @@ func (a *App) pageHandler(w http.ResponseWriter, r *http.Request) {
 	a.Templates.ExecuteTemplate(w, "player.html", &struct {
 		Playing  *media.Video
 		Playlist media.Playlist
+		Captions media.CaptionList
 	}{
 		Playing:  playing,
 		Playlist: a.Library.Playlist(),
+		Captions: a.Library.CaptionList(),
 	})
 }
 
@@ -186,12 +191,15 @@ func (a *App) musicHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("/m/%s", id)
 	playing, ok := a.Library.Videos[id]
 	if !ok {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		a.Templates.ExecuteTemplate(w, "player_music.html", &struct {
 			Playing  *media.Video
 			Playlist media.Playlist
+			Captions media.CaptionList
 		}{
 			Playing:  &media.Video{ID: ""},
 			Playlist: a.Library.Playlist(),
+			Captions: a.Library.CaptionList(),
 		})
 		return
 	}
@@ -199,9 +207,11 @@ func (a *App) musicHandler(w http.ResponseWriter, r *http.Request) {
 	a.Templates.ExecuteTemplate(w, "player_music.html", &struct {
 		Playing  *media.Video
 		Playlist media.Playlist
+		Captions media.CaptionList
 	}{
 		Playing:  playing,
 		Playlist: a.Library.Playlist(),
+		Captions: a.Library.CaptionList(),
 	})
 }
 
@@ -216,12 +226,15 @@ func (a *App) embedHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("/e/%s", id)
 	playing, ok := a.Library.Videos[id]
 	if !ok {
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		a.Templates.ExecuteTemplate(w, "embed.html", &struct {
 			Playing  *media.Video
 			Playlist media.Playlist
+			Captions media.CaptionList
 		}{
 			Playing:  &media.Video{ID: ""},
 			Playlist: a.Library.Playlist(),
+			Captions: a.Library.CaptionList(),
 		})
 		return
 	}
@@ -229,9 +242,11 @@ func (a *App) embedHandler(w http.ResponseWriter, r *http.Request) {
 	a.Templates.ExecuteTemplate(w, "embed.html", &struct {
 		Playing  *media.Video
 		Playlist media.Playlist
+		Captions media.CaptionList
 	}{
 		Playing:  playing,
 		Playlist: a.Library.Playlist(),
+		Captions: a.Library.CaptionList(),
 	})
 }
 
@@ -246,6 +261,15 @@ func (a *App) fileHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("/f/%s", id)
 	m, ok := a.Library.Videos[id]
 	if !ok {
+		m, ok := a.Library.Captions[id]
+		if !ok {
+			return
+		}
+		name := m.FileName
+		disposition := "attachment; filename=\"" + name + "\""
+		w.Header().Set("Content-Disposition", disposition)
+		w.Header().Set("Content-Type", "text/vtt")
+		http.ServeFile(w, r, m.Path)
 		return
 	}
 	name := m.FileName
