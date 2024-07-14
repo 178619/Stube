@@ -307,6 +307,7 @@ func (a *App) thumbHandler(w http.ResponseWriter, r *http.Request) {
 
 // HTTP handler for /feed.xml
 func (a *App) rssHandler(w http.ResponseWriter, r *http.Request) {
+	log.Printf("/feed.xml")
 	w.Header().Set("Cache-Control", "public, max-age=7776000")
 	w.Header().Set("Content-Type", "text/xml")
 	w.Write(a.Feed)
