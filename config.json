@@ -10,15 +10,15 @@
         "port": 80
     },
     "feed": {
-        "external_url": "",
-        "title": "Feed Title",
-        "link": "http://your-url.example/about",
+        "external_url": "https://stube.floatick.com",
+        "title": "Stube Live Instance",
+        "link": "https://stube.floatick.com",
         "description": "Feed Description",
         "author": {
-            "name": "Author Name",
-            "email": "author@somewhere.example"
+            "name": "Fryze",
+            "email": "fryze@floatick.com"
         },
-        "copyright": "Copyright Text"
+        "copyright": "Files in this instance are all copyright free."
     },
     "tor": {
         "enable": false,

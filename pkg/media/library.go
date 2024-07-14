@@ -58,8 +58,14 @@ func (lib *Library) Import(p *Path) error {
 				Path:   path.Join(p.Path, info.Name()),
 				Prefix: path.Join(p.Prefix, info.Name()),
 			}
-			lib.AddPath(n)
-			lib.Import(n)
+			err := lib.AddPath(n)
+			if err != nil {
+				return err
+			}
+			err = lib.Import(n)
+			if err != nil {
+				return err
+			}
 			continue
 		}
 		err = lib.Add(path.Join(p.Path, info.Name()))

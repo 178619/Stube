@@ -58,7 +58,7 @@ func buildFeed(a *App) {
 			Link:        &feeds.Link{Href: id},
 			Description: v.Description,
 			Enclosure: &feeds.Enclosure{
-				Url:    id + ".mp4",
+				Url:    id,
 				Length: strconv.FormatInt(v.Size, 10),
 				Type:   v.MIMEType,
 			},
