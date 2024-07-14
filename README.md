@@ -1,3 +1,7 @@
+## Live Instance
+
+You can try Stube on [stube.floatick.com](https://stube.floatick.com).
+
 # tube [![GoDoc](https://godoc.org/github.com/wybiral/tube?status.svg)](https://godoc.org/github.com/wybiral/tube)
 
 Tube is a Golang project to build a self hosted "tube"-style video player for watching your own video collection over HTTP or hosting your own channel for others to watch.
@@ -46,16 +50,16 @@ Supported File Formats:
 
 All differences from the original work:
 - Has a video controller based on Javascript, for both pointers and keyboards. Enabled when Javascript is on.
-- Loads files in subfolders.
+- Loads Files in Subfolders.
 - Basic Search Function.
-- Video-only page for embeds (iframes).
-- Loads WebVTT files.
+- Video-only Page for Embeds (iframes).
+- Loads WebVTT Files.
 
-To load VTT files, they have to be in the same folder with the video, and have the filename in the appropriate format.
+To use VTT files, they have to be in the same folder with the video, and have the filename in the appropriate format.
 ```
 - videos
-    - video1.mp4        - MP4 File
-    - video1.webm       - MP4 File
+    - video1.mp4        - Video File
+    - video1.webm       - Video File
     - video1.en.vtt     - VTT File, works for both files
     - video1.mp4.en.vtt - VTT File, works for video.mp4 file
     - video1.vtt        - VTT File, works for both files, not recommended

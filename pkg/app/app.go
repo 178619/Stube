@@ -122,7 +122,9 @@ func (a *App) Run() error {
 		if err != nil {
 			return err
 		}
-		a.Watcher.Add(p.Path)
+	}
+	for path := range a.Library.Paths {
+		a.Watcher.Add(path)
 	}
 	buildFeed(a)
 	go startWatcher(a)
