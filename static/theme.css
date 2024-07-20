@@ -42,9 +42,10 @@ nav {
     position: relative;
     overflow: hidden;
 }
+
 nav > #album {
     position: absolute;
-    right: 10px;
+    right: 20px;
 }
 
 nav > #search {
@@ -63,8 +64,9 @@ nav > #search {
 }
 
 main {
-    width: 1156px;
-    margin:0 auto;
+    width: fit-content;
+    max-width: 1200px;
+    margin-inline: auto;
     margin-top: 15px;
     white-space: nowrap;
 }
@@ -89,13 +91,7 @@ main {
     position: absolute;
     user-select: none;
     z-index: 1;
-    opacity: 0;
-    transition: opacity 200ms ease-in-out;
     display: none;
-}
-
-#mask:hover {
-    opacity: 1;
 }
 
 #player > h1 {
@@ -148,6 +144,7 @@ details > summary {
 #playlist > #search {
     height: 30px;
     width: inherit;
+    max-width: inherit;
     padding-inline: 8px;
     background: #000000;
     border: 1px solid #7F7F7F;
@@ -239,6 +236,7 @@ details.description {
     margin: 12px;
     background-color: #0F0F0F;
     border-radius: 12px;
+    min-width: 300px;
 }
 
 #homeview > a.hidden {
@@ -284,109 +282,6 @@ details.description {
     max-height: 1lh;
     text-overflow: ellipsis;
     overflow-x: clip;
-}
-
-/* 360p */
-@media only screen and (max-width: 1180px) {
-    main {
-        width: 940px;
-    }
-    #player {
-        width: 640px;
-    }
-    #video {
-        height: 360px;
-    }
-    #mask {
-        height: 360px;
-    }
-}
-
-/* 240p */
-@media only screen and (max-width: 965px) {
-    main {
-        width: 726px;
-    }
-    #player {
-        width: 426px;
-    }
-    #video {
-        height: 240px;
-    }
-    #mask {
-        height: 240px;
-    }
-}
-
-/* 240p with shifted playlist */
-@media only screen and (max-width: 750px) {
-    main {
-        width: 426px;
-    }
-    #player {
-        width: 426px;
-    }
-    #video {
-        height: 240px;
-    }
-    #mask {
-        height: 240px;
-    }
-    #playlist {
-        width: 426px;
-        margin-top: 10px;
-        margin-left: 0;
-        display: block;
-    }
-    p.description {
-        display: none;
-    }
-    details.description {
-        display: block;
-    }
-    #homeview {
-        font-size: 13px;
-    }
-    #homeview > a {
-        width: 100%;
-        margin: 0px;
-        margin-bottom: 8px;
-        border-radius: 4px;
-    }
-    #homeview > a > img {
-        width: 72px;
-        height: 54px;
-        object-fit: contain;
-    }
-    #homeview > a > div {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        bottom: 10px;
-        left: 90px;
-    }
-    #homeview > a > div > h1 {
-        max-height: 1lh;
-    }
-}
-
-/* responsive width with shifted playlist */
-@media only screen and (max-width: 440px) {
-    main {
-        width: 100%;
-    }
-    #player {
-        width: 100%;
-    }
-    #video {
-        height: auto;
-    }
-    #playlist {
-        width: 100%;
-    }
-    #homeview > a {
-        border-radius: 0px;
-    }
 }
 
 #player.fullscreen #video {
@@ -439,15 +334,15 @@ details.description {
     right: 0;
     bottom: 0;
     margin: auto;
-    background-image: url(/static/play-pause.png);
+    background-image: url('/static/icons/play-pause.png');
     background-size: 80px;
     filter: invert(1);
     border-radius: 50%;
     background-repeat: no-repeat;
-    background-position: 8px;
+    background-position: center;
     opacity: 0.75;
     display: none;
-    transition: background 250ms, transform 100ms;
+    transition: background 250ms, width 250ms, height 250ms, transform 100ms, opacity 200ms ease-in-out;
 }
 
 #mask #center:active {
@@ -469,6 +364,7 @@ details.description {
     display: none;
     justify-content: space-between;
     align-items: flex-end;
+    transition: opacity 200ms ease-in-out;
 }
 
 #mask.shown #control {
@@ -562,32 +458,38 @@ details.description {
     bottom: 36px;
 }
 
-#mask #control a.button {
+#mask #control button {
     width: 32px;
     height: 32px;
     display: flex;
+    background-color: transparent;
     background-size: contain;
     background-repeat: no-repeat;
     transition: background 250ms, transform 100ms;
 }
 
-#mask #control a.button:active {
+#mask #control button:active {
     transform: scale(0.875);
 }
 
 #mask #control #play-pause {
-    background-image: url('/static/play-pause.png');
+    background-image: url('/static/icons/play-pause.png');
+    filter: invert(1);
+}
+
+#mask #control #loop {
+    background-image: url('/static/icons/repeat-off.png');
     filter: invert(1);
 }
 
 #mask #control #current {
     align-self: center;
     margin-inline: 4px;
-    font-family: 'Lato', 'Roboto Mono', 'Consolas', 'Lucida Console', monospace
+    font-family: 'Roboto Mono', 'Consolas', 'Lucida Console', monospace;
 }
 
 #mask #control #volume-icon {
-    background-image: url('/static/volume-high.png');
+    background-image: url('/static/icons/volume-high.png');
     filter: invert(1);
 }
 
@@ -596,17 +498,22 @@ details.description {
 }
 
 #mask #control #captions {
-    background-image: url('/static/closed-caption.png');
+    background-image: url('/static/icons/closed-caption.png');
     filter: invert(1);
 }
 
 #mask #control #screenshot {
-    background-image: url('/static/camera.png');
+    background-image: url('/static/icons/camera.png');
+    filter: invert(1);
+}
+
+#mask #control #playspeed {
+    background-image: url('/static/icons/speedometer.png');
     filter: invert(1);
 }
 
 #mask #control #embedlink {
-    background-image: url('/static/open-in-app.png');
+    background-image: url('/static/icons/open-in-app.png');
     filter: invert(1);
 }
 
@@ -615,17 +522,17 @@ details.description {
 }
 
 #mask #control #filelink {
-    background-image: url('/static/download.png');
+    background-image: url('/static/icons/download.png');
     filter: invert(1);
 }
 
 #mask #control #fullscreen {
-    background-image: url('/static/fullscreen.png');
+    background-image: url('/static/icons/fullscreen.png');
     filter: invert(1);
 }
 
 .fullscreen #mask #control #fullscreen {
-    background-image: url('/static/fullscreen-exit.png');
+    background-image: url('/static/icons/fullscreen-exit.png');
 }
 
 .fullscreen #mask #control {
@@ -651,4 +558,133 @@ details.description {
 
 .fullscreen #mask.shown h1 {
     display: block;
+}
+
+#mask .minialert {
+    opacity: 1;
+    background: rgba(0, 0, 0, 0.5);
+    color: var(--text-color);
+    text-align: center;
+    transition: opacity 1000ms ease-in-out;
+    width: min-content;
+    margin: 2px auto;
+    padding: 4px;
+    border-radius: 4px;
+}
+
+/* 360p */
+@media only screen and (max-width: 1180px) {
+    #player {
+        width: 640px;
+    }
+    #video {
+        height: 360px;
+    }
+    #mask {
+        height: 360px;
+    }
+}
+
+/* 240p */
+@media only screen and (max-width: 965px) {
+    #player {
+        width: 426px;
+    }
+    #video {
+        height: 240px;
+    }
+    #mask {
+        height: 240px;
+    }
+    #mask #control button {
+        width: 24px;
+        height: 24px;
+    }
+    #mask #control #seeker {
+        bottom: 28px;
+    }
+    #mask #control #current {
+        letter-spacing: -1px;
+        font-size: 90%;
+    }
+    #mask #control #volume {
+        width: 64px;
+    }
+    #mask #center {
+        width: 80px;
+        height: 80px;
+        background-size: 64px;
+    }
+    #mask .minialert {
+        font-size: 90%;
+        padding: 2px;
+        border-radius: 2px;
+    }
+}
+
+/* 240p with shifted playlist */
+@media only screen and (max-width: 750px) {
+    main {
+        width: 426px;
+        max-width: 100%;
+    }
+    #player {
+        width: 100%;
+    }
+    #video {
+        width: 100%;
+    }
+    #mask {
+        width: 426px;
+        max-width: 100%;
+    }
+    #playlist {
+        width: 100%;
+        max-width: 426px;
+        margin-top: 10px;
+        margin-left: 0;
+        display: block;
+    }
+    p.description {
+        display: none;
+    }
+    details.description {
+        display: block;
+    }
+    #homeview {
+        font-size: 13px;
+    }
+    #homeview > a {
+        width: 100%;
+        margin: 0px;
+        margin-bottom: 8px;
+        border-radius: 4px;
+    }
+    #homeview > a > img {
+        width: 72px;
+        height: 54px;
+        object-fit: contain;
+    }
+    #homeview > a > div {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        bottom: 10px;
+        left: 90px;
+    }
+    #homeview > a > div > h1 {
+        max-height: 1lh;
+    }
+}
+
+/* responsive width with shifted playlist */
+@media only screen and (max-width: 440px) {
+    #mask #center {
+        width: 33.333vw;
+        height: 33.333vw;
+        background-size: 26.667vw;
+    }
+    #homeview > a {
+        border-radius: 0px;
+    }
 }

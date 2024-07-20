@@ -2,47 +2,17 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Tube</title>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="shortcut icon" type="image/x-icon" href="/static/favicon.ico">
-        <link rel="stylesheet" type="text/css" href="/static/theme.css">
+        <title>{{ $playing.Title }} - Tube</title>
+        {{ template "head.html" }}
         <script type="application/javascript" src="/static/video.js"></script>
     </head>
     <body onload="init()">
         <main>
             <div id="player" class="embed">
                 {{ if $playing.ID }}
-                <div id="mask">
-                    <h1>{{ $playing.Title }}</h1>
-                    <div id="center"></div>
-                    <div id="control">
-                        <input id="seeker" type="range" value="0" min="0" max="0">
-                        <div>
-                            <a class="button" id="play-pause"></a>
-                            <div id="current"></div>
-                            <a class="button" id="volume-icon"></a>
-                            <input id="volume" type="range" value="0" min="0" max="1" step="0.000001">
-                        </div>
-                        <div>
-                            <a class="button" id="captions"></a>
-                            <a class="button" id="screenshot"></a>
-                            <a class="button" id="embedlink" target="_blank" href="/e/{{ $playing.Ref }}"></a>
-                            <a class="button" id="filelink" target="_blank" href="/f/{{ $playing.Ref }}"></a>
-                            <a class="button" id="fullscreen"></a>
-                        </div>
-                    </div>
-                </div>
-                <video id="video" controls poster="/t/{{ $playing.Ref }}" preload="metadata">
-                    {{ range $m := .Captions }}
-                        {{ if eq $m.Origin $playing.FileName $playing.BaseName }}
-                            <track kind="captions" srclang="{{ $m.SrcLang }}" src="/f/{{ $m.Ref }}" label="{{ $m.SrcLang }}" />
-                        {{ end }}
-                    {{ end }}
-                    <source src="/f/{{ $playing.Ref }}" />
-                </video>
+                    {{ template "player.html" . }}
                 {{ else }}
-                <video id="video" controls></video>
+                    <video id="video" controls></video>
                 {{ end }}
             </div>
         </main>

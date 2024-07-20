@@ -10,10 +10,10 @@ import (
 	"net/http"
 	"path"
 
-	"github.com/fsnotify/fsnotify"
-	"github.com/gorilla/mux"
 	"github.com/178619/tube/pkg/media"
 	"github.com/178619/tube/pkg/onionkey"
+	"github.com/fsnotify/fsnotify"
+	"github.com/gorilla/mux"
 )
 
 // App represents main application.
@@ -159,7 +159,7 @@ func (a *App) pageHandler(w http.ResponseWriter, r *http.Request) {
 	playing, ok := a.Library.Videos[id]
 	if !ok {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		a.Templates.ExecuteTemplate(w, "player.html", &struct {
+		a.Templates.ExecuteTemplate(w, "video.html", &struct {
 			Playing  *media.Video
 			Playlist media.Playlist
 			Captions media.CaptionList
@@ -171,7 +171,7 @@ func (a *App) pageHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	a.Templates.ExecuteTemplate(w, "player.html", &struct {
+	a.Templates.ExecuteTemplate(w, "video.html", &struct {
 		Playing  *media.Video
 		Playlist media.Playlist
 		Captions media.CaptionList
@@ -194,7 +194,7 @@ func (a *App) musicHandler(w http.ResponseWriter, r *http.Request) {
 	playing, ok := a.Library.Videos[id]
 	if !ok {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		a.Templates.ExecuteTemplate(w, "player_music.html", &struct {
+		a.Templates.ExecuteTemplate(w, "music.html", &struct {
 			Playing  *media.Video
 			Playlist media.Playlist
 			Captions media.CaptionList
@@ -206,7 +206,7 @@ func (a *App) musicHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	a.Templates.ExecuteTemplate(w, "player_music.html", &struct {
+	a.Templates.ExecuteTemplate(w, "music.html", &struct {
 		Playing  *media.Video
 		Playlist media.Playlist
 		Captions media.CaptionList

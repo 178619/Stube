@@ -61,8 +61,7 @@ To use VTT files, they have to be in the same folder with the video, and have th
     - video1.mp4        - Video File
     - video1.webm       - Video File
     - video1.en.vtt     - VTT File, works for both files
-    - video1.mp4.en.vtt - VTT File, works for video.mp4 file
-    - video1.vtt        - VTT File, works for both files, not recommended
+    - video1.mp4.en.vtt - VTT File, works for video1.mp4 file
 ```
 
 Todo:
