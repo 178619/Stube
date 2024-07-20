@@ -1,0 +1,68 @@
+{{ $playing := .Playing }}
+{{ $playlist := .Playlist }}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{{ $playing.Title }} - Tube</title>
+        {{ template "head.html" }}
+        <script type="application/javascript" src="/static/video.js"></script>
+    </head>
+    <body onload="init()">
+        <nav>
+            <a href="/">Tube</a>
+            {{ if $playing.Album }}
+            <a id="album" href="/m/{{ $playing.Ref }}">Album</a>
+            {{ end }}
+        </nav>
+        <main>
+            <div id="player">
+                {{ if $playing.ID }}
+                    {{ template "player.html" . }}
+                    <h1>{{ $playing.Title }}</h1>
+                    {{ if $playing.Album }}
+                        <h2>{{ $playing.Album }}</h2>
+                    {{ end }}
+                    <h2>{{ $playing.Modified }}</h2>
+                    <p class="description">{{ $playing.Description }}</p>
+                    <details class="description">
+                        <summary>Description</summary>
+                        {{ $playing.Description }}
+                    </details>
+                {{ else }}
+                    <video id="video" controls></video>
+                {{ end }}
+            </div>
+            <div id="playlist">
+                <input id="search" type="text" placeholder="Search...">
+                {{ if gt (len $playlist) 256 }}
+                    {{ range $m := $playlist }}
+                        {{ if eq $m.ID $playing.ID }}
+                        <a href="/v/{{ $m.Ref }}" title="{{ $m.Title }}" name="{{ $m.ID }}" class="playing">
+                        {{ else }}
+                        <a href="/v/{{ $m.Ref }}" title="{{ $m.Title }}" name="{{ $m.ID }}">
+                        {{ end }}
+                            <div>
+                                <h1>{{ $m.Title }}</h1>
+                                <h2>{{ $m.Modified }}</h2>
+                            </div>
+                        </a>
+                    {{ end }}
+                {{ else }}
+                    {{ range $m := $playlist }}
+                        {{ if eq $m.ID $playing.ID }}
+                        <a href="/v/{{ $m.Ref }}" title="{{ $m.Title }}" name="{{ $m.ID }}" class="playing">
+                        {{ else }}
+                        <a href="/v/{{ $m.Ref }}" title="{{ $m.Title }}" name="{{ $m.ID }}">
+                        {{ end }}
+                            <img src="/t/{{ $m.Ref }}">
+                            <div>
+                                <h1>{{ $m.Title }}</h1>
+                                <h2>{{ $m.Modified }}</h2>
+                            </div>
+                        </a>
+                    {{ end }}
+                {{ end }}
+            </div>
+        </main>
+    </body>
+</html>
