@@ -531,15 +531,18 @@ details.description {
     filter: invert(1);
 }
 
+.fullscreen #mask #control {
+    padding-bottom: 8px;
+    padding-inline: 24px;
+}
+
 .fullscreen #mask #control #fullscreen {
     background-image: url('/static/icons/fullscreen-exit.png');
 }
 
-.fullscreen #mask #control {
-    padding-bottom: 8px;
-}
-
 .fullscreen #mask #control #seeker {
+    width: calc(100% - 24px);
+    left: 12px;
     bottom: 44px;
 }
 
@@ -595,6 +598,9 @@ details.description {
     }
     #mask {
         height: 240px;
+    }
+    #mask #control button {
+        height: 64px;
     }
     #mask #control button {
         width: 24px;

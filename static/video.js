@@ -37,7 +37,10 @@ const init = () => {
         })
     }
     const mask = document.getElementById("mask")
-    if (!mask) return
+    if (!mask) {
+        tempStyle.remove()
+        return
+    }
     mask.style.display = 'block'
     const video = document.getElementById("video")
     if (video.hasAttribute('controls')) video.removeAttribute('controls')
@@ -50,7 +53,7 @@ const init = () => {
         }
     }
     const getFullscreen = () => {
-        if (window.document.fullscreenElement) {
+        if (document.fullscreenElement) {
             document.exitFullscreen()
         } else {
             document.body.requestFullscreen()
@@ -285,7 +288,8 @@ const init = () => {
         oneAlert('Screenshot Taken')
     }
     document.getElementById('playspeed').onmousedown = () => {
-        // do something in later
+        if (video.playbackRate < 2) video.playbackRate = Math.round(video.playbackRate * 4 + 1) / 4; else video.playbackRate = 0.25;
+        oneAlert('Playspeed: ' + video.playbackRate + 'x')
     }
     document.getElementById('playspeed').onwheel = (e) => {
         e.preventDefault()
@@ -298,9 +302,24 @@ const init = () => {
         document.getElementById('playspeed').style.transform = 'scale(0.875)'
         setTimeout(()=>{document.getElementById('playspeed').style.transform = null}, 100)
     }
+    document.getElementById('embedlink').onmousedown = () => {
+        const a = document.createElement('a')
+        a.href = document.getElementById('embedlink').getAttribute('href')
+        a.target = '_blank'
+        document.body.appendChild(a)
+        a.click()
+        a.remove()
+    }
+    document.getElementById('filelink').onmousedown = () => {
+        const a = document.createElement('a')
+        a.href = document.getElementById('filelink').getAttribute('href')
+        document.body.appendChild(a)
+        a.click()
+        a.remove()
+    }
     document.getElementById('fullscreen').onmousedown = getFullscreen
     document.body.onfullscreenchange = (e) => {
-        if (window.document.fullscreenElement) {
+        if (document.fullscreenElement) {
             player.classList.add('fullscreen')
         } else {
             player.classList.remove('fullscreen')
