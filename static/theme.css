@@ -334,7 +334,7 @@ details.description {
     right: 0;
     bottom: 0;
     margin: auto;
-    background-image: url('/static/icons/play-pause.png');
+    background-image: url('/static/icons/play-pause.svg');
     background-size: 80px;
     filter: invert(1);
     border-radius: 50%;
@@ -348,7 +348,6 @@ details.description {
 #mask #center:active {
     transform: scale(0.875);
 }
-
 
 #mask.shown #center {
     display: block;
@@ -466,6 +465,7 @@ details.description {
     background-size: contain;
     background-repeat: no-repeat;
     transition: background 250ms, transform 100ms;
+    cursor: pointer;
 }
 
 #mask #control button:active {
@@ -473,12 +473,12 @@ details.description {
 }
 
 #mask #control #play-pause {
-    background-image: url('/static/icons/play-pause.png');
+    background-image: url('/static/icons/play-pause.svg');
     filter: invert(1);
 }
 
 #mask #control #loop {
-    background-image: url('/static/icons/repeat-off.png');
+    background-image: url('/static/icons/repeat-off.svg');
     filter: invert(1);
 }
 
@@ -489,7 +489,7 @@ details.description {
 }
 
 #mask #control #volume-icon {
-    background-image: url('/static/icons/volume-high.png');
+    background-image: url('/static/icons/volume-high.svg');
     filter: invert(1);
 }
 
@@ -498,22 +498,22 @@ details.description {
 }
 
 #mask #control #captions {
-    background-image: url('/static/icons/closed-caption.png');
+    background-image: url('/static/icons/closed-caption.svg');
     filter: invert(1);
 }
 
 #mask #control #screenshot {
-    background-image: url('/static/icons/camera.png');
+    background-image: url('/static/icons/camera.svg');
     filter: invert(1);
 }
 
 #mask #control #playspeed {
-    background-image: url('/static/icons/speedometer.png');
+    background-image: url('/static/icons/speedometer.svg');
     filter: invert(1);
 }
 
 #mask #control #embedlink {
-    background-image: url('/static/icons/open-in-app.png');
+    background-image: url('/static/icons/open-in-app.svg');
     filter: invert(1);
 }
 
@@ -522,12 +522,18 @@ details.description {
 }
 
 #mask #control #filelink {
-    background-image: url('/static/icons/download.png');
+    background-image: url('/static/icons/download.svg');
     filter: invert(1);
 }
 
+#mask #control #collapse {
+    background-image: url('/static/icons/tune.svg');
+    filter: invert(1);
+    display: none;
+}
+
 #mask #control #fullscreen {
-    background-image: url('/static/icons/fullscreen.png');
+    background-image: url('/static/icons/fullscreen.svg');
     filter: invert(1);
 }
 
@@ -537,7 +543,7 @@ details.description {
 }
 
 .fullscreen #mask #control #fullscreen {
-    background-image: url('/static/icons/fullscreen-exit.png');
+    background-image: url('/static/icons/fullscreen-exit.svg');
 }
 
 .fullscreen #mask #control #seeker {
@@ -557,6 +563,7 @@ details.description {
 
 .embed #mask.shown h1 {
     display: block;
+    cursor: pointer;
 }
 
 .fullscreen #mask.shown h1 {
@@ -573,6 +580,60 @@ details.description {
     margin: 2px auto;
     padding: 4px;
     border-radius: 4px;
+}
+
+#mask .menu {
+    display: none;
+    background-color: rgba(0, 0, 0, 0.75);
+    color: var(--text-color);
+    width: min-content;
+    position: absolute;
+    right: 0;
+    bottom: 48px;
+}
+
+#mask.shown .menu {
+    display: block;
+}
+
+#mask .menu .head {
+    border-bottom: 1px solid white;
+    text-align: center;
+    font-weight: bold;
+    padding: 8px;
+    padding-right: 32px;
+}
+
+#mask .menu button.closer {
+    width: 1lh;
+    height: 1lh;
+    position: absolute;
+    right: 8px;
+    top: 8px;
+    background: none;
+    background-image: url('/static/icons/window-close.svg');
+    background-size: contain;
+    filter: invert(1);
+    cursor: pointer;
+}
+
+#mask .menu ul {
+    list-style: none;
+    overflow-y: scroll;
+    scrollbar-width: thin;
+    max-height: min(calc(100vh - 64px - 1lh), 130px);
+}
+
+#mask .menu li {
+    padding: 4px;
+}
+
+#mask .menu ul > li:hover {
+    background-color: rgba(127, 127, 127, 0.25);
+}
+
+#mask .menu ul > li.enabled {
+    background-color: rgba(0, 255, 0, 0.5);
 }
 
 /* 360p */
@@ -599,7 +660,7 @@ details.description {
     #mask {
         height: 240px;
     }
-    #mask #control button {
+    #mask #control {
         height: 64px;
     }
     #mask #control button {
@@ -686,11 +747,47 @@ details.description {
 /* responsive width with shifted playlist */
 @media only screen and (max-width: 440px) {
     #mask #center {
-        width: 33.333vw;
-        height: 33.333vw;
-        background-size: 26.667vw;
+        width: 64px;
+        height: 64px;
+        background-size: 48px;
     }
     #homeview > a {
         border-radius: 0px;
+    }
+}
+
+/* responsive width with shifted playlist */
+@media only screen and (max-width: 395px) {
+    #mask #control #screenshot {
+        display: none;
+    }
+}
+
+/* responsive width with shifted playlist */
+@media only screen and (max-width: 375px) {
+    #mask #control #current {
+        display: none;
+    }
+    #mask #control #captions {
+        display: none;
+    }
+    #mask #control #playspeed {
+        display: none;
+    }
+    #mask #control #embedlink {
+        display: none;
+    }
+    #mask #control #filelink {
+        display: none;
+    }
+    #mask #control #collapse {
+        display: block;
+    }
+}
+
+/* responsive width with shifted playlist */
+@media only screen and (max-width: 335px) {
+    #mask #control #volume {
+        width: 48px;
     }
 }
