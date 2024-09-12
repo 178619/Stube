@@ -336,7 +336,7 @@ const init = () => {
         ctx.drawImage(video, 0, 0, video.videoWidth, video.videoHeight)
         const a = document.createElement('a')
         a.href = canvas.toDataURL('image/png')
-        a.download = decodeURIComponent(location.pathname.split('/').pop())+'-'+getTimeString(video.currentTime)+(video.currentTime%1+'').replace('.',':').slice(1,5)+'.svg'
+        a.download = decodeURIComponent(location.pathname.split('/').pop())+'-'+getTimeString(video.currentTime)+(video.currentTime%1+'').replace('.',':').slice(1,5)+'.png'
         document.body.appendChild(a)
         a.click()
         a.remove()
@@ -392,7 +392,7 @@ const init = () => {
         if (e.pointerType == 'mouse' && e.button != 0) return
         if (document.getElementById('current').style.display != 'block') {
             document.getElementById('current').style.display = 'block';
-            document.getElementById('captions').style.display = '';
+            if (video.textTracks.length) document.getElementById('captions').style.display = '';
             document.getElementById('screenshot').style.display = '';
             document.getElementById('playspeed').style.display = '';
             document.getElementById('embedlink').style.display = '';
@@ -400,7 +400,7 @@ const init = () => {
             document.getElementById("collapse").style.backgroundImage = 'url(/static/icons/tune.svg)'
         } else {
             document.getElementById('current').style.display = '';
-            document.getElementById('captions').style.display = 'block';
+            if (video.textTracks.length) document.getElementById('captions').style.display = 'block';
             document.getElementById('screenshot').style.display = 'block';
             document.getElementById('playspeed').style.display = 'block';
             document.getElementById('embedlink').style.display = 'block';
