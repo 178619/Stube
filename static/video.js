@@ -322,7 +322,7 @@ const init = () => {
         if (!video.videoWidth || !video.videoHeight) {
             const a = document.createElement('a')
             a.href = '/t/' + location.pathname.slice(3)
-            a.download = decodeURIComponent(location.pathname.split('/').pop())+'.svg'
+            a.download = decodeURIComponent(location.pathname.split('/').pop())+'.png'
             document.body.appendChild(a)
             a.click()
             a.remove()
