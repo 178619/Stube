@@ -9,6 +9,7 @@ import (
 	"net"
 	"net/http"
 	"path"
+	"strings"
 
 	"github.com/178619/tube/pkg/media"
 	"github.com/178619/tube/pkg/onionkey"
@@ -74,6 +75,8 @@ func NewApp(cfg *Config) (*App, error) {
 	r.HandleFunc("/m/{prefix:.*}/{id}", a.musicHandler).Methods("GET")
 	r.HandleFunc("/e/{id}", a.embedHandler).Methods("GET")
 	r.HandleFunc("/e/{prefix:.*}/{id}", a.embedHandler).Methods("GET")
+	r.HandleFunc("/i", a.imageHandler).Methods("GET")
+	r.HandleFunc("/i/{prefix:.*}", a.imageHandler).Methods("GET")
 	r.HandleFunc("/feed.xml", a.rssHandler).Methods("GET")
 	// Static file handler
 	fsHandler := http.StripPrefix(
@@ -162,11 +165,11 @@ func (a *App) pageHandler(w http.ResponseWriter, r *http.Request) {
 		a.Templates.ExecuteTemplate(w, "video.html", &struct {
 			Playing  *media.Video
 			Playlist media.Playlist
-			Captions media.CaptionList
+			Captions map[string]*media.Caption
 		}{
 			Playing:  &media.Video{ID: ""},
 			Playlist: a.Library.Playlist(),
-			Captions: a.Library.CaptionList(),
+			Captions: a.Library.Captions,
 		})
 		return
 	}
@@ -174,11 +177,11 @@ func (a *App) pageHandler(w http.ResponseWriter, r *http.Request) {
 	a.Templates.ExecuteTemplate(w, "video.html", &struct {
 		Playing  *media.Video
 		Playlist media.Playlist
-		Captions media.CaptionList
+		Captions map[string]*media.Caption
 	}{
 		Playing:  playing,
 		Playlist: a.Library.Playlist(),
-		Captions: a.Library.CaptionList(),
+		Captions: a.Library.Captions,
 	})
 }
 
@@ -197,11 +200,11 @@ func (a *App) musicHandler(w http.ResponseWriter, r *http.Request) {
 		a.Templates.ExecuteTemplate(w, "music.html", &struct {
 			Playing  *media.Video
 			Playlist media.Playlist
-			Captions media.CaptionList
+			Captions map[string]*media.Caption
 		}{
 			Playing:  &media.Video{ID: ""},
 			Playlist: a.Library.Playlist(),
-			Captions: a.Library.CaptionList(),
+			Captions: a.Library.Captions,
 		})
 		return
 	}
@@ -209,11 +212,11 @@ func (a *App) musicHandler(w http.ResponseWriter, r *http.Request) {
 	a.Templates.ExecuteTemplate(w, "music.html", &struct {
 		Playing  *media.Video
 		Playlist media.Playlist
-		Captions media.CaptionList
+		Captions map[string]*media.Caption
 	}{
 		Playing:  playing,
 		Playlist: a.Library.Playlist(),
-		Captions: a.Library.CaptionList(),
+		Captions: a.Library.Captions,
 	})
 }
 
@@ -231,24 +234,20 @@ func (a *App) embedHandler(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		a.Templates.ExecuteTemplate(w, "embed.html", &struct {
 			Playing  *media.Video
-			Playlist media.Playlist
-			Captions media.CaptionList
+			Captions map[string]*media.Caption
 		}{
 			Playing:  &media.Video{ID: ""},
-			Playlist: a.Library.Playlist(),
-			Captions: a.Library.CaptionList(),
+			Captions: a.Library.Captions,
 		})
 		return
 	}
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	a.Templates.ExecuteTemplate(w, "embed.html", &struct {
 		Playing  *media.Video
-		Playlist media.Playlist
-		Captions media.CaptionList
+		Captions map[string]*media.Caption
 	}{
 		Playing:  playing,
-		Playlist: a.Library.Playlist(),
-		Captions: a.Library.CaptionList(),
+		Captions: a.Library.Captions,
 	})
 }
 
@@ -261,8 +260,8 @@ func (a *App) fileHandler(w http.ResponseWriter, r *http.Request) {
 		id = path.Join(prefix, id)
 	}
 	log.Printf("/f/%s", id)
-	m, ok := a.Library.Videos[id]
-	if !ok {
+	switch strings.ToUpper(id)[strings.LastIndex(id, ".")+1:] {
+	case "VTT":
 		m, ok := a.Library.Captions[id]
 		if !ok {
 			return
@@ -272,14 +271,27 @@ func (a *App) fileHandler(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Disposition", disposition)
 		w.Header().Set("Content-Type", "text/vtt")
 		http.ServeFile(w, r, m.Path)
-		return
+	case "PNG", "BMP", "GIF", "WEBP", "JPG", "JPEG":
+		m, ok := a.Library.Images[id]
+		if !ok {
+			return
+		}
+		name := m.FileName
+		disposition := "attachment; filename=\"" + name + "\""
+		w.Header().Set("Content-Disposition", disposition)
+		w.Header().Set("Content-Type", m.MIMEType)
+		http.ServeFile(w, r, m.Path)
+	default:
+		m, ok := a.Library.Videos[id]
+		if !ok {
+			return
+		}
+		name := m.FileName
+		disposition := "attachment; filename=\"" + name + "\""
+		w.Header().Set("Content-Disposition", disposition)
+		w.Header().Set("Content-Type", m.MIMEType)
+		http.ServeFile(w, r, m.Path)
 	}
-	name := m.FileName
-	disposition := "attachment; filename=\"" + name + "\""
-	mimeType := m.MIMEType
-	w.Header().Set("Content-Disposition", disposition)
-	w.Header().Set("Content-Type", mimeType)
-	http.ServeFile(w, r, m.Path)
 }
 
 // HTTP handler for /t/id
@@ -303,6 +315,32 @@ func (a *App) thumbHandler(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", m.ThumbType)
 		w.Write(m.Thumb)
 	}
+}
+
+// HTTP handler for /i/id
+func (a *App) imageHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	prefix, ok := vars["prefix"]
+	if !ok {
+		prefix = ""
+	}
+	log.Printf("/i/%s", prefix)
+	paths := make(map[string]*media.Path, 0)
+	for k, v := range a.Library.Paths {
+		if strings.HasPrefix(v.Prefix, prefix) {
+			paths[k] = v
+		}
+	}
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	a.Templates.ExecuteTemplate(w, "image.html", &struct {
+		ImageList media.ImageList
+		Paths     map[string]*media.Path
+		Prefix    string
+	}{
+		ImageList: a.Library.ImageList(),
+		Paths:     paths,
+		Prefix:    prefix,
+	})
 }
 
 // HTTP handler for /feed.xml

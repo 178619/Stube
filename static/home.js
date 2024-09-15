@@ -4,7 +4,7 @@ const init = () => {
     input.id = 'search'
     input.type = 'text'
     input.placeholder = "Search..."
-    input.onkeyup = () => {
+    input.oninput = () => {
         const key = input.value.toLocaleLowerCase()
         document.querySelectorAll('#homeview > a').forEach((v)=>{
             if (v.getAttribute('key').toLocaleLowerCase().includes(key)) v.className = ''; else v.className = 'hidden';

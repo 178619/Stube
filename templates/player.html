@@ -22,7 +22,7 @@
         </div>
     </div>
 </div>
-<video id="video" controls poster="/t/{{ $playing.Ref }}" preload="metadata">
+<video id="video" controls poster="/t/{{ $playing.Ref }}" preload="metadata" playsinline>
     {{ range $m := .Captions }}
         {{ if eq $m.Origin $playing.FileName $playing.BaseName }}
             <track kind="captions" srclang="{{ $m.SrcLang }}" src="/f/{{ $m.Ref }}" label="{{ $m.SrcLang }}" />

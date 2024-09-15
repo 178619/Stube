@@ -1,0 +1,30 @@
+{{ $prefix := .Prefix }}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{{ $prefix }} - Tube</title>
+        {{ template "head.html" }}
+        <script type="application/javascript" src="/static/image.js"></script>
+    </head>
+    <body onload="init()">
+        <nav><a href="/">Tube</a></nav>
+        <section id="viewer">
+            {{ range $m := .ImageList }}
+                {{ if eq $m.Prefix $prefix }}
+                    <img src="/f/{{ $m.Ref }}">
+                {{ end }}
+            {{ end }}
+            <div id="paths" style="display: none;">
+                {{ range $m := .Paths }}
+                    {{ if ne $m.Prefix $prefix }}
+                    <a href="/i/{{ $m.Prefix }}">
+                        <div>
+                            <h1>{{ $m.Prefix }}</h1>
+                        </div>
+                    </a>
+                    {{ end }}
+                {{ end }}
+            </div>
+        </section>
+    </body>
+</html>
