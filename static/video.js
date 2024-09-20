@@ -1,16 +1,16 @@
 const tempStyle = document.createElement('style')
 tempStyle.innerHTML = 'video {visibility: hidden;}'
 document.head.appendChild(tempStyle)
-const isMusic = location.pathname.startsWith('/m/')
-const trackSorter = (v1, v2) => {
-    let e1 = 0, e2 = 0
-    if (v1.getAttribute('disc')) e1 += v1.getAttribute('disc') * 10^6
-    if (v1.getAttribute('track')) e1 += v1.getAttribute('track')
-    if (v2.getAttribute('disc')) e2 += v2.getAttribute('disc') * 10^6
-    if (v2.getAttribute('track')) e2 += v2.getAttribute('track')
-    return e1 - e2
-}
 const init = () => {
+    const isMusic = location.pathname.startsWith('/m/')
+    const trackSorter = (v1, v2) => {
+        let e1 = 0, e2 = 0
+        if (v1.getAttribute('disc')) e1 += v1.getAttribute('disc') * 10^6
+        if (v1.getAttribute('track')) e1 += v1.getAttribute('track')
+        if (v2.getAttribute('disc')) e2 += v2.getAttribute('disc') * 10^6
+        if (v2.getAttribute('track')) e2 += v2.getAttribute('track')
+        return e1 - e2
+    }
     const miniAlert = (v) => {
         const d = document.createElement('div')
         d.classList.add('minialert')
@@ -63,7 +63,7 @@ const init = () => {
     let musicLoopMode = false
     const keyList = [
         " ", "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", ",", ".", ">", "<", "Home", "End",
-        "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "/", "f", "c", "k", "m", "j", "l"
+        "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "/", "f", "c", "k", "m", "j", "l", "N", "P"
     ]
     const getTimeString = (v) => {
         return (v >= 3600 ? Math.floor(v / 3600) + ':' : '')
@@ -108,6 +108,53 @@ const init = () => {
         }
         video.currentTime = q
         oneAlert('To: '+getTimeString(video.currentTime))
+    }
+
+    const toPrev = () => {
+        const playlist = Array.from(document.querySelectorAll('#playlist > a')).sort(trackSorter)
+        const index = playlist.findIndex((v)=>{return v.className.includes('playing')})
+        playlist[index].classList.remove('playing')
+        const target = playlist[(index-1+playlist.length)%playlist.length]
+        target.classList.add('playing')
+        toVideo(target)
+        video.play()
+    }
+
+    const toNext = () => {
+        const playlist = Array.from(document.querySelectorAll('#playlist > a')).sort(trackSorter)
+        const index = playlist.findIndex((v)=>{return v.className.includes('playing')})
+        playlist[index].classList.remove('playing')
+        const target = playlist[(index+1)%playlist.length]
+        target.classList.add('playing')
+        toVideo(target)
+        video.play()
+    }
+
+    const toVideo = (target) => {
+        video.src = '/f/' + target.pathname.slice(3)
+        target.scrollIntoView()
+        document.body.scrollIntoView()
+        window.history.pushState(null, null, location.origin+target.pathname);
+        document.querySelector('#player > h1').innerText = target.querySelector('h1').innerText
+        document.querySelector('#mask > h1').innerText = target.querySelector('h1').innerText
+        document.querySelectorAll('#player > h2')[0].innerText = target.getAttribute('artist')
+        document.querySelectorAll('#player > h2')[1].innerText = target.querySelector('h2').innerText
+        document.querySelector('p.description').innerText = target.getAttribute('description')
+        document.querySelector('details.description > span').innerText = target.getAttribute('description')
+        document.title = target.querySelector('h1').innerText + ' - Tube'
+        video.poster = '/t/' + target.pathname.slice(3)
+        if (navigator.mediaSession) {
+            navigator.mediaSession.metadata = new MediaMetadata({
+                title: target.querySelector('h1').innerText,
+                artist: target.getAttribute('artist'),
+                album: isMusic ? document.querySelectorAll('#player > h2')[2].innerText : undefined,
+                artwork: [  
+                    {
+                        src: window.location.origin + '/t/' + target.pathname.slice(3)
+                    }
+                ]
+            });
+        }
     }
 
     const locationOptions = Object.fromEntries(location.search.slice(1).split('&').filter((v)=>{return v.length}).map((v)=>{return [v.split('=')[0], v.split('=').slice(1).join('=')]}))
@@ -176,6 +223,12 @@ const init = () => {
             case "f":
                 getFullscreen()
                 break
+            case "N":
+                if (isMusic) toNext()
+                break
+            case "P":
+                if (isMusic) toPrev()
+                break
         }
         updateSeeker()
     }
@@ -211,12 +264,15 @@ const init = () => {
         }
     }
     const hideMask = () => {setTimeout(()=>{if (pointerWaitTime <= 0) mask.classList.remove('shown'); else hideMask()}, 100)}
-    mask.onpointermove = (e) => {
-        if (e.pointerType == "touch") return
+    const showMask = () => {
         updateSeeker()
         mask.classList.add('shown')
         pointerWaitTime = 3000
         hideMask()
+    }
+    mask.onpointermove = (e) => {
+        if (e.pointerType == "touch") return
+        showMask()
     }
     mask.ondblclick = (e) => {
         if (e.target.id != 'mask') return
@@ -237,13 +293,6 @@ const init = () => {
     document.getElementById('center').onpointerdown = (e) => {
         if (e.pointerType == 'mouse' && e.button != 0) return
         playOrPause()
-        document.getElementById('center').style.transform = 'scale(0.875)'
-    }
-    document.getElementById('center').onpointerup = () => {
-        document.getElementById('center').style.transform = null
-    }
-    document.getElementById('center').onpointerleave = () => {
-        document.getElementById('center').style.transform = null
     }
     document.getElementById('seeker').onwheel = (e) => {
         if (e.ctrlKey) return
@@ -464,23 +513,7 @@ const init = () => {
     }
     video.onended = () => {
         if (video.currentTime == video.duration && musicLoopMode) {
-            const playlist = Array.from(document.querySelectorAll('#playlist > a')).sort(trackSorter)
-            const index = playlist.findIndex((v)=>{return v.className.includes('playing')})
-            playlist[index].classList.remove('playing')
-            const target = playlist[(index+1)%playlist.length]
-            // location.href = target.href
-            target.classList.add('playing')
-            video.src = '/f/' + target.pathname.slice(3)
-            target.scrollIntoView()
-            document.body.scrollIntoView()
-            history.pushState(null, null, location.origin+target.pathname);
-            document.querySelector('#player > h1').innerText = target.title
-            document.querySelector('#mask > h1').innerText = target.title
-            document.querySelectorAll('#player > h2')[0].innerText = target.getAttribute('artist')
-            document.querySelectorAll('#player > h2')[1].innerText = target.querySelector('h2').innerText
-            document.querySelector('p.description').innerText = target.getAttribute('description')
-            document.querySelector('details.description > span').innerText = target.getAttribute('description')
-            document.title = target.title + ' - Tube'
+            toNext()
             video.play()
         }
     }
@@ -500,12 +533,78 @@ const init = () => {
     }
     const repeat = () => setTimeout(()=>{updateSeeker(); pointerWaitTime -= 20; repeat()}, 20)
     updateVolume()
+    if (navigator.mediaSession) {
+        navigator.mediaSession.metadata = new MediaMetadata({
+            title: document.querySelector('#player > h1') ? document.querySelector('#player > h1').innerText : document.querySelector('h1').innerText,
+            artist: document.querySelector('#player > h2') ? document.querySelector('#player > h2').innerText : undefined,
+            album: isMusic ? document.querySelectorAll('#player > h2')[2].innerText : undefined,
+            artwork: [  
+                {
+                    src: video.poster
+                }
+            ]
+        });
+        navigator.mediaSession.setActionHandler('play', ()=>{
+            if (!(video.currentTime > 0 && !video.paused && !video.ended && video.readyState > 2)) {
+                video.play()
+            }
+            // showMask()
+        })
+        navigator.mediaSession.setActionHandler('pause', ()=>{
+            if (!!(video.currentTime > 0 && !video.paused && !video.ended && video.readyState > 2)) {
+                video.pause()
+            }
+            // showMask()
+        })
+        navigator.mediaSession.setActionHandler('stop', ()=>{
+            if (!!(video.currentTime > 0 && !video.paused && !video.ended && video.readyState > 2)) {
+                video.pause()
+            }
+            video.currentTime = 0
+            // showMask()
+        })
+        navigator.mediaSession.setActionHandler('seekbackward', ()=>{
+            addTime(-10)
+            // showMask()
+        })
+        navigator.mediaSession.setActionHandler('seekforward', ()=>{
+            addTime(10)
+            // showMask()
+        })
+        navigator.mediaSession.setActionHandler('seekto', ({seekTime})=>{
+            video.currentTime = seekTime
+            // showMask()
+        })
+    }
     if (isMusic) {
         Array.from(document.querySelectorAll('#playlist > a')).sort(trackSorter).forEach((v)=>{document.getElementById('playlist').appendChild(v)})
         video.play()
         window.onpopstate = () => { 
             location.reload()
         }
+        if (navigator.mediaSession && navigator.mediaSession.setActionHandler) {
+            navigator.mediaSession.setActionHandler('previoustrack', ()=>{
+                if (video.currentTime > 5) {
+                    video.currentTime = 0
+                } else toPrev()
+                // showMask()
+            })
+            navigator.mediaSession.setActionHandler('nexttrack', ()=>{
+                toNext()
+                // showMask()
+            })
+        }
+        document.getElementById('left').onpointerdown = (e) => {
+            if (e.pointerType == 'mouse' && e.button != 0) return
+            toPrev()
+        }
+        document.getElementById('right').onpointerdown = (e) => {
+            if (e.pointerType == 'mouse' && e.button != 0) return
+            toNext()
+        }
+    } else {
+        document.getElementById('left').remove()
+        document.getElementById('right').remove()
     }
     tempStyle.remove()
     const current = document.querySelector('a.playing')

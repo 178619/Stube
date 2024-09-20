@@ -1,7 +1,9 @@
 {{ $playing := .Playing }}
 <div id="mask">
     <h1>{{ $playing.Title }}</h1>
+    <button id="left"></button>
     <button id="center"></button>
+    <button id="right"></button>
     <div id="control">
         <input id="seeker" type="range" value="0" min="0" max="0">
         <div>

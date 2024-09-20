@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>{{ $playing.Title }} - Tube</title>
+        <title>{{ if $playing.Disc }}{{ $playing.Disc }}-{{ end }}{{ $playing.Track }}. {{ $playing.Title }} - Tube</title>
         {{ template "head.html" }}
         <script type="application/javascript" src="/static/video.js"></script>
     </head>
@@ -13,7 +13,7 @@
             <div id="player">
                 {{ if $playing.ID }}
                     {{ template "player.html" . }}
-                    <h1>{{ $playing.Title }}</h1>
+                    <h1>{{ if $playing.Disc }}{{ $playing.Disc }}-{{ end }}{{ $playing.Track }}. {{ $playing.Title }}</h1>
                     <h2>{{ $playing.Artist }}</h2>
                     <h2>{{ $playing.Modified }}</h2>
                     <h2>{{ $playing.Album }}</h2>

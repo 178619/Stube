@@ -323,19 +323,14 @@ details.description {
     z-index: 1001;
 }
 
-#mask #center {
+#mask > button {
     position: absolute;
     background: rgba(255,255,255,0.5);
-    width: 96px;
-    height: 96px;
     left: 0;
     top: 0;
     right: 0;
     bottom: 0;
     margin: auto;
-    background-image: url('/static/icons/play-pause.svg');
-    background-size: 80px;
-    filter: invert(1);
     border-radius: 50%;
     background-repeat: no-repeat;
     background-position: center;
@@ -344,11 +339,37 @@ details.description {
     transition: background 250ms, width 250ms, height 250ms, transform 100ms, opacity 200ms ease-in-out;
 }
 
-#mask #center:active {
+#mask > button#left {
+    width: 80px;
+    height: 80px;
+    background-image: url('/static/icons/skip-previous.svg');
+    background-size: 64px;
+    filter: invert(1);
+    right: 384px;
+}
+
+#mask > button#center {
+    width: 96px;
+    height: 96px;
+    background-image: url('/static/icons/play-pause.svg');
+    background-size: 80px;
+    filter: invert(1);
+}
+
+#mask > button#right {
+    width: 80px;
+    height: 80px;
+    background-image: url('/static/icons/skip-next.svg');
+    background-size: 64px;
+    filter: invert(1);
+    left: 384px;
+}
+
+#mask > button:active {
     transform: scale(0.875);
 }
 
-#mask.shown #center {
+#mask.shown > button {
     display: block;
 }
 
@@ -646,6 +667,12 @@ details.description {
     #mask {
         height: 360px;
     }
+    #mask > button#left {
+        right: 320px;
+    }
+    #mask > button#right {
+        left: 320px;
+    }
 }
 
 /* 240p */
@@ -676,7 +703,19 @@ details.description {
     #mask #control #volume {
         width: 64px;
     }
-    #mask #center {
+    #mask > button#left {
+        width: 64px;
+        height: 64px;
+        background-size: 48px;
+        right: 256px;
+    }
+    #mask > button#right {
+        width: 64px;
+        height: 64px;
+        background-size: 48px;
+        left: 256px;
+    }
+    #mask > button#center {
         width: 80px;
         height: 80px;
         background-size: 64px;
@@ -745,7 +784,19 @@ details.description {
 
 /* responsive width with shifted playlist */
 @media only screen and (max-width: 440px) {
-    #mask #center {
+    #mask > button#left {
+        width: 48px;
+        height: 48px;
+        background-size: 36px;
+        right: 192px;
+    }
+    #mask > button#right {
+        width: 48px;
+        height: 48px;
+        background-size: 36px;
+        left: 192px;
+    }
+    #mask > button#center {
         width: 64px;
         height: 64px;
         background-size: 48px;
