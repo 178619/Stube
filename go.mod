@@ -1,4 +1,4 @@
-module github.com/178619/tube
+module github.com/178619/stube
 
 go 1.22.3
 

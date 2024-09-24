@@ -141,7 +141,7 @@ const init = () => {
         document.querySelectorAll('#player > h2')[1].innerText = target.querySelector('h2').innerText
         document.querySelector('p.description').innerText = target.getAttribute('description')
         document.querySelector('details.description > span').innerText = target.getAttribute('description')
-        document.title = target.querySelector('h1').innerText + ' - Tube'
+        document.title = target.querySelector('h1').innerText + ' - Stube'
         video.poster = '/t/' + target.pathname.slice(3)
         if (navigator.mediaSession) {
             navigator.mediaSession.metadata = new MediaMetadata({
@@ -224,10 +224,14 @@ const init = () => {
                 getFullscreen()
                 break
             case "N":
-                if (isMusic) toNext()
+                if (!isMusic) return
+                toNext()
+                oneAlert('To: Next Track')
                 break
             case "P":
-                if (isMusic) toPrev()
+                if (!isMusic) return
+                toPrev()
+                oneAlert('To: Previous Track')
                 break
         }
         updateSeeker()
@@ -577,7 +581,17 @@ const init = () => {
         })
     }
     if (isMusic) {
-        Array.from(document.querySelectorAll('#playlist > a')).sort(trackSorter).forEach((v)=>{document.getElementById('playlist').appendChild(v)})
+        Array.from(document.querySelectorAll('#playlist > a')).sort(trackSorter).forEach((v)=>{
+            document.getElementById('playlist').appendChild(v)
+            v.onclick = (e) => {
+                e.preventDefault()
+                document.querySelector('#playlist > a.playing').classList.remove('playing')
+                const target = v
+                target.classList.add('playing')
+                toVideo(target)
+                video.play()
+            }
+        })
         video.play()
         window.onpopstate = () => { 
             location.reload()

@@ -27,9 +27,9 @@ This one is a fork of the original repository tube. I personally like to call it
 
 This project is rather for myself but you are free to use it (if you ever wanted to). I was looking for a way to host some video files in my local network without having to install annoying stuff on neither side of servers and clients, and I found this simple and good enough. Since I am a beginner in programming I'm also using this as my playground to mess with GitHub and some basic codes.
 
-The main difference between the original project and this one is the video controls based on JavaScript. Although being JS-Free is great for both security and privacy, it makes controls rely on browser native controller which usually doesn't really provide a good user experience. Also it becomes pointless when you want to use it for a local video streaming server rather than for a public channel.
+The biggest difference between the original project and this one is the video controls based on JavaScript. Although being JS-Free is great for both security and privacy, it makes controls rely on browser native controller which usually doesn't really provide a good user experience. Also it becomes pointless when you want to use it for a local video streaming server rather than for a public channel.
 
-Still, it will not use any third-party script or CDN, to maintain an isolated environment so it can prevent any leak. You also can still play videos without Javscript. Turning off JavaScript will make you able to use browser native controls.
+Still, it will not use any third-party script or CDN, to maintain an isolated environment so it can prevent any leak of personal data. You also can still play videos without JavaScript. Turning off JavaScript will make you able to use browser native controls.
 
 While Stube currently is just a fork repository that adds barely more than some Javascripts, its ultimate goal is to create a complete personal media streaming server while being light-weighted, portable and simple enough. You will be able to access all the media files you own in your Stube (in a million years).
 

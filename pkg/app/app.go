@@ -11,8 +11,8 @@ import (
 	"path"
 	"strings"
 
-	"github.com/178619/tube/pkg/media"
-	"github.com/178619/tube/pkg/onionkey"
+	"github.com/178619/stube/pkg/media"
+	"github.com/178619/stube/pkg/onionkey"
 	"github.com/fsnotify/fsnotify"
 	"github.com/gorilla/mux"
 )

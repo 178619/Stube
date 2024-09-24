@@ -16,7 +16,7 @@ def listdir(a):
 
 def build(pkg, bin, env):
     
-    src = 'github.com/178619/tube'
+    src = 'github.com/178619/stube'
     
     e = ''
     if os.name == 'nt':

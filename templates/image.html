@@ -2,12 +2,12 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>{{ $prefix }} - Tube</title>
+        <title>{{ $prefix }} - Stube</title>
         {{ template "head.html" }}
         <script type="application/javascript" src="/static/image.js"></script>
     </head>
     <body onload="init()">
-        <nav><a href="/">Tube</a></nav>
+        <nav><a href="/">Stube</a></nav>
         <section id="viewer">
             {{ range $m := .ImageList }}
                 {{ if eq $m.Prefix $prefix }}
