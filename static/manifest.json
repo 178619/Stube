@@ -1,21 +1,26 @@
 {
     "short_name": "Stube",
     "name": "Stube",
+    "description": "A media streaming server.",
     "icons": [
         {
             "src": "/favicon.svg",
+            "type": "image/svg+xml",
             "sizes": "any"
         },
         {
             "src": "/favicon.512.png",
+            "type": "image/png",
             "sizes": "512x512"
         },
         {
             "src": "/favicon.png",
+            "type": "image/png",
             "sizes": "192x192"
         },
         {
             "src": "/favicon.180.png",
+            "type": "image/png",
             "sizes": "180x180"
         }
     ],
