@@ -1,7 +1,40 @@
 :root {
     --main-color: #7F3FFF;
-    --date-color: #7F7F7F;
     --text-color: #DFDFDF;
+    --date-color: #7F7F7F;
+    --background-color: #171717;
+    --background-sub-color: #000000;
+    --playlist-background-color: #1F1F1F;
+    --playlist-playing-background-color: #2F2F2F;
+    --playlist-playing-color: #FFFFDF;
+    --playlist-hover-color: #9FBFDF;
+    --playlist-hover-visited-color: #DFBFFF;
+}
+@media (prefers-color-scheme: light) {
+    :root {
+        --text-color: #000000;
+        --date-color: #7F7F7F;
+        --background-color: #FFFFFF;
+        --background-sub-color: #FFFFFF;
+        --playlist-background-color: #FFFFFF;
+        --playlist-playing-background-color: #EFEFEF;
+        --playlist-playing-color: #7F5F00;
+        --playlist-hover-color: #1F5F7F;
+        --playlist-hover-visited-color: #7F3F9F;
+    }
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --text-color: #DFDFDF;
+        --date-color: #7F7F7F;
+        --background-color: #171717;
+        --background-sub-color: #000000;
+        --playlist-background-color: #1F1F1F;
+        --playlist-playing-background-color: #2F2F2F;
+        --playlist-playing-color: #FFFFDF;
+        --playlist-hover-color: #9FBFDF;
+        --playlist-hover-visited-color: #DFBFFF;
+    }
 }
 
 * {
@@ -24,7 +57,7 @@ body {
     font-size: 16px;
     font-weight: 400;
     color: var(--text-color);
-    background: #171717;
+    background: var(--background-color);
 }
 
 nav {
@@ -36,8 +69,8 @@ nav {
     line-height: 50px;
     width: 100%;
     height: 50px;
-    background: #000000;
-    border-bottom: 1px solid #3F3F3F;
+    background: var(--background-sub-color);
+    box-shadow: 0 0 0 1px rgb(63, 63, 63), 0 0 2px 2px rgba(0, 0, 0, 0.25);
     position: relative;
     overflow: hidden;
 }
@@ -52,7 +85,7 @@ nav > #search {
     width: 40%;
     max-width: 320px;
     padding-inline: 8px;
-    background: #000000;
+    background: var(--background-sub-color);
     border: 1px solid #7F7F7F;
     color: var(--text-color);
     position: absolute;
@@ -80,8 +113,8 @@ main {
 #video {
     width: 100%;
     height: 480px;
-    background: #000;
-    box-shadow: 0 0 4px 4px rgba(0, 0, 0, 0.25);
+    background: #000000;
+    box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.25);
 }
 
 #mask {
@@ -133,7 +166,7 @@ details > summary {
     margin-left: 10px;
     width: 300px;
     height: 600px;
-    background: #1F1F1F;
+    background: var(--playlist-background-color);
     box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.25);
     overflow-x: hidden;
     overflow-y: auto;
@@ -145,8 +178,8 @@ details > summary {
     width: inherit;
     max-width: inherit;
     padding-inline: 8px;
-    background: #000000;
-    border: 1px solid #7F7F7F;
+    background: var(--background-sub-color);
+    box-shadow: 0 0 0 1px rgb(127, 127, 127), 0 0 2px 2px rgba(0, 0, 0, 0.25);
     color: var(--text-color);
     position: absolute;
     margin-top: -30px;
@@ -167,20 +200,20 @@ details > summary {
 
 #playlist > a:hover {
     backdrop-filter: brightness(1.25);
-    color: #9FBFDF;
+    color: var(--playlist-hover-color);
 }
 
 #playlist > a:hover:visited {
-    color: #DFBFFF;
+    color: var(--playlist-hover-visited-color);
 }
 
 #playlist > a.playing {
-    background: #2F2F2F;
-    color: #FFFFDF;
+    background: var(--playlist-playing-background-color);
+    color: var(--playlist-playing-color);
 }
 
 #playlist > a.playing:hover:visited {
-    color: #FFFFDF;
+    color: var(--playlist-playing-color);
 }
 
 #playlist > a > img {
@@ -222,7 +255,7 @@ details.description {
 
 #homeview {
     font-size: 16px;
-    background: #1F1F1F;
+    background: var(--playlist-background-color);
 }
 
 #homeview > a {
@@ -233,7 +266,8 @@ details.description {
     float: left;
     width: calc(50% - 24px);
     margin: 12px;
-    background-color: #0F0F0F;
+    background-color: var(--background-sub-color);
+    box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.25);
     border-radius: 12px;
     min-width: 300px;
 }
@@ -243,12 +277,12 @@ details.description {
 }
 
 #homeview > a:hover {
-    background-color: #131313;
-    color: #9FBFDF;
+    background-color: var(--playlist-background-color);
+    color: var(--playlist-hover-color);
 }
 
 #homeview > a:hover:visited {
-    color: #DFBFFF;
+    color: var(--playlist-hover-visited-color);
 }
 
 #homeview > a > img {
@@ -506,6 +540,7 @@ details.description {
     align-self: center;
     margin-inline: 4px;
     font-family: 'Roboto Mono', 'Consolas', 'Lucida Console', monospace;
+    color: #DFDFDF;
 }
 
 #mask #control #volume-icon {
@@ -575,7 +610,8 @@ details.description {
 #mask h1 {
     display: none;
     padding: 8px;
-    text-shadow: 0px 0px 4px black;
+    color: #DFDFDF;
+    text-shadow: 0px 0px 4px #000000;
     font-weight: bold;
     text-overflow: ellipsis;
     overflow-x: clip;
@@ -593,7 +629,7 @@ details.description {
 #mask .minialert {
     opacity: 1;
     background: rgba(0, 0, 0, 0.5);
-    color: var(--text-color);
+    color: #DFDFDF;
     text-align: center;
     transition: opacity 1000ms ease-in-out;
     width: min-content;
@@ -605,7 +641,7 @@ details.description {
 #mask .menu {
     display: none;
     background-color: rgba(0, 0, 0, 0.75);
-    color: var(--text-color);
+    color: #DFDFDF;
     width: min-content;
     position: absolute;
     right: 0;
@@ -617,7 +653,7 @@ details.description {
 }
 
 #mask .menu .head {
-    border-bottom: 1px solid white;
+    border-bottom: 1px solid #FFFFFF;
     text-align: center;
     font-weight: bold;
     padding: 8px;
@@ -864,17 +900,23 @@ section#viewer a {
     position: relative;
     float: left;
     margin: 12px;
-    background-color: #0F0F0F;
+    background-color: var(--background-sub-color);
+    box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.25);
     border-radius: 12px;
     min-width: 300px;
+}
+section#viewer a:hover {
+    background-color: var(--playlist-background-color);
+    color: var(--playlist-hover-color);
+}
+section#viewer a:hover:visited {
+    color: var(--playlist-hover-visited-color);
 }
 nav > #range {
     height: 30px;
     width: 40%;
     max-width: 320px;
     padding-inline: 8px;
-    background: #000000;
-    border: 1px solid #7F7F7F;
     color: var(--text-color);
     position: absolute;
     top: 10px;
