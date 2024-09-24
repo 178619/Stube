@@ -5,10 +5,10 @@ const init = () => {
     const isMusic = location.pathname.startsWith('/m/')
     const trackSorter = (v1, v2) => {
         let e1 = 0, e2 = 0
-        if (v1.getAttribute('disc')) e1 += v1.getAttribute('disc') * 10^6
-        if (v1.getAttribute('track')) e1 += v1.getAttribute('track')
-        if (v2.getAttribute('disc')) e2 += v2.getAttribute('disc') * 10^6
-        if (v2.getAttribute('track')) e2 += v2.getAttribute('track')
+        if (v1.hasAttribute('disc')) e1 += parseInt(v1.getAttribute('disc')) * 10**6
+        if (v1.hasAttribute('track')) e1 += parseInt(v1.getAttribute('track'))
+        if (v2.hasAttribute('disc')) e2 += parseInt(v2.getAttribute('disc')) * 10**6
+        if (v2.hasAttribute('track')) e2 += parseInt(v2.getAttribute('track'))
         return e1 - e2
     }
     const miniAlert = (v) => {
@@ -592,7 +592,7 @@ const init = () => {
                 video.play()
             }
         })
-        video.play()
+        if (navigator.getAutoplayPolicy && navigator.getAutoplayPolicy("mediaelement") == 'allowed') video.play()
         window.onpopstate = () => { 
             location.reload()
         }
