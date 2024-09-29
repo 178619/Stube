@@ -79,11 +79,10 @@ func NewApp(cfg *Config) (*App, error) {
 	r.HandleFunc("/i/{prefix:.*}", a.imageHandler).Methods("GET")
 	r.HandleFunc("/feed.xml", a.rssHandler).Methods("GET")
 	// Static file handler
-	fsHandler := http.StripPrefix(
+	r.PathPrefix("/static/").Handler(http.StripPrefix(
 		"/static/",
 		http.FileServer(http.Dir("./static/")),
-	)
-	r.PathPrefix("/static/").Handler(fsHandler).Methods("GET")
+	)).Methods("GET")
 	a.Router = r
 	return a, nil
 }

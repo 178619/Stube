@@ -8,7 +8,10 @@
         <script type="application/javascript" src="/static/video.js"></script>
     </head>
     <body onload="init()">
-        <nav><a href="/">Stube</a></nav>
+        <nav>
+            <a href="/">Stube</a>
+            <a id="album" href="/v/{{ $playing.Ref }}">All</a>
+        </nav>
         <main>
             <div id="player">
                 {{ if $playing.ID }}

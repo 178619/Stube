@@ -66,9 +66,10 @@ const init = () => {
         "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "/", "f", "c", "k", "m", "j", "l", "N", "P"
     ]
     const getTimeString = (v) => {
+        if (!v) return '00:00'
         return (v >= 3600 ? Math.floor(v / 3600) + ':' : '')
-        + (Math.floor(v % 3600 / 60) < 10 ? '0' : '') + Math.floor(v % 3600 / 60) + ':'
-        + (Math.floor(v % 60) < 10 ? '0' : '') + Math.floor(v % 60)
+        + (((Math.floor(v % 3600 / 60) < 10 ? '0' : '') + Math.floor(v % 3600 / 60)) || '00') + ':'
+        + (((Math.floor(v % 60) < 10 ? '0' : '') + Math.floor(v % 60)) || '00')
     }
     const languageNames = new Intl.DisplayNames(navigator.languages, { type: 'language' });
     if (document.getElementById('search')) document.getElementById('search').oninput = () => {
@@ -116,7 +117,7 @@ const init = () => {
         playlist[index].classList.remove('playing')
         const target = playlist[(index-1+playlist.length)%playlist.length]
         target.classList.add('playing')
-        toVideo(target)
+        toVideo(target, true)
         video.play()
     }
 
@@ -126,14 +127,16 @@ const init = () => {
         playlist[index].classList.remove('playing')
         const target = playlist[(index+1)%playlist.length]
         target.classList.add('playing')
-        toVideo(target)
+        toVideo(target, true)
         video.play()
     }
 
-    const toVideo = (target) => {
+    const toVideo = (target, scroll=false) => {
         video.src = '/f/' + target.pathname.slice(3)
-        target.scrollIntoView()
-        document.body.scrollIntoView()
+        if (scroll) {
+            target.scrollIntoView({behavior: "smooth"})
+            document.body.scrollIntoView()
+        }
         window.history.pushState(null, null, location.origin+target.pathname);
         document.querySelector('#player > h1').innerText = target.querySelector('h1').innerText
         document.querySelector('#mask > h1').innerText = target.querySelector('h1').innerText
@@ -143,6 +146,7 @@ const init = () => {
         document.querySelector('details.description > span').innerText = target.getAttribute('description')
         document.title = target.querySelector('h1').innerText + ' - Stube'
         video.poster = '/t/' + target.pathname.slice(3)
+        if (document.getElementById('album')) document.getElementById('album').pathname = '/v/' + target.pathname.slice(3)
         if (navigator.mediaSession) {
             navigator.mediaSession.metadata = new MediaMetadata({
                 title: target.querySelector('h1').innerText,
@@ -157,7 +161,7 @@ const init = () => {
         }
     }
 
-    const locationOptions = Object.fromEntries(location.search.slice(1).split('&').filter((v)=>{return v.length}).map((v)=>{return [v.split('=')[0], v.split('=').slice(1).join('=')]}))
+    // const locationOptions = Object.fromEntries(location.search.slice(1).split('&').filter((v)=>{return v.length}).map((v)=>{return [v.split('=')[0], v.split('=').slice(1).join('=')]}))
 
     document.body.onkeydown = (e) => {
         if (!keyList.includes(e.key) || e.target.id == 'search' || e.ctrlKey) return

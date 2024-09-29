@@ -117,6 +117,75 @@ main {
     box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.25);
 }
 
+/* #video::cue {
+    background: rgba(0,0,0,0);
+    text-shadow: 1px 1px #000000, 1px 0px #000000, 1px -1px #000000, 0px -1px #000000, -1px -1px #000000, -1px 0px #000000, -1px 1px #000000, 0px 1px #000000, 0 0 4px #000000, 0 0 4px #000000;
+} */
+
+#video::cue(.white) {
+    color: rgba(255,255,255,1);
+}
+
+#video::cue(.lime) {
+    color: rgba(0,255,0,1);
+}
+
+#video::cue(.cyan) {
+    color: rgba(0,255,255,1);
+}
+
+#video::cue(.red) {
+    color: rgba(255,0,0,1);
+}
+
+#video::cue(.yellow) {
+    color: rgba(255,255,0,1);
+}
+
+#video::cue(.magenta) {
+    color: rgba(255,0,255,1);
+}
+
+#video::cue(.blue) {
+    color: rgba(0,0,255,1);
+}
+
+#video::cue(.black) {
+    color: rgba(0,0,0,1);
+}
+
+#video::cue(.bg_white) {
+    background: rgba(255,255,255,1);
+}
+
+#video::cue(.bg_lime) {
+    background: rgba(0,255,0,1);
+}
+
+#video::cue(.bg_cyan) {
+    background: rgba(0,255,255,1);
+}
+
+#video::cue(.bg_red) {
+    background: rgba(255,0,0,1);
+}
+
+#video::cue(.bg_yellow) {
+    background: rgba(255,255,0,1);
+}
+
+#video::cue(.bg_magenta) {
+    background: rgba(255,0,255,1);
+}
+
+#video::cue(.bg_blue) {
+    background: rgba(0,0,255,1);
+}
+
+#video::cue(.bg_black) {
+    background: rgba(0,0,0,1);
+}
+
 #mask {
     width: inherit;
     height: 480px;
@@ -256,6 +325,8 @@ details.description {
 #homeview {
     font-size: 16px;
     background: var(--playlist-background-color);
+    width: max(75vw, 648px);
+    max-width: 100%;
 }
 
 #homeview > a {
