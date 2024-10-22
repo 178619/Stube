@@ -122,7 +122,7 @@ func ParseVideo(p *Path, name string) (*Video, error) {
 			mimeType = "audio/aac"
 		case "FLAC":
 			mimeType = "audio/flac"
-		case "OGG":
+		case "OGG", "OGA", "OPUS":
 			mimeType = "audio/ogg"
 		default:
 			mimeType = ""
