@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/178619/stube/pkg/onionkey"
 	"github.com/wybiral/torgo"
-	"github.com/178619/tube/pkg/onionkey"
 )
 
 type tor struct {

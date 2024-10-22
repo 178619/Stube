@@ -17,6 +17,7 @@ type Library struct {
 	Paths    map[string]*Path
 	Videos   map[string]*Video
 	Captions map[string]*Caption
+	Images   map[string]*Image
 }
 
 // NewLibrary returns new instance of Library.
@@ -25,6 +26,7 @@ func NewLibrary() *Library {
 		Paths:    make(map[string]*Path),
 		Videos:   make(map[string]*Video),
 		Captions: make(map[string]*Caption),
+		Images:   make(map[string]*Image),
 	}
 	return lib
 }
@@ -43,6 +45,18 @@ func (lib *Library) AddPath(p *Path) error {
 		}
 	}
 	lib.Paths[p.Path] = p
+	log.Println("Added Path:", p.Path)
+	return nil
+}
+
+func (lib *Library) RemovePath(p *Path) error {
+	lib.mu.Lock()
+	defer lib.mu.Unlock()
+	v, ok := lib.Paths[p.Path]
+	if ok {
+		delete(lib.Videos, p.Path)
+		log.Println("Removed Path:", v.Path)
+	}
 	return nil
 }
 
@@ -89,7 +103,8 @@ func (lib *Library) Add(fp string) error {
 		return errors.New("media: path not found")
 	}
 	n := path.Base(fp)
-	if strings.HasSuffix(strings.ToUpper(n), ".VTT") {
+	switch strings.ToUpper(n)[strings.LastIndex(n, ".")+1:] {
+	case "VTT":
 		v, err := ParseCaption(p, n)
 		if err != nil {
 			return err
@@ -97,14 +112,23 @@ func (lib *Library) Add(fp string) error {
 		lib.Captions[v.ID] = v
 		log.Println("Added:", v.Path)
 		return nil
+	case "PNG", "BMP", "GIF", "WEBP", "JPG", "JPEG":
+		v, err := ParseImage(p, n)
+		if err != nil {
+			return err
+		}
+		lib.Images[v.ID] = v
+		log.Println("Added:", v.Path)
+		return nil
+	default:
+		v, err := ParseVideo(p, n)
+		if err != nil {
+			return err
+		}
+		lib.Videos[v.ID] = v
+		log.Println("Added:", v.Path)
+		return nil
 	}
-	v, err := ParseVideo(p, n)
-	if err != nil {
-		return err
-	}
-	lib.Videos[v.ID] = v
-	log.Println("Added:", v.Path)
-	return nil
 }
 
 // Remove removes a single video from a given file path.
@@ -151,14 +175,15 @@ func (lib *Library) Playlist() Playlist {
 }
 
 // Playlist returns a sorted Playlist of all videos.
-func (lib *Library) CaptionList() CaptionList {
+func (lib *Library) ImageList() ImageList {
 	lib.mu.RLock()
 	defer lib.mu.RUnlock()
-	pl := make(CaptionList, len(lib.Captions))
+	pl := make(ImageList, len(lib.Images))
 	i := 0
-	for _, v := range lib.Captions {
+	for _, v := range lib.Images {
 		pl[i] = v
 		i++
 	}
+	sort.Sort(pl)
 	return pl
 }

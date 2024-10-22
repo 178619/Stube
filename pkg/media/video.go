@@ -3,8 +3,9 @@ package media
 import (
 	"os"
 	"path"
-	"time"
 	"strings"
+	"time"
+
 	"github.com/dhowden/tag"
 )
 
@@ -22,6 +23,7 @@ type Video struct {
 	Title       string
 	Album       string
 	Artist      string
+	Disc        int
 	Track       int
 	Description string
 	Thumb       []byte
@@ -30,10 +32,10 @@ type Video struct {
 	Size        int64
 	Path        string
 	Timestamp   time.Time
-	FileName	string
-	Format		tag.Format
-	FileType	tag.FileType
-	MIMEType	string
+	FileName    string
+	Format      tag.Format
+	FileType    tag.FileType
+	MIMEType    string
 	MediaType   MediaType
 	BaseName    string
 }
@@ -68,6 +70,7 @@ func ParseVideo(p *Path, name string) (*Video, error) {
 	} else {
 		ext = strings.ToUpper(name[idx:])
 	}
+	var disc int = 0
 	var track int = 0
 	var title, mimeType, album, comment string
 	var format tag.Format
@@ -113,16 +116,16 @@ func ParseVideo(p *Path, name string) (*Video, error) {
 		format = m.Format()
 		filetype = m.FileType()
 		switch filetype {
-			case "MP3":
-				mimeType = "audio/mpeg"
-			case "M4A", "M4B", "M4P":
-				mimeType = "audio/aac"
-			case "FLAC":
-				mimeType = "audio/flac"
-			case "OGG":
-				mimeType = "audio/ogg"
-			default:
-				mimeType = ""
+		case "MP3":
+			mimeType = "audio/mpeg"
+		case "M4A", "M4B", "M4P":
+			mimeType = "audio/aac"
+		case "FLAC":
+			mimeType = "audio/flac"
+		case "OGG", "OGA", "OPUS":
+			mimeType = "audio/ogg"
+		default:
+			mimeType = ""
 		}
 		mediaType = AUDIO
 		if format == "MP4" {
@@ -133,9 +136,8 @@ func ParseVideo(p *Path, name string) (*Video, error) {
 		artist = m.Artist()
 		comment = m.Comment()
 		pic = m.Picture()
-		disc, _ := m.Disc()
+		disc, _ = m.Disc()
 		track, _ = m.Track()
-		track += disc * 1000
 	}
 	v := &Video{
 		ID:          id,
@@ -143,6 +145,7 @@ func ParseVideo(p *Path, name string) (*Video, error) {
 		Title:       title,
 		Album:       album,
 		Artist:      artist,
+		Disc:        disc,
 		Track:       track,
 		Description: comment,
 		Modified:    modified,
@@ -154,7 +157,7 @@ func ParseVideo(p *Path, name string) (*Video, error) {
 		FileType:    filetype,
 		MIMEType:    mimeType,
 		MediaType:   mediaType,
-		BaseName:	 name[:idx-1],
+		BaseName:    name[:idx-1],
 	}
 	// Add thumbnail (if exists)
 	if pic != nil {

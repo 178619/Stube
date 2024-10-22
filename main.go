@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/178619/tube/pkg/app"
+	"github.com/178619/stube/pkg/app"
 )
 
 func main() {

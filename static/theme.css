@@ -1,7 +1,40 @@
 :root {
     --main-color: #7F3FFF;
-    --date-color: #7F7F7F;
     --text-color: #DFDFDF;
+    --date-color: #7F7F7F;
+    --background-color: #171717;
+    --background-sub-color: #000000;
+    --playlist-background-color: #1F1F1F;
+    --playlist-playing-background-color: #2F2F2F;
+    --playlist-playing-color: #FFFFDF;
+    --playlist-hover-color: #9FBFDF;
+    --playlist-hover-visited-color: #DFBFFF;
+}
+@media (prefers-color-scheme: light) {
+    :root {
+        --text-color: #000000;
+        --date-color: #7F7F7F;
+        --background-color: #FFFFFF;
+        --background-sub-color: #FFFFFF;
+        --playlist-background-color: #FFFFFF;
+        --playlist-playing-background-color: #EFEFEF;
+        --playlist-playing-color: #7F5F00;
+        --playlist-hover-color: #1F5F7F;
+        --playlist-hover-visited-color: #7F3F9F;
+    }
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --text-color: #DFDFDF;
+        --date-color: #7F7F7F;
+        --background-color: #171717;
+        --background-sub-color: #000000;
+        --playlist-background-color: #1F1F1F;
+        --playlist-playing-background-color: #2F2F2F;
+        --playlist-playing-color: #FFFFDF;
+        --playlist-hover-color: #9FBFDF;
+        --playlist-hover-visited-color: #DFBFFF;
+    }
 }
 
 * {
@@ -24,8 +57,7 @@ body {
     font-size: 16px;
     font-weight: 400;
     color: var(--text-color);
-    background: #171717;
-    padding-bottom: 10px;
+    background: var(--background-color);
 }
 
 nav {
@@ -37,8 +69,8 @@ nav {
     line-height: 50px;
     width: 100%;
     height: 50px;
-    background: #000000;
-    border-bottom: 1px solid #3F3F3F;
+    background: var(--background-sub-color);
+    box-shadow: 0 0 0 1px rgb(63, 63, 63), 0 0 2px 2px rgba(0, 0, 0, 0.25);
     position: relative;
     overflow: hidden;
 }
@@ -53,7 +85,7 @@ nav > #search {
     width: 40%;
     max-width: 320px;
     padding-inline: 8px;
-    background: #000000;
+    background: var(--background-sub-color);
     border: 1px solid #7F7F7F;
     color: var(--text-color);
     position: absolute;
@@ -81,8 +113,77 @@ main {
 #video {
     width: 100%;
     height: 480px;
-    background: #000;
-    box-shadow: 0 0 4px 4px rgba(0, 0, 0, 0.25);
+    background: #000000;
+    box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.25);
+}
+
+/* #video::cue {
+    background: rgba(0,0,0,0);
+    text-shadow: 1px 1px #000000, 1px 0px #000000, 1px -1px #000000, 0px -1px #000000, -1px -1px #000000, -1px 0px #000000, -1px 1px #000000, 0px 1px #000000, 0 0 4px #000000, 0 0 4px #000000;
+} */
+
+#video::cue(.white) {
+    color: rgba(255,255,255,1);
+}
+
+#video::cue(.lime) {
+    color: rgba(0,255,0,1);
+}
+
+#video::cue(.cyan) {
+    color: rgba(0,255,255,1);
+}
+
+#video::cue(.red) {
+    color: rgba(255,0,0,1);
+}
+
+#video::cue(.yellow) {
+    color: rgba(255,255,0,1);
+}
+
+#video::cue(.magenta) {
+    color: rgba(255,0,255,1);
+}
+
+#video::cue(.blue) {
+    color: rgba(0,0,255,1);
+}
+
+#video::cue(.black) {
+    color: rgba(0,0,0,1);
+}
+
+#video::cue(.bg_white) {
+    background: rgba(255,255,255,1);
+}
+
+#video::cue(.bg_lime) {
+    background: rgba(0,255,0,1);
+}
+
+#video::cue(.bg_cyan) {
+    background: rgba(0,255,255,1);
+}
+
+#video::cue(.bg_red) {
+    background: rgba(255,0,0,1);
+}
+
+#video::cue(.bg_yellow) {
+    background: rgba(255,255,0,1);
+}
+
+#video::cue(.bg_magenta) {
+    background: rgba(255,0,255,1);
+}
+
+#video::cue(.bg_blue) {
+    background: rgba(0,0,255,1);
+}
+
+#video::cue(.bg_black) {
+    background: rgba(0,0,0,1);
 }
 
 #mask {
@@ -134,7 +235,7 @@ details > summary {
     margin-left: 10px;
     width: 300px;
     height: 600px;
-    background: #1F1F1F;
+    background: var(--playlist-background-color);
     box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.25);
     overflow-x: hidden;
     overflow-y: auto;
@@ -146,8 +247,8 @@ details > summary {
     width: inherit;
     max-width: inherit;
     padding-inline: 8px;
-    background: #000000;
-    border: 1px solid #7F7F7F;
+    background: var(--background-sub-color);
+    box-shadow: 0 0 0 1px rgb(127, 127, 127), 0 0 2px 2px rgba(0, 0, 0, 0.25);
     color: var(--text-color);
     position: absolute;
     margin-top: -30px;
@@ -168,20 +269,20 @@ details > summary {
 
 #playlist > a:hover {
     backdrop-filter: brightness(1.25);
-    color: #9FBFDF;
+    color: var(--playlist-hover-color);
 }
 
 #playlist > a:hover:visited {
-    color: #DFBFFF;
+    color: var(--playlist-hover-visited-color);
 }
 
 #playlist > a.playing {
-    background: #2F2F2F;
-    color: #FFFFDF;
+    background: var(--playlist-playing-background-color);
+    color: var(--playlist-playing-color);
 }
 
 #playlist > a.playing:hover:visited {
-    color: #FFFFDF;
+    color: var(--playlist-playing-color);
 }
 
 #playlist > a > img {
@@ -223,7 +324,9 @@ details.description {
 
 #homeview {
     font-size: 16px;
-    background: #1F1F1F;
+    background: var(--playlist-background-color);
+    width: max(75vw, 648px);
+    max-width: 100%;
 }
 
 #homeview > a {
@@ -234,7 +337,8 @@ details.description {
     float: left;
     width: calc(50% - 24px);
     margin: 12px;
-    background-color: #0F0F0F;
+    background-color: var(--background-sub-color);
+    box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.25);
     border-radius: 12px;
     min-width: 300px;
 }
@@ -244,12 +348,12 @@ details.description {
 }
 
 #homeview > a:hover {
-    background-color: #131313;
-    color: #9FBFDF;
+    background-color: var(--playlist-background-color);
+    color: var(--playlist-hover-color);
 }
 
 #homeview > a:hover:visited {
-    color: #DFBFFF;
+    color: var(--playlist-hover-visited-color);
 }
 
 #homeview > a > img {
@@ -324,19 +428,14 @@ details.description {
     z-index: 1001;
 }
 
-#mask #center {
+#mask > button {
     position: absolute;
     background: rgba(255,255,255,0.5);
-    width: 96px;
-    height: 96px;
     left: 0;
     top: 0;
     right: 0;
     bottom: 0;
     margin: auto;
-    background-image: url('/static/icons/play-pause.svg');
-    background-size: 80px;
-    filter: invert(1);
     border-radius: 50%;
     background-repeat: no-repeat;
     background-position: center;
@@ -345,11 +444,37 @@ details.description {
     transition: background 250ms, width 250ms, height 250ms, transform 100ms, opacity 200ms ease-in-out;
 }
 
-#mask #center:active {
+#mask > button#left {
+    width: 80px;
+    height: 80px;
+    background-image: url('/static/icons/skip-previous.svg');
+    background-size: 64px;
+    filter: invert(1);
+    right: 384px;
+}
+
+#mask > button#center {
+    width: 96px;
+    height: 96px;
+    background-image: url('/static/icons/play-pause.svg');
+    background-size: 80px;
+    filter: invert(1);
+}
+
+#mask > button#right {
+    width: 80px;
+    height: 80px;
+    background-image: url('/static/icons/skip-next.svg');
+    background-size: 64px;
+    filter: invert(1);
+    left: 384px;
+}
+
+#mask > button:active {
     transform: scale(0.875);
 }
 
-#mask.shown #center {
+#mask.shown > button {
     display: block;
 }
 
@@ -486,6 +611,7 @@ details.description {
     align-self: center;
     margin-inline: 4px;
     font-family: 'Roboto Mono', 'Consolas', 'Lucida Console', monospace;
+    color: #DFDFDF;
 }
 
 #mask #control #volume-icon {
@@ -555,7 +681,8 @@ details.description {
 #mask h1 {
     display: none;
     padding: 8px;
-    text-shadow: 0px 0px 4px black;
+    color: #DFDFDF;
+    text-shadow: 0px 0px 4px #000000;
     font-weight: bold;
     text-overflow: ellipsis;
     overflow-x: clip;
@@ -573,7 +700,7 @@ details.description {
 #mask .minialert {
     opacity: 1;
     background: rgba(0, 0, 0, 0.5);
-    color: var(--text-color);
+    color: #DFDFDF;
     text-align: center;
     transition: opacity 1000ms ease-in-out;
     width: min-content;
@@ -585,7 +712,7 @@ details.description {
 #mask .menu {
     display: none;
     background-color: rgba(0, 0, 0, 0.75);
-    color: var(--text-color);
+    color: #DFDFDF;
     width: min-content;
     position: absolute;
     right: 0;
@@ -597,7 +724,7 @@ details.description {
 }
 
 #mask .menu .head {
-    border-bottom: 1px solid white;
+    border-bottom: 1px solid #FFFFFF;
     text-align: center;
     font-weight: bold;
     padding: 8px;
@@ -647,6 +774,12 @@ details.description {
     #mask {
         height: 360px;
     }
+    #mask > button#left {
+        right: 320px;
+    }
+    #mask > button#right {
+        left: 320px;
+    }
 }
 
 /* 240p */
@@ -677,7 +810,19 @@ details.description {
     #mask #control #volume {
         width: 64px;
     }
-    #mask #center {
+    #mask > button#left {
+        width: 64px;
+        height: 64px;
+        background-size: 48px;
+        right: 256px;
+    }
+    #mask > button#right {
+        width: 64px;
+        height: 64px;
+        background-size: 48px;
+        left: 256px;
+    }
+    #mask > button#center {
         width: 80px;
         height: 80px;
         background-size: 64px;
@@ -746,7 +891,19 @@ details.description {
 
 /* responsive width with shifted playlist */
 @media only screen and (max-width: 440px) {
-    #mask #center {
+    #mask > button#left {
+        width: 48px;
+        height: 48px;
+        background-size: 36px;
+        right: 192px;
+    }
+    #mask > button#right {
+        width: 48px;
+        height: 48px;
+        background-size: 36px;
+        left: 192px;
+    }
+    #mask > button#center {
         width: 64px;
         height: 64px;
         background-size: 48px;
@@ -790,4 +947,51 @@ details.description {
     #mask #control #volume {
         width: 48px;
     }
+}
+
+
+
+section#viewer {
+    height: calc(100vh - 50px);
+    display: block;
+    margin: 0 auto;
+    overflow-y: scroll;
+    touch-action: none;
+}
+section#viewer img {
+    display: block;
+    margin: 0 auto;
+    object-fit: contain;
+    height: 100%;
+    max-width: 100%;
+}
+section#viewer a {
+    display: block;
+    padding: 10px;
+    position: relative;
+    float: left;
+    margin: 12px;
+    background-color: var(--background-sub-color);
+    box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.25);
+    border-radius: 12px;
+    min-width: 300px;
+}
+section#viewer a:hover {
+    background-color: var(--playlist-background-color);
+    color: var(--playlist-hover-color);
+}
+section#viewer a:hover:visited {
+    color: var(--playlist-hover-visited-color);
+}
+nav > #range {
+    height: 30px;
+    width: 40%;
+    max-width: 320px;
+    padding-inline: 8px;
+    color: var(--text-color);
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 13px;
+    font-weight: normal;
 }

@@ -40,6 +40,7 @@ func startWatcher(a *App) {
 			// handle remove events first
 			if len(removeEvents) > 0 {
 				for p := range removeEvents {
+					// a.Library.RemovePath()
 					a.Library.Remove(p)
 				}
 				// clear map
@@ -48,6 +49,7 @@ func startWatcher(a *App) {
 			// then handle add events
 			if len(addEvents) > 0 {
 				for p := range addEvents {
+					// a.Library.AddPath()
 					a.Library.Add(p)
 				}
 				// clear map

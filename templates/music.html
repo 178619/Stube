@@ -3,23 +3,27 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>{{ $playing.Title }} - Tube</title>
+        <title>{{ if $playing.Disc }}{{ $playing.Disc }}-{{ end }}{{ $playing.Track }}. {{ $playing.Title }} - Stube</title>
         {{ template "head.html" }}
         <script type="application/javascript" src="/static/video.js"></script>
     </head>
     <body onload="init()">
-        <nav><a href="/">Tube</a></nav>
+        <nav>
+            <a href="/">Stube</a>
+            <a id="album" href="/v/{{ $playing.Ref }}">All</a>
+        </nav>
         <main>
             <div id="player">
                 {{ if $playing.ID }}
                     {{ template "player.html" . }}
-                    <h1>{{ $playing.Title }}</h1>
-                    <h2>{{ $playing.Artist }} - {{ $playing.Album }}</h2>
+                    <h1>{{ if $playing.Disc }}{{ $playing.Disc }}-{{ end }}{{ $playing.Track }}. {{ $playing.Title }}</h1>
+                    <h2>{{ $playing.Artist }}</h2>
                     <h2>{{ $playing.Modified }}</h2>
+                    <h2>{{ $playing.Album }}</h2>
                     <p class="description">{{ $playing.Description }}</p>
                     <details class="description">
                         <summary>Description</summary>
-                        {{ $playing.Description }}
+                        <span>{{ $playing.Description }}</span>
                     </details>
                 {{ else }}
                     <video id="video" controls></video>
@@ -30,13 +34,13 @@
                 {{ range $m := $playlist }}
                     {{ if eq $m.Album $playing.Album }}
                         {{ if eq $m.ID $playing.ID }}
-                        <a href="/m/{{ $m.Ref }}" title="{{ $m.Title }}" name="{{ $m.ID }}" class="playing">
+                        <a href="/m/{{ $m.Ref }}" title="{{ $m.Title }}" name="{{ $m.ID }}" artist="{{ $m.Artist }}" description="{{ $m.Description }}" {{ if $m.Disc }} disc="{{ $m.Disc }}" {{ end }} track="{{ $m.Track }}" class="playing">
                         {{ else }}
-                        <a href="/m/{{ $m.Ref }}" title="{{ $m.Title }}" name="{{ $m.ID }}">
+                        <a href="/m/{{ $m.Ref }}" title="{{ $m.Title }}" name="{{ $m.ID }}" artist="{{ $m.Artist }}" description="{{ $m.Description }}" name="{{ $m.ID }}" {{ if $m.Disc }} disc="{{ $m.Disc }}" {{ end }} track="{{ $m.Track }}">
                         {{ end }}
                             <img src="/t/{{ $m.Ref }}">
                             <div>
-                                <h1>{{ $m.Track }}. {{ $m.Title }}</h1>
+                                <h1>{{ if $m.Disc }}{{ $m.Disc }}-{{ end }}{{ $m.Track }}. {{ $m.Title }}</h1>
                                 <h2>{{ $m.Modified }}</h2>
                             </div>
                         </a>

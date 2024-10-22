@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-type Caption struct {
+type Image struct {
 	ID        string
 	Ref       string
 	Modified  string
@@ -16,11 +16,11 @@ type Caption struct {
 	Timestamp time.Time
 	FileName  string
 	FileType  string
-	Origin    string
-	SrcLang   string
+	MIMEType  string
+	Prefix    string
 }
 
-func ParseCaption(p *Path, name string) (*Caption, error) {
+func ParseImage(p *Path, name string) (*Image, error) {
 	pth := path.Join(p.Path, name)
 	f, err := os.Open(pth)
 	if err != nil {
@@ -40,16 +40,26 @@ func ParseCaption(p *Path, name string) (*Caption, error) {
 		id = path.Join(p.Prefix, name)
 	}
 	ref := replacer.Replace(id)
-	idx := strings.LastIndex(name, ".")
-	idx = strings.LastIndex(name[:idx], ".")
-	var ext string
-	if idx == -1 {
-		idx = strings.LastIndex(name, ".")
-		ext = ""
-	} else {
-		ext = name[idx+1 : strings.LastIndex(name, ".")]
+	mimeType := "image"
+	switch strings.ToUpper(name)[strings.LastIndex(name, ".")+1:] {
+	case "PNG":
+		mimeType = "image/png"
+	case "BMP":
+		mimeType = "image/bmp"
+	case "GIF":
+		mimeType = "image/gif"
+	case "ICO":
+		mimeType = "image/vnd.microsoft.icon"
+	case "JPEG", "JPG":
+		mimeType = "image/jpeg"
+	case "SVG":
+		mimeType = "image/svg+xml"
+	case "TIF", "TIFF":
+		mimeType = "image/tiff"
+	case "WEBP":
+		mimeType = "image/webp"
 	}
-	v := &Caption{
+	v := &Image{
 		ID:        id,
 		Ref:       ref,
 		Modified:  modified,
@@ -57,8 +67,8 @@ func ParseCaption(p *Path, name string) (*Caption, error) {
 		Path:      pth,
 		Timestamp: timestamp,
 		FileName:  name,
-		Origin:    name[:idx],
-		SrcLang:   ext,
+		MIMEType:  mimeType,
+		Prefix:    p.Prefix,
 	}
 	return v, nil
 }
