@@ -1,5 +1,5 @@
 const init = () => {
-    if (location.pathname.endsWith('/')) history.replaceState('', null, location.origin + location.pathname.slice(0, -1) + location.search + location.hash);
+    if (location.pathname.endsWith('/')) window.history.replaceState('', null, window.location.origin + window.location.pathname.slice(0, -1) + window.location.search + window.location.hash);
     const keyList = [
         'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'PageUp', 'PageDown', 'Home', 'End'
     ]
@@ -16,7 +16,7 @@ const init = () => {
     range.value = cp
     range.style.direction = direction
     document.querySelector('nav').appendChild(range)
-    history.replaceState(null, null, location.origin + location.pathname + location.search + '#' + (cp+1));
+    window.history.replaceState(null, null, window.location.origin + window.location.pathname + window.location.search + '#' + (cp+1));
     const load = (smooth) => {
         toPage(cp, smooth)
     }
@@ -35,7 +35,7 @@ const init = () => {
                     list[p].onload = null;
                 }
             }
-            history.replaceState(null, null, location.origin + location.pathname + location.search + '#' + (p+1));
+            window.history.replaceState(null, null, window.location.origin + window.location.pathname + window.location.search + '#' + (p+1));
         }
     }
     const prev = () => {

@@ -137,7 +137,7 @@ const init = () => {
             target.scrollIntoView({behavior: "smooth"})
             document.body.scrollIntoView()
         }
-        window.history.pushState(null, null, location.origin+target.pathname);
+        window.history.pushState(null, null, window.location.origin+target.pathname);
         document.querySelector('#player > h1').innerText = target.querySelector('h1').innerText
         document.querySelector('#mask > h1').innerText = target.querySelector('h1').innerText
         document.querySelectorAll('#player > h2')[0].innerText = target.getAttribute('artist')
@@ -247,7 +247,7 @@ const init = () => {
         }
     }
     mask.onmouseleave = (e) => {
-        if (mask.classList.toString().includes('shown')) {
+        if (mask.classList.value.includes('shown')) {
             document.getElementById('center').style.transform = null
             mask.classList.remove('shown')
         }
@@ -255,7 +255,7 @@ const init = () => {
     mask.onpointerdown = (e) => {
         if (e.target.id != 'mask' || e.pointerType == 'mouse' && e.button != 0) return
         if (e.pointerType == 'touch') {
-            if (mask.classList.toString().includes('shown')) {
+            if (mask.classList.value.includes('shown')) {
                 mask.classList.remove('shown')
             } else {
                 updateSeeker()
