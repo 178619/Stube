@@ -775,10 +775,10 @@ details.description {
         height: 360px;
     }
     #mask > button#left {
-        right: 320px;
+        right: 288px;
     }
     #mask > button#right {
-        left: 320px;
+        left: 288px;
     }
 }
 
@@ -811,21 +811,21 @@ details.description {
         width: 64px;
     }
     #mask > button#left {
-        width: 64px;
-        height: 64px;
-        background-size: 48px;
-        right: 256px;
+        width: 48px;
+        height: 48px;
+        background-size: 36px;
+        right: 192px;
     }
     #mask > button#right {
+        width: 48px;
+        height: 48px;
+        background-size: 36px;
+        left: 192px;
+    }
+    #mask > button#center {
         width: 64px;
         height: 64px;
         background-size: 48px;
-        left: 256px;
-    }
-    #mask > button#center {
-        width: 80px;
-        height: 80px;
-        background-size: 64px;
     }
     #mask .minialert {
         font-size: 90%;

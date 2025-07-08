@@ -141,7 +141,9 @@ window.addEventListener('load', () => {
         const playlist = Array.from(document.querySelectorAll('#playlist > a')).sort(trackSorter)
         const index = playlist.findIndex((v)=>{return v.className.includes('playing')})
         playlist[index].classList.remove('playing')
-        const target = playlist[Math.floor(Math.random()*playlist.length)]
+        let ni = Math.floor(Math.random()*(playlist.length-1))
+        if (ni >= index) ni += 1
+        const target = playlist[ni%playlist.length]
         target.classList.add('playing')
         toVideo(target, true)
         video.play()
