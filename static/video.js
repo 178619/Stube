@@ -1,20 +1,22 @@
 (()=>{
 
-const tempStyle = window.document.createElement('style')
+const {location, document} = window
+
+const tempStyle = document.createElement('style')
 tempStyle.innerHTML = 'video {visibility: hidden;}'
-window.document.head.appendChild(tempStyle)
+document.head.appendChild(tempStyle)
+
+const trackSorter = (v1, v2) => {
+    let e1 = 0, e2 = 0
+    if (v1.hasAttribute('disc')) e1 += parseInt(v1.getAttribute('disc')) << 16
+    if (v1.hasAttribute('track')) e1 += parseInt(v1.getAttribute('track'))
+    if (v2.hasAttribute('disc')) e2 += parseInt(v2.getAttribute('disc')) << 16
+    if (v2.hasAttribute('track')) e2 += parseInt(v2.getAttribute('track'))
+    return e1 - e2
+}
 
 window.addEventListener('load', () => {
-    const {location, document} = window
     const isMusic = location.pathname.startsWith('/m/')
-    const trackSorter = (v1, v2) => {
-        let e1 = 0, e2 = 0
-        if (v1.hasAttribute('disc')) e1 += parseInt(v1.getAttribute('disc')) * 10**6
-        if (v1.hasAttribute('track')) e1 += parseInt(v1.getAttribute('track'))
-        if (v2.hasAttribute('disc')) e2 += parseInt(v2.getAttribute('disc')) * 10**6
-        if (v2.hasAttribute('track')) e2 += parseInt(v2.getAttribute('track'))
-        return e1 - e2
-    }
     const miniAlert = (v) => {
         const d = document.createElement('div')
         d.classList.add('minialert')
@@ -135,13 +137,23 @@ window.addEventListener('load', () => {
         video.play()
     }
 
+    const toRandom = () => {
+        const playlist = Array.from(document.querySelectorAll('#playlist > a')).sort(trackSorter)
+        const index = playlist.findIndex((v)=>{return v.className.includes('playing')})
+        playlist[index].classList.remove('playing')
+        const target = playlist[Math.floor(Math.random()*playlist.length)]
+        target.classList.add('playing')
+        toVideo(target, true)
+        video.play()
+    }
+
     const toVideo = (target, scroll=false) => {
         video.src = '/f/' + target.pathname.slice(3)
         if (scroll) {
             target.scrollIntoView({behavior: "smooth"})
             document.body.scrollIntoView()
         }
-        window.history.pushState(null, null, window.location.origin+target.pathname);
+        window.history.pushState(null, null, window.location.origin+target.pathname)
         document.querySelector('#player > h1').innerText = target.querySelector('h1').innerText
         document.querySelector('#mask > h1').innerText = target.querySelector('h1').innerText
         document.querySelectorAll('#player > h2')[0].innerText = target.getAttribute('artist')
@@ -297,7 +309,7 @@ window.addEventListener('load', () => {
             updateSeeker()
         }
     }
-    document.querySelector('#mask h1').onpointerdown = (e) => {
+    document.querySelector('#mask h1').onclick = (e) => {
         if (e.pointerType == 'mouse' && e.button != 0) return
         if (!document.querySelector('.embed')) return
         open(location.origin + location.pathname.replace('/e/', '/v/'))
@@ -311,6 +323,11 @@ window.addEventListener('load', () => {
         e.preventDefault()
         addTime(e.wheelDeltaY / 100)
     }
+    mask.onwheel = (e) => {
+        if (e.ctrlKey || e.target.nodeName == 'LI' || e.target.nodeName == 'INPUT' || e.target.nodeName == 'BUTTON' && e.target.id != 'left' && e.target.id != 'center' && e.target.id != 'right') return
+        e.preventDefault()
+        addTime(e.wheelDeltaY / 100)
+    }
     document.getElementById('seeker').oninput = () => {
         video.currentTime = document.getElementById('seeker').value / 1000
         oneAlert('To: '+getTimeString(video.currentTime))
@@ -319,26 +336,31 @@ window.addEventListener('load', () => {
         if (e.pointerType == 'mouse' && e.button != 0) return
         playOrPause()
     }
-    document.getElementById('loop').onpointerdown = (e) => {
+    document.getElementById('loop').onclick = (e) => {
         if (e.pointerType == 'mouse' && e.button != 0) return
-        if (musicLoopMode || video.loop && !isMusic) {
-            musicLoopMode = false
+        if (musicLoopMode == 'random') {
+            musicLoopMode = null
             video.loop = false
             document.getElementById("loop").style.backgroundImage = 'url(/static/icons/repeat-off.svg)'
             oneAlert('Repeat: Off')
+        } else if (musicLoopMode == 'repeat' || video.loop && !isMusic) {
+            musicLoopMode = 'random'
+            video.loop = false
+            document.getElementById("loop").style.backgroundImage = 'url(/static/icons/shuffle.svg)'
+            oneAlert('Repeat: Random')
         } else if (!video.loop) {
-            musicLoopMode = false
+            musicLoopMode = null
             video.loop = true
             document.getElementById("loop").style.backgroundImage = 'url(/static/icons/repeat-once.svg)'
             oneAlert('Repeat: One')
         } else {
-            musicLoopMode = true
+            musicLoopMode = 'repeat'
             video.loop = false
             document.getElementById("loop").style.backgroundImage = 'url(/static/icons/repeat.svg)'
             oneAlert('Repeat: All')
         }
     }
-    document.getElementById('volume-icon').onpointerdown = (e) => {
+    document.getElementById('volume-icon').onclick = (e) => {
         if (e.pointerType == 'mouse' && e.button != 0) return
         video.muted = !video.muted
         updateVolume()
@@ -370,7 +392,7 @@ window.addEventListener('load', () => {
         updateVolume()
     }
     if (!video.textTracks.length) document.getElementById('captions').style.display = 'none'
-    document.getElementById('captions').onpointerdown = (e) => {
+    document.getElementById('captions').onclick = (e) => {
         if (e.pointerType == 'mouse' && e.button != 0) return
         const tracks = Array.from(video.textTracks)
         const ul = document.createElement('ul')
@@ -382,7 +404,7 @@ window.addEventListener('load', () => {
                 li.innerText = v.language
             }
             if (v.mode == 'showing') li.classList.add('enabled')
-            li.onpointerdown = (e) => {
+            li.onclick = (e) => {
                 if (e.pointerType == 'mouse' && e.button != 0) return
                 if (v.mode == 'showing') {
                     v.mode = 'disabled'
@@ -396,7 +418,7 @@ window.addEventListener('load', () => {
         })
         setMenu('Captions', ul)
     }
-    document.getElementById('screenshot').onpointerdown = (e) => {
+    document.getElementById('screenshot').onclick = (e) => {
         if (e.pointerType == 'mouse' && e.button != 0) return
         if (!video.videoWidth || !video.videoHeight) {
             const a = document.createElement('a')
@@ -422,13 +444,13 @@ window.addEventListener('load', () => {
         oneAlert('Screenshot Taken')
     }
     const speedList = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 2, 2.5, 3, 4]
-    document.getElementById('playspeed').onpointerdown = (e) => {
+    document.getElementById('playspeed').onclick = (e) => {
         if (e.pointerType == 'mouse' && e.button != 0) return
         const ul = document.createElement('ul')
         speedList.forEach((v)=>{
             const li = document.createElement('li')
             li.innerText = v + 'x'
-            li.onpointerdown = (e) => {
+            li.onclick = (e) => {
                 if (e.pointerType == 'mouse' && e.button != 0) return
                 video.playbackRate = v
                 oneAlert('Playspeed: ' + video.playbackRate + 'x')
@@ -449,7 +471,7 @@ window.addEventListener('load', () => {
         document.getElementById('playspeed').style.transform = 'scale(0.875)'
         setTimeout(()=>{document.getElementById('playspeed').style.transform = null}, 100)
     }
-    document.getElementById('embedlink').onpointerdown = (e) => {
+    document.getElementById('embedlink').onclick = (e) => {
         if (e.pointerType == 'mouse' && e.button == 1) {
             open(location.origin + location.pathname.replace('/v/', '/e/'))
             return
@@ -458,7 +480,7 @@ window.addEventListener('load', () => {
         navigator.clipboard.writeText('<iframe src="'+location.origin+location.pathname.replace('/v/', '/e/')+'" width=320 height=180 allowfullscreen></iframe>')
         oneAlert('HTML code Copied to Clipboard.')
     }
-    document.getElementById('filelink').onpointerdown = (e) => {
+    document.getElementById('filelink').onclick = (e) => {
         if (e.pointerType == 'mouse' && e.button != 0) return
         const a = document.createElement('a')
         a.href = document.getElementById('filelink').getAttribute('href')
@@ -467,7 +489,7 @@ window.addEventListener('load', () => {
         a.remove()
     }
     document.getElementById('current').style.display = 'block';
-    document.getElementById('collapse').onpointerdown = (e) => {
+    document.getElementById('collapse').onclick = (e) => {
         if (e.pointerType == 'mouse' && e.button != 0) return
         if (document.getElementById('current').style.display != 'block') {
             document.getElementById('current').style.display = 'block';
@@ -487,7 +509,7 @@ window.addEventListener('load', () => {
             document.getElementById("collapse").style.backgroundImage = 'url(/static/icons/tune-vertical.svg)'
         }
     }
-    document.getElementById('fullscreen').onpointerdown = (e) => {
+    document.getElementById('fullscreen').onclick = (e) => {
         if (e.pointerType == 'mouse' && e.button != 0) return
         getFullscreen()
     }
@@ -524,7 +546,10 @@ window.addEventListener('load', () => {
         }
     }
     video.onended = () => {
-        if (video.currentTime == video.duration && musicLoopMode) {
+        if (video.currentTime == video.duration && musicLoopMode == 'random') {
+            toRandom()
+            video.play()
+        } else if (video.currentTime == video.duration && musicLoopMode) {
             toNext()
             video.play()
         }
