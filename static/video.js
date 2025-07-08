@@ -1,8 +1,8 @@
 (()=>{
+
 const tempStyle = window.document.createElement('style')
 tempStyle.innerHTML = 'video {visibility: hidden;}'
 window.document.head.appendChild(tempStyle)
-})()
 
 window.addEventListener('load', () => {
     const {location, document} = window
@@ -636,3 +636,5 @@ window.addEventListener('load', () => {
     oneAlertHandler.push(null)
     repeat()
 })
+
+})()

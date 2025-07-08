@@ -1,5 +1,6 @@
-const init = () => {
-    if (location.pathname.endsWith('/')) window.history.replaceState('', null, window.location.origin + window.location.pathname.slice(0, -1) + window.location.search + window.location.hash);
+window.addEventListener('load', () => {
+    const {location, document} = window
+    if (location.pathname.endsWith('/')) window.history.replaceState('', null, window.location.origin + window.location.pathname.slice(0, -1) + window.location.search + window.location.hash)
     const keyList = [
         'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'PageUp', 'PageDown', 'Home', 'End'
     ]
@@ -16,7 +17,7 @@ const init = () => {
     range.value = cp
     range.style.direction = direction
     document.querySelector('nav').appendChild(range)
-    window.history.replaceState(null, null, window.location.origin + window.location.pathname + window.location.search + '#' + (cp+1));
+    window.history.replaceState(null, null, window.location.origin + window.location.pathname + window.location.search + '#' + (cp+1))
     const load = (smooth) => {
         toPage(cp, smooth)
     }
@@ -35,47 +36,47 @@ const init = () => {
                     list[p].onload = null;
                 }
             }
-            window.history.replaceState(null, null, window.location.origin + window.location.pathname + window.location.search + '#' + (p+1));
+            window.history.replaceState(null, null, window.location.origin + window.location.pathname + window.location.search + '#' + (p+1))
         }
     }
     const prev = () => {
-        if (direction == 'rtl' && cp > 0) cp-=1; else if (direction != 'rtl' && cp < len-1) cp+=1;
-        load();
+        if (direction == 'rtl' && cp > 0) cp-=1; else if (direction != 'rtl' && cp < len-1) cp += 1
+        load()
     }
     const next = () => {
-        if (direction == 'rtl' && cp < len-1) cp+=1; else if (direction != 'rtl' && cp > 0) cp-=1;
-        load();
+        if (direction == 'rtl' && cp < len-1) cp+=1; else if (direction != 'rtl' && cp > 0) cp -= 1
+        load()
     }
     document.onkeydown = function(e) {
         if (!keyList.includes(e.key) || e.ctrlKey) return
         e.preventDefault();
-        if (e.key=="ArrowLeft") next();
-        if (e.key=="ArrowRight") prev();
-        if (e.key=="ArrowUp" || e.key=="PageUp") {
+        if (e.key == "ArrowLeft") next();
+        if (e.key == "ArrowRight") prev();
+        if (e.key == "ArrowUp" || e.key == "PageUp") {
             if (cp > 0) cp -= 1
-            load();
+            load()
         }
-        if (e.key=="ArrowDown" || e.key=="PageDown") {
+        if (e.key == "ArrowDown" || e.key == "PageDown") {
             if (cp < len-1) cp += 1
-            load();
+            load()
         }
-        if (e.key=="Home") {
+        if (e.key  == "Home") {
             cp = 0
             load()
         }
-        if (e.key=="End") {
+        if (e.key == "End") {
             cp = len-1
             load()
         }
     }
     var posX = 0, posY = 0, relX = 0, relY = 0, time;
     document.onpointerdown = function (e) {
-        if (e.button || ['INPUT', 'DIV', 'NAV', 'SPAN', 'A'].includes(e.target.tagName.toUpperCase())) return;
-        e.preventDefault();
-        posX = e.clientX;
-        posY = e.clientY;
+        if (e.button || ['INPUT', 'DIV', 'NAV', 'SPAN', 'A'].includes(e.target.tagName.toUpperCase())) return
+        e.preventDefault()
+        posX = e.clientX
+        posY = e.clientY
         time = Date.now()
-        document.onpointerup = document.onpointercancel = document.onpointerout = document.onpointerleave = function (e) {
+        document.onpointerup = document.onpointercancel = document.onpointerout = document.onpointerleave = (e) => {
             relX = posX - e.clientX;
             relY = posY - e.clientY;
             if (Math.abs(relX+relY) >= 16) {
@@ -83,24 +84,24 @@ const init = () => {
                     if (relX > 0) prev();
                     if (relX < 0) next();
                 } else if (relX*relY == 0 && Math.abs(relY) || relX*relY != 0 && Math.abs(relY/relX) >= 1) {
-                    if (relY > 0) document.documentElement.requestFullscreen();
-                    if (relY < 0) document.exitFullscreen();
+                    if (relY > 0) document.documentElement.requestFullscreen()
+                    if (relY < 0) document.exitFullscreen()
                 }
-            } else if (Date.now() - time < 400) prev();
-            document.onpointerup = document.onpointercancel = document.onpointerout = document.onpointerleave = null;
+            } else if (Date.now() - time < 400) prev()
+            document.onpointerup = document.onpointercancel = document.onpointerout = document.onpointerleave = null
         }
     }
     document.onwheel = (e) => {
         if (e.ctrlKey) return
-        e.preventDefault();
-        if (e.deltaY > 0 && cp < len-1) cp+=1;
-        if (e.deltaY < 0 && cp > 0) cp-=1;
+        e.preventDefault()
+        if (e.deltaY > 0 && cp < len-1) cp += 1
+        if (e.deltaY < 0 && cp > 0) cp -= 1
         load(true);
     }
     document.body.onhashchange = () => {
-        if (cp != parseInt(location.hash.slice(1))-1) {
-            cp = parseInt(location.hash.slice(1))-1
-            load();
+        if (cp != parseInt(location.hash.slice(1)) - 1) {
+            cp = parseInt(location.hash.slice(1)) - 1
+            load()
         }
     }
     range.oninput = () => {
@@ -109,14 +110,14 @@ const init = () => {
     }
     document.onfullscreenchange = () => {
         if (document.fullscreenElement) {
-            document.querySelector('nav').style.display = 'none';
-            document.getElementById('viewer').style.height = '100vh';
+            document.querySelector('nav').style.display = 'none'
+            document.getElementById('viewer').style.height = '100vh'
         } else {
-            document.querySelector('nav').style.display = '';
-            document.getElementById('viewer').style.height = 'calc(100vh - 50px)';
+            document.querySelector('nav').style.display = ''
+            document.getElementById('viewer').style.height = 'calc(100vh - 50px)'
         }
         load()
     }
-    document.getElementById('viewer').style.overflowY = 'hidden';
-    document.getElementById('paths').style.display = 'none';
-}
+    document.getElementById('viewer').style.overflowY = 'hidden'
+    document.getElementById('paths').style.display = 'none'
+})
