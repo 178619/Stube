@@ -1,4 +1,4 @@
-const init = () => {
+window.addEventListener('load', () => {
     document.body.style.overflowY = 'scroll'
     const input = document.createElement('input')
     input.id = 'search'
@@ -11,4 +11,4 @@ const init = () => {
         })
     }
     document.querySelector('nav').appendChild(input)
-}
+})

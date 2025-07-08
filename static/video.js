@@ -1,7 +1,11 @@
-const tempStyle = document.createElement('style')
+(()=>{
+const tempStyle = window.document.createElement('style')
 tempStyle.innerHTML = 'video {visibility: hidden;}'
-document.head.appendChild(tempStyle)
-const init = () => {
+window.document.head.appendChild(tempStyle)
+})()
+
+window.addEventListener('load', () => {
+    const {location, document} = window
     const isMusic = location.pathname.startsWith('/m/')
     const trackSorter = (v1, v2) => {
         let e1 = 0, e2 = 0
@@ -631,4 +635,4 @@ const init = () => {
     document.body.click()
     oneAlertHandler.push(null)
     repeat()
-}
+})
