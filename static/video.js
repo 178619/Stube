@@ -449,6 +449,14 @@ window.addEventListener('load', () => {
     document.getElementById('playspeed').onclick = (e) => {
         if (e.pointerType == 'mouse' && e.button != 0) return
         const ul = document.createElement('ul')
+        const li = document.createElement('li')
+        li.innerText = 'Toggle Preserve Pitch'
+        li.onclick = (e) => {
+            if (e.pointerType == 'mouse' && e.button != 0) return
+            video.preservesPitch = !video.preservesPitch
+            oneAlert('Preserve Pitch: ' + video.preservesPitch)
+        }
+        ul.appendChild(li)
         speedList.forEach((v)=>{
             const li = document.createElement('li')
             li.innerText = v + 'x'
