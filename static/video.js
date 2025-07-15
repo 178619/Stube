@@ -77,11 +77,11 @@ window.addEventListener('load', () => {
         + (((Math.floor(v % 3600 / 60) < 10 ? '0' : '') + Math.floor(v % 3600 / 60)) || '00') + ':'
         + (((Math.floor(v % 60) < 10 ? '0' : '') + Math.floor(v % 60)) || '00')
     }
-    const languageNames = new Intl.DisplayNames(navigator.languages, { type: 'language' });
+    const languageNames = new Intl.DisplayNames(navigator.languages, { type: 'language' })
     if (document.getElementById('search')) document.getElementById('search').oninput = () => {
         const key = document.getElementById('search').value.toLocaleLowerCase()
         document.querySelectorAll('#playlist > a').forEach((v)=>{
-            if (v.title.toLocaleLowerCase().includes(key) || v.name.toLocaleLowerCase().includes(key)) v.className = ''; else v.className = 'hidden';
+            if (v.title.toLocaleLowerCase().includes(key) || v.name.toLocaleLowerCase().includes(key)) v.className = ''; else v.className = 'hidden'
         })
     }
     const mask = document.getElementById("mask")
@@ -138,7 +138,7 @@ window.addEventListener('load', () => {
     }
 
     const toRandom = () => {
-        const playlist = Array.from(document.querySelectorAll('#playlist > a')).sort(trackSorter)
+        const playlist = Array.from(document.querySelectorAll('#playlist > a'))
         const index = playlist.findIndex((v)=>{return v.className.includes('playing')})
         playlist[index].classList.remove('playing')
         let ni = Math.floor(Math.random()*(playlist.length-1))
@@ -149,13 +149,13 @@ window.addEventListener('load', () => {
         video.play()
     }
 
-    const toVideo = (target, scroll=false) => {
+    const toVideo = (target, scroll=false, pushState=true) => {
         video.src = '/f/' + target.pathname.slice(3)
         if (scroll) {
             target.scrollIntoView({behavior: "smooth"})
             document.body.scrollIntoView()
         }
-        window.history.pushState(null, null, window.location.origin+target.pathname)
+        if (pushState) window.history.pushState(null, null, window.location.origin+target.pathname)
         document.querySelector('#player > h1').innerText = target.querySelector('h1').innerText
         document.querySelector('#mask > h1').innerText = target.querySelector('h1').innerText
         document.querySelectorAll('#player > h2')[0].innerText = target.getAttribute('artist')
@@ -175,7 +175,7 @@ window.addEventListener('load', () => {
                         src: window.location.origin + '/t/' + target.pathname.slice(3)
                     }
                 ]
-            });
+            })
         }
     }
 
@@ -223,11 +223,11 @@ window.addEventListener('load', () => {
                 oneAlert('To: '+getTimeString(video.duration))
                 break
             case "<":
-                if (video.playbackRate > 0.5) video.playbackRate = Math.round(video.playbackRate * 4 - 1) / 4; else video.playbackRate = 0.25;
+                if (video.playbackRate > 0.5) video.playbackRate = Math.round(video.playbackRate * 4 - 1) / 4; else video.playbackRate = 0.25
                 oneAlert('Playspeed: ' + video.playbackRate + 'x')
                 break
             case ">":
-                if (video.playbackRate < 3.75) video.playbackRate = Math.round(video.playbackRate * 4 + 1) / 4;  else video.playbackRate = 4;
+                if (video.playbackRate < 3.75) video.playbackRate = Math.round(video.playbackRate * 4 + 1) / 4;  else video.playbackRate = 4
                 oneAlert('Playspeed: ' + video.playbackRate + 'x')
                 break
             case "m":
@@ -235,11 +235,11 @@ window.addEventListener('load', () => {
                 updateVolume()
                 break
             case "ArrowUp":
-                if (video.volume < 0.95) video.volume = Math.round(video.volume * 20 + 1) / 20; else video.volume = 1;
+                if (video.volume < 0.95) video.volume = Math.round(video.volume * 20 + 1) / 20; else video.volume = 1
                 updateVolume()
                 break
             case "ArrowDown":
-                if (video.volume > 0.05) video.volume = Math.round(video.volume * 20 - 1) / 20; else video.volume = 0;
+                if (video.volume > 0.05) video.volume = Math.round(video.volume * 20 - 1) / 20; else video.volume = 0
                 updateVolume()
                 break
             case "f":
@@ -345,7 +345,7 @@ window.addEventListener('load', () => {
             video.loop = false
             document.getElementById("loop").style.backgroundImage = 'url(/static/icons/repeat-off.svg)'
             oneAlert('Repeat: Off')
-        } else if (musicLoopMode == 'repeat' || video.loop && !isMusic) {
+        } else if (musicLoopMode == 'repeat' || video.loop && !isMusic && !document.querySelector('.embed')) {
             musicLoopMode = 'random'
             video.loop = false
             document.getElementById("loop").style.backgroundImage = 'url(/static/icons/shuffle.svg)'
@@ -371,9 +371,9 @@ window.addEventListener('load', () => {
         if (e.ctrlKey) return
         e.preventDefault()
         if (e.deltaY < 0) {
-            if (video.volume < 0.95) video.volume = Math.round(video.volume * 20 + 1) / 20; else video.volume = 1;
+            if (video.volume < 0.95) video.volume = Math.round(video.volume * 20 + 1) / 20; else video.volume = 1
         } else if (e.deltaY > 0) {
-            if (video.volume > 0.05) video.volume = Math.round(video.volume * 20 - 1) / 20; else video.volume = 0;
+            if (video.volume > 0.05) video.volume = Math.round(video.volume * 20 - 1) / 20; else video.volume = 0
         }
         document.getElementById('volume-icon').style.transform = 'scale(0.875)'
         setTimeout(()=>{document.getElementById('volume-icon').style.transform = null}, 100)
@@ -387,9 +387,9 @@ window.addEventListener('load', () => {
         if (e.ctrlKey) return
         e.preventDefault()
         if (e.deltaY < 0) {
-            if (video.volume < 0.95) video.volume = Math.round(video.volume * 20 + 1) / 20; else video.volume = 1;
+            if (video.volume < 0.95) video.volume = Math.round(video.volume * 20 + 1) / 20; else video.volume = 1
         } else if (e.deltaY > 0) {
-            if (video.volume > 0.05) video.volume = Math.round(video.volume * 20 - 1) / 20; else video.volume = 0;
+            if (video.volume > 0.05) video.volume = Math.round(video.volume * 20 - 1) / 20; else video.volume = 0
         }
         updateVolume()
     }
@@ -473,9 +473,9 @@ window.addEventListener('load', () => {
         if (e.ctrlKey) return
         e.preventDefault()
         if (e.deltaY < 0) {
-            if (video.playbackRate < 3.75) video.playbackRate = Math.round(video.playbackRate * 4 + 1) / 4; else video.playbackRate = 4;
+            if (video.playbackRate < 3.75) video.playbackRate = Math.round(video.playbackRate * 4 + 1) / 4; else video.playbackRate = 4
         } else if (e.deltaY > 0) {
-            if (video.playbackRate > 0.5) video.playbackRate = Math.round(video.playbackRate * 4 - 1) / 4; else video.playbackRate = 0.25;
+            if (video.playbackRate > 0.5) video.playbackRate = Math.round(video.playbackRate * 4 - 1) / 4; else video.playbackRate = 0.25
         }
         oneAlert('Playspeed: ' + video.playbackRate + 'x')
         document.getElementById('playspeed').style.transform = 'scale(0.875)'
@@ -498,24 +498,24 @@ window.addEventListener('load', () => {
         a.click()
         a.remove()
     }
-    document.getElementById('current').style.display = 'block';
+    document.getElementById('current').style.display = 'block'
     document.getElementById('collapse').onclick = (e) => {
         if (e.pointerType == 'mouse' && e.button != 0) return
         if (document.getElementById('current').style.display != 'block') {
-            document.getElementById('current').style.display = 'block';
-            if (video.textTracks.length) document.getElementById('captions').style.display = '';
-            document.getElementById('screenshot').style.display = '';
-            document.getElementById('playspeed').style.display = '';
-            document.getElementById('embedlink').style.display = '';
-            document.getElementById('filelink').style.display = '';
+            document.getElementById('current').style.display = 'block'
+            if (video.textTracks.length) document.getElementById('captions').style.display = ''
+            document.getElementById('screenshot').style.display = ''
+            document.getElementById('playspeed').style.display = ''
+            document.getElementById('embedlink').style.display = ''
+            document.getElementById('filelink').style.display = ''
             document.getElementById("collapse").style.backgroundImage = 'url(/static/icons/tune.svg)'
         } else {
-            document.getElementById('current').style.display = '';
-            if (video.textTracks.length) document.getElementById('captions').style.display = 'block';
-            document.getElementById('screenshot').style.display = 'block';
-            document.getElementById('playspeed').style.display = 'block';
-            document.getElementById('embedlink').style.display = 'block';
-            document.getElementById('filelink').style.display = 'block';
+            document.getElementById('current').style.display = ''
+            if (video.textTracks.length) document.getElementById('captions').style.display = 'block'
+            document.getElementById('screenshot').style.display = 'block'
+            document.getElementById('playspeed').style.display = 'block'
+            document.getElementById('embedlink').style.display = 'block'
+            document.getElementById('filelink').style.display = 'block'
             document.getElementById("collapse").style.backgroundImage = 'url(/static/icons/tune-vertical.svg)'
         }
     }
@@ -590,7 +590,7 @@ window.addEventListener('load', () => {
                     src: video.poster
                 }
             ]
-        });
+        })
         navigator.mediaSession.setActionHandler('play', ()=>{
             if (!(video.currentTime > 0 && !video.paused && !video.ended && video.readyState > 2)) {
                 video.play()
@@ -636,9 +636,6 @@ window.addEventListener('load', () => {
             }
         })
         if (navigator.getAutoplayPolicy && navigator.getAutoplayPolicy("mediaelement") == 'allowed') video.play()
-        window.onpopstate = () => { 
-            location.reload()
-        }
         if (navigator.mediaSession && navigator.mediaSession.setActionHandler) {
             navigator.mediaSession.setActionHandler('previoustrack', ()=>{
                 if (video.currentTime > 5) {
@@ -663,12 +660,33 @@ window.addEventListener('load', () => {
         document.getElementById('left').remove()
         document.getElementById('right').remove()
     }
+    window.onpopstate = () => { 
+        if (location.href.replace('/v/', '/f/') != video.src) toVideo(Array.from(document.querySelectorAll('#playlist > a')).find(v=>v.pathname==location.pathname), false, false)
+    }
     tempStyle.remove()
     const current = document.querySelector('a.playing')
     if (current) current.scrollIntoView()
     document.body.scrollIntoView()
     document.body.click()
     oneAlertHandler.push(null)
+    const rd = document.createElement('a')
+    rd.textContent = 'Random'
+    rd.onclick = isMusic ? toRandom : () => {
+        const playlist = Array.from(document.querySelectorAll('#playlist > a'))
+        const index = playlist.findIndex((v)=>{return v.className.includes('playing')})
+        let ni = Math.floor(Math.random()*(playlist.length-1))
+        if (ni >= index) ni += 1
+        const target = playlist[ni%playlist.length]
+        location.href = target.href
+    }
+    rd.style.position = 'absolute'
+    rd.style.margin = '0 auto'
+    rd.style.left = '0'
+    rd.style.right = '0'
+    rd.style.width = 'fit-content'
+    rd.style.cursor = 'pointer'
+    rd.style.textIndent = '0'
+    document.querySelector('nav').appendChild(rd)
     repeat()
 })
 
