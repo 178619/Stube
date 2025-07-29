@@ -118,7 +118,7 @@ window.addEventListener('load', () => {
     }
 
     const toPrev = () => {
-        const playlist = Array.from(document.querySelectorAll('#playlist > a')).sort(trackSorter)
+        const playlist = Array.from(document.querySelectorAll('#playlist > a'))
         const index = playlist.findIndex((v)=>{return v.className.includes('playing')})
         playlist[index].classList.remove('playing')
         const target = playlist[(index-1+playlist.length)%playlist.length]
@@ -128,7 +128,7 @@ window.addEventListener('load', () => {
     }
 
     const toNext = () => {
-        const playlist = Array.from(document.querySelectorAll('#playlist > a')).sort(trackSorter)
+        const playlist = Array.from(document.querySelectorAll('#playlist > a'))
         const index = playlist.findIndex((v)=>{return v.className.includes('playing')})
         playlist[index].classList.remove('playing')
         const target = playlist[(index+1)%playlist.length]
@@ -341,11 +341,17 @@ window.addEventListener('load', () => {
     document.getElementById('loop').onclick = (e) => {
         if (e.pointerType == 'mouse' && e.button != 0) return
         if (musicLoopMode == 'random') {
+            if (isMusic) Array.from(document.querySelectorAll('#playlist > a')).sort(trackSorter).forEach((v)=>{
+                document.getElementById('playlist').appendChild(v)
+            })
             musicLoopMode = null
             video.loop = false
             document.getElementById("loop").style.backgroundImage = 'url(/static/icons/repeat-off.svg)'
             oneAlert('Repeat: Off')
         } else if (musicLoopMode == 'repeat' || video.loop && !isMusic && !document.querySelector('.embed')) {
+            if (isMusic) Array.from(document.querySelectorAll('#playlist > a:not(.playing)')).map((v)=>[v, Math.random()]).sort(([v1, a1], [v2, a2])=>a1-a2).map(([v])=>v).forEach((v)=>{
+                document.getElementById('playlist').appendChild(v)
+            })
             musicLoopMode = 'random'
             video.loop = false
             document.getElementById("loop").style.backgroundImage = 'url(/static/icons/shuffle.svg)'
@@ -556,7 +562,7 @@ window.addEventListener('load', () => {
         }
     }
     video.onended = () => {
-        if (video.currentTime == video.duration && musicLoopMode == 'random') {
+        if (video.currentTime == video.duration && !isMusic && musicLoopMode == 'random') {
             toRandom()
             video.play()
         } else if (video.currentTime == video.duration && musicLoopMode) {
