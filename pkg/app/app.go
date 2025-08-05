@@ -309,7 +309,7 @@ func (a *App) thumbHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Cache-Control", "public, max-age=7776000")
 	if m.ThumbType == "" {
 		w.Header().Set("Content-Type", "image/png")
-		http.ServeFile(w, r, "static/defaulticon.png")
+		http.ServeFile(w, r, "static/default.png")
 	} else {
 		w.Header().Set("Content-Type", m.ThumbType)
 		w.Write(m.Thumb)

@@ -22,6 +22,9 @@
         --playlist-hover-color: #1F5F7F;
         --playlist-hover-visited-color: #7F3F9F;
     }
+    .invert-light {
+        filter: invert(1);
+    }
 }
 @media (prefers-color-scheme: dark) {
     :root {
@@ -34,6 +37,9 @@
         --playlist-playing-color: #FFFFDF;
         --playlist-hover-color: #9FBFDF;
         --playlist-hover-visited-color: #DFBFFF;
+    }
+    .invert-dark {
+        filter: invert(1);
     }
 }
 

@@ -54,7 +54,7 @@
                         {{ else }}
                         <a href="/v/{{ $m.Ref }}" title="{{ $m.Title }}" name="{{ $m.ID }}">
                         {{ end }}
-                            <img src="/t/{{ $m.Ref }}">
+                            <img {{ if $m.ThumbType }} src="/t/{{ $m.Ref }}" {{else}} src="/static/default.svg" class="invert-light" {{ end }}>
                             <div>
                                 <h1>{{ $m.Title }}</h1>
                                 <h2>{{ $m.Modified }}</h2>

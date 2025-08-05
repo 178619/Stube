@@ -38,7 +38,7 @@
                         {{ else }}
                         <a href="/m/{{ $m.Ref }}" title="{{ $m.Title }}" name="{{ $m.ID }}" artist="{{ $m.Artist }}" description="{{ $m.Description }}" name="{{ $m.ID }}" {{ if $m.Disc }} disc="{{ $m.Disc }}" {{ end }} track="{{ $m.Track }}">
                         {{ end }}
-                            <img src="/t/{{ $m.Ref }}">
+                            <img {{ if $m.ThumbType }} src="/t/{{ $m.Ref }}" {{else}} src="/static/default.svg" class="invert-light" {{ end }}>
                             <div>
                                 <h1>{{ if $m.Disc }}{{ $m.Disc }}-{{ end }}{{ $m.Track }}. {{ $m.Title }}</h1>
                                 <h2>{{ $m.Modified }}</h2>
