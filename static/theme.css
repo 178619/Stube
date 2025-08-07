@@ -58,6 +58,10 @@ a {
     text-decoration: none;
 }
 
+b {
+    font-weight: bold;
+}
+
 body {
     font-family: Arial, sans-serif;
     font-size: 16px;
@@ -122,11 +126,6 @@ main {
     background: #000000;
     box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.25);
 }
-
-/* #video::cue {
-    background: rgba(0,0,0,0);
-    text-shadow: 1px 1px #000000, 1px 0px #000000, 1px -1px #000000, 0px -1px #000000, -1px -1px #000000, -1px 0px #000000, -1px 1px #000000, 0px 1px #000000, 0 0 4px #000000, 0 0 4px #000000;
-} */
 
 #video::cue(.white) {
     color: rgba(255,255,255,1);
@@ -199,6 +198,7 @@ main {
     user-select: none;
     z-index: 1;
     display: none;
+    container-type: inline-size;
 }
 
 #player > h1 {
@@ -710,7 +710,8 @@ details.description {
     text-align: center;
     transition: opacity 1000ms ease-in-out;
     width: min-content;
-    margin: 2px auto;
+    margin: 2px;
+    margin-left: auto;
     padding: 4px;
     border-radius: 4px;
 }
@@ -767,6 +768,18 @@ details.description {
 
 #mask .menu ul > li.enabled {
     background-color: rgba(0, 255, 0, 0.5);
+}
+
+#mask cue {
+    pointer-events: none;
+    position: absolute;
+    margin: auto;
+    text-shadow: 1px 1px 0 #000000, 0px 1px 0 #000000, -1px 1px 0 #000000, 1px 0px 0 #000000, -1px 0px 0 #000000, 1px -1px 0 #000000, 0px -1px 0 #000000, -1px -1px 0 #000000, 0 0 4px #1F1F1F, 0 0 4px #1F1F1F;
+    width: fit-content;
+    padding-inline: 2px;
+    white-space: pre;
+    font-size: 2.5cqi;
+    z-index: -1;
 }
 
 /* 360p */

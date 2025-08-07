@@ -6,6 +6,11 @@ const tempStyle = document.createElement('style')
 tempStyle.innerHTML = 'video {visibility: hidden;}'
 document.head.appendChild(tempStyle)
 
+const cueJSStyle = document.createElement('style')
+cueJSStyle.innerHTML = '::cue {visibility: hidden;}'
+document.head.appendChild(cueJSStyle)
+let cueJS = true
+
 const trackSorter = (v1, v2) => {
     let e1 = 0, e2 = 0
     if (v1.hasAttribute('disc')) e1 += parseInt(v1.getAttribute('disc')) << 16
@@ -220,7 +225,9 @@ window.addEventListener('load', () => {
     }
 
     const toVideo = (target, scroll=false, pushState=true) => {
+        const { playbackRate } = video
         video.src = '/f/' + target.pathname.slice(3)
+        video.playbackRate = playbackRate
         if (scroll) {
             target.scrollIntoView({behavior: "smooth"})
             document.body.scrollIntoView()
@@ -474,12 +481,26 @@ window.addEventListener('load', () => {
         if (e.pointerType == 'mouse' && e.button != 0) return
         const tracks = Array.from(video.textTracks)
         const ul = document.createElement('ul')
+        const cl = document.createElement('li')
+        cl.textContent = cueJS ? 'Mode: JS' : 'Mode: Browser'
+        cl.onclick = () => {
+            if (cueJS) {
+                cueJSStyle.innerHTML = 'cue {display: none;}'
+                cl.textContent = 'Mode: Browser'
+                cueJS = false
+            } else {
+                cueJSStyle.innerHTML = '::cue {visibility: hidden;}'
+                cl.textContent = 'Mode: JS'
+                cueJS = true
+            }
+        }
+        ul.appendChild(cl)
         tracks.forEach((v)=>{
             const li = document.createElement('li')
             try {
-                li.innerText = languageNames.of(v.language)
+                li.textContent = languageNames.of(v.language)
             } catch {
-                li.innerText = v.language
+                li.textContent = v.language
             }
             if (v.mode == 'showing') li.classList.add('enabled')
             li.onclick = (e) => {
@@ -549,9 +570,9 @@ window.addEventListener('load', () => {
         if (e.ctrlKey) return
         e.preventDefault()
         if (e.deltaY < 0) {
-            if (video.playbackRate < 3.75) video.playbackRate = Math.round(video.playbackRate * 4 + 1) / 4; else video.playbackRate = 4
+            if (video.playbackRate < 3.875) video.playbackRate = Math.round(video.playbackRate * 8 + 1) / 8; else video.playbackRate = 4
         } else if (e.deltaY > 0) {
-            if (video.playbackRate > 0.5) video.playbackRate = Math.round(video.playbackRate * 4 - 1) / 4; else video.playbackRate = 0.25
+            if (video.playbackRate > 0.375) video.playbackRate = Math.round(video.playbackRate * 8 - 1) / 8; else video.playbackRate = 0.25
         }
         oneAlert('Playspeed: ' + video.playbackRate + 'x')
         document.getElementById('playspeed').style.transform = 'scale(0.875)'
@@ -630,6 +651,41 @@ window.addEventListener('load', () => {
             document.getElementById("center").style.backgroundImage = 'url(/static/icons/play.svg)'
             document.getElementById("play-pause").style.backgroundImage = 'url(/static/icons/play.svg)'
         }
+        Array.from(video.textTracks).filter(v=>v.mode=='showing').forEach((v)=>{
+            const currentCueList = Array.from(document.querySelectorAll('#mask cue')).map(c=>c.cue)
+            const activeCues = Array.from(v.activeCues || [])
+            document.querySelectorAll('#mask cue').forEach(c=>{
+                if (!activeCues.includes(c.cue)) c.remove()
+            })
+            activeCues.forEach((cue)=>{
+                if (currentCueList.includes(cue)) return
+                const c = document.createElement('cue')
+                c.cue = cue
+                c.innerHTML = cue.text.replace(/\<c\..*?\>/g, (v)=>{
+                    if (v.startsWith('<c.color') && v.length == 15) return ('<c style="color:#'+v.slice(8, -1)+';">')
+                    return ('<c class="'+v.slice(3, -1)+'">')
+                })
+                if (cue.line == 'auto') {
+                    c.style.bottom = '0.5lh'
+                } else if (cue.line) {
+                    c.style.top = `calc(${cue.line}%)` //  - ${(cue.text.split('\n').length*cue.line/100)}lh
+                } else {
+                    c.style.top = 0
+                }
+                if (cue.position == 'auto' || cue.position == 50) {
+                    c.style.left = 0
+                    c.style.right = 0
+                } else if (cue.position > 50) {
+                    c.style.left = (cue.position * 2 - 100).toString() + '%'
+                    c.style.right = 0
+                } else if (cue.position < 50) {
+                    c.style.left = 0
+                    c.style.right = (cue.position * 2).toString() + '%'
+                }
+                c.style.textAlign = cue.align
+                document.querySelector('#mask').append(c)
+            })
+        })
     }
     video.onended = () => {
         if (video.currentTime == video.duration && !isMusic && musicLoopMode == 'random') {
