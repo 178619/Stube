@@ -20,19 +20,18 @@ const trackSorter = (v1, v2) => {
     return e1 - e2
 }
 
+const searchKeyTable_0 = [
+    'ъ', 'ь', 'ー', 'ᄋ', '­'
+]
+
 const searchKeyTable_1 = {
     'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'yo', 'ж': 'zh',
     'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o',
     'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'kh', 'ц': 'ts',
-    'ч': 'ch', 'ш': 'sh', 'щ': 'shch', 'ъ': '', 'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu',
-    'я': 'ya',
+    'ч': 'ch', 'ш': 'sh', 'щ': 'shch', 'ы': 'y', 'э': 'e', 'ю': 'yu', 'я': 'ya',
 
     'ß': 'ss',
-
-    'α': 'a', 'β': 'b', 'γ': 'g', 'δ': 'd', 'ε': 'e', 'ζ': 'z', 'η': 'i', 'θ': 'th',
-    'ι': 'i', 'κ': 'k', 'λ': 'l', 'μ': 'm', 'ν': 'n', 'ξ': 'x', 'ο': 'o', 'π': 'p',
-    'ρ': 'r', 'σ': 's', 'τ': 't', 'υ': 'y', 'φ': 'f', 'χ': 'ch', 'ψ': 'ps', 'ω': 'o',
-
+    
     'あ': 'a', 'い': 'i', 'う': 'u', 'え': 'e', 'お': 'o',
     'か': 'ka', 'き': 'ki', 'く': 'ku', 'け': 'ke', 'こ': 'ko',
     'さ': 'sa', 'し': 'shi', 'す': 'su', 'せ': 'se', 'そ': 'so',
@@ -45,7 +44,7 @@ const searchKeyTable_1 = {
     'わ': 'wa', 'を': 'wo', 'ん': 'n',
     'が': 'ga', 'ぎ': 'gi', 'ぐ': 'gu', 'げ': 'ge', 'ご': 'go',
     'ざ': 'za', 'じ': 'ji', 'ず': 'zu', 'ぜ': 'ze', 'ぞ': 'zo',
-    'だ': 'da', 'ぢ': 'di', 'づ': 'du', 'で': 'de', 'ど': 'do',
+    'だ': 'da', 'ぢ': 'ji', 'づ': 'zu', 'で': 'de', 'ど': 'do',
     'ば': 'ba', 'び': 'bi', 'ぶ': 'bu', 'べ': 'be', 'ぼ': 'bo',
     'ぱ': 'pa', 'ぴ': 'pi', 'ぷ': 'pu', 'ぺ': 'pe', 'ぽ': 'po',
     'っ': 't',
@@ -64,7 +63,7 @@ const searchKeyTable_1 = {
     'ワ': 'wa', 'ヲ': 'wo', 'ン': 'n',
     'ガ': 'ga', 'ギ': 'gi', 'グ': 'gu', 'ゲ': 'ge', 'ゴ': 'go',
     'ザ': 'za', 'ジ': 'ji', 'ズ': 'zu', 'ゼ': 'ze', 'ゾ': 'zo',
-    'ダ': 'da', 'ヂ': 'di', 'ヅ': 'du', 'デ': 'de', 'ド': 'do',
+    'ダ': 'da', 'ヂ': 'ji', 'ヅ': 'zu', 'デ': 'de', 'ド': 'do',
     'バ': 'ba', 'ビ': 'bi', 'ブ': 'bu', 'ベ': 'be', 'ボ': 'bo',
     'パ': 'pa', 'ピ': 'pi', 'プ': 'pu', 'ペ': 'pe', 'ポ': 'po',
     'ッ': 't',
@@ -73,6 +72,10 @@ const searchKeyTable_1 = {
 }
 
 const searchKeyTable_2 = {
+    'α': 'a', 'β': 'b', 'γ': 'g', 'δ': 'd', 'ε': 'e', 'ζ': 'z', 'η': 'i', 'θ': 'th',
+    'ι': 'i', 'κ': 'k', 'λ': 'l', 'μ': 'm', 'ν': 'n', 'ξ': 'x', 'ο': 'o', 'π': 'p',
+    'ρ': 'r', 'σ': 's', 'τ': 't', 'υ': 'y', 'φ': 'f', 'χ': 'ch', 'ψ': 'ps', 'ω': 'o',
+
     'ᄀ': 'g', 'ᄁ': 'gg', 'ᄂ': 'n', 'ᄃ': 'd', 'ᄄ': 'dd', 'ᄅ': 'r', 'ᄆ': 'm', 'ᄇ': 'b', 'ᄈ': 'bb',
     'ᄉ': 's', 'ᄊ': 'ss', 'ᄋ': '', 'ᄌ': 'j', 'ᄍ': 'jj', 'ᄎ': 'ch', 'ᄏ': 'k', 'ᄐ': 't', 'ᄑ': 'p', 'ᄒ': 'h',
 
@@ -83,12 +86,19 @@ const searchKeyTable_2 = {
     // Definitely need fix
     'ᆨ': 'k', 'ᆩ': 'k', 'ᆪ': 'k', 'ᆫ': 'n', 'ᆬ': 'n', 'ᆭ': 'n', 'ᆮ': 't', 'ᆯ': 'l', 'ᆰ': 'l',
     'ᆱ': 'l', 'ᆲ': 'l', 'ᆳ': 'l', 'ᆴ': 'l', 'ᆵ': 'l', 'ᆶ': 'l', 'ᆷ': 'm', 'ᆸ': 'p', 'ᆹ': 'p',
-    'ᆺ': 't', 'ᆻ': 't', 'ᆼ': 'ng', 'ᆽ': 't', 'ᆾ': 't', 'ᆿ': 'k', 'ᇀ': 't', 'ᇁ': 'p', 'ᇂ': 't'
+    'ᆺ': 't', 'ᆻ': 't', 'ᆼ': 'ng', 'ᆽ': 't', 'ᆾ': 't', 'ᆿ': 'k', 'ᇀ': 't', 'ᇁ': 'p', 'ᇂ': 't',
+    
+    '□': '■', '▫': '▪', '▭': '▬', '▯': '▮', '▱': '▰',
+    '△': '▲', '▵': '▴', '▷': '▶', '▹': '▸', '▻': '►', '▽': '▼', '▿': '▾', '◁': '◀', '◃': '◂', '◅': '◄',
+    '◇': '◆', '●': '○', '◼': '◻', '◾': '◽', '◦': '•',
+    '☆': '★', '☏': '☎', '♤': '♠', '♥': '♡', '♦': '♢', '♧': '♣',
+    
+    '⁄': '/', '‽': '!?'
 }
 
 const getSearchKey = (v) => {
     if (!v) return ''
-    return v.toLowerCase().split('').map((c)=>(searchKeyTable_1[c] || c)).join('').normalize('NFKD').split('').map((c)=>(searchKeyTable_2[c] || c)).join('').replace(/[^a-z0-9\/\. ]/g, '').trim().replace(/\s+/g, ' ')
+    return v.toLowerCase().normalize('NFKC').split('').map((c)=>(!searchKeyTable_0.includes(c) ? (searchKeyTable_1[c] || c) : '')).join('').normalize('NFKD').split('').map((c)=>(searchKeyTable_1[c] || searchKeyTable_2[c] || c)).join('').trim().replace(/\s+/g, ' ')
 }
 
 window.addEventListener('load', () => {
@@ -156,8 +166,16 @@ window.addEventListener('load', () => {
     const languageNames = new Intl.DisplayNames(navigator.languages, { type: 'language' })
     if (document.getElementById('search')) document.getElementById('search').oninput = () => {
         const key = getSearchKey(document.getElementById('search').value)
+        if (!key) {
+            document.querySelectorAll('#playlist > a.hidden').forEach((v)=>{
+                v.classList.remove('hidden')
+            })
+            return
+        }
         document.querySelectorAll('#playlist > a').forEach((v)=>{
-            if (getSearchKey(v.title).includes(key) || getSearchKey(v.name).includes(key)) v.className = ''; else v.className = 'hidden'
+            const shown = getSearchKey(v.title).includes(key) || getSearchKey(v.name).includes(key)
+            if (!v.className.includes('hidden') && !shown) v.classList.add('hidden')
+            else if (v.className.includes('hidden') && shown) v.classList.remove('hidden')
         })
     }
     const mask = document.getElementById("mask")
@@ -245,8 +263,8 @@ window.addEventListener('load', () => {
         if (document.getElementById('album')) document.getElementById('album').pathname = '/v/' + target.pathname.slice(3)
         if (navigator.mediaSession) {
             navigator.mediaSession.metadata = new MediaMetadata({
-                title: target.querySelector('h1').innerText,
-                artist: target.getAttribute('artist'),
+                title: target.querySelector('h1')?.innerText || location.pathname.split('/').pop(),
+                artist: target.getAttribute('artist') || undefined,
                 album: isMusic ? document.querySelectorAll('#player > h2')[2].innerText : undefined,
                 artwork: [  
                     {
@@ -715,8 +733,8 @@ window.addEventListener('load', () => {
     updateVolume()
     if (navigator.mediaSession) {
         navigator.mediaSession.metadata = new MediaMetadata({
-            title: document.querySelector('#player > h1') ? document.querySelector('#player > h1').innerText : document.querySelector('h1').innerText,
-            artist: document.querySelector('#player > h2') ? document.querySelector('#player > h2').innerText : undefined,
+            title: document.querySelector('#player > h1')?.innerText || document.querySelector('h1')?.innerText || location.pathname.split('/').pop(),
+            artist: document.querySelector('#player > h2')?.innerText || undefined,
             album: isMusic ? document.querySelectorAll('#player > h2')[2].innerText : undefined,
             artwork: [  
                 {
