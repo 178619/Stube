@@ -263,7 +263,7 @@ window.addEventListener('load', () => {
         if (document.getElementById('album')) document.getElementById('album').pathname = '/v/' + target.pathname.slice(3)
         if (navigator.mediaSession) {
             navigator.mediaSession.metadata = new MediaMetadata({
-                title: target.querySelector('h1')?.innerText || location.pathname.split('/').pop(),
+                title: target.querySelector('h1')?.innerText || target.pathname.split('/').pop(),
                 artist: target.getAttribute('artist') || undefined,
                 album: isMusic ? document.querySelectorAll('#player > h2')[2].innerText : undefined,
                 artwork: [  
@@ -658,7 +658,7 @@ window.addEventListener('load', () => {
             }
         }
         if (!bt) bt = ct
-        document.getElementById("seeker").style.backgroundImage = `linear-gradient(to right, rgba(0,0,0,0) 6px, var(--main-color) 6px, var(--main-color) calc(6px + ${ct * 100}% - 12px * ${ct}), rgba(223,223,223,0.75) calc(6px + ${ct * 100}% - 12px * ${ct}), rgba(223,223,223,0.75) calc(6px + ${bt * 100}% - 12px * ${bt}), rgba(191,191,191,0.5) calc(6px + ${bt * 100}% - 12px * ${bt}), rgba(191,191,191,0.5) calc(100% - 6px), rgba(191,191,191,0.5) calc(100% - 6px), rgba(0,0,0,0) calc(100% - 6px))`
+        document.getElementById("seeker").style.backgroundImage = `linear-gradient(to right, rgba(0,0,0,0) 6px, var(--main-color) 6px, var(--main-color) calc(6px + ${ct * 100}% - 12px * ${ct}), rgba(223,223,223,0.75) calc(6px + ${ct * 100}% - 12px * ${ct}), rgba(223,223,223,0.75) calc(6px + ${bt * 100}% - 12px * ${bt}), rgba(191,191,191,0.5) calc(6px + ${bt * 100}% - 12px * ${bt}), rgba(191,191,191,0.5) calc(100% - 6px), rgba(0,0,0,0) calc(100% - 6px))`
         document.getElementById("current").innerText = getTimeString(video.currentTime) + ' / ' + getTimeString(video.duration)
         if (!!(video.currentTime > 0 && !video.paused && !video.ended && video.readyState > 2)) {
             document.getElementById("center").style.backgroundImage = 'url(/static/icons/pause.svg)'
