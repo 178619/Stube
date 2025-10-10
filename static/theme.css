@@ -246,6 +246,7 @@ details > summary {
     overflow-x: hidden;
     overflow-y: auto;
     margin-top: 30px;
+    overscroll-behavior-y: contain;
 }
 
 #playlist > #search {
@@ -309,6 +310,7 @@ details > summary {
     line-height: 140%;
     text-overflow: ellipsis;
     overflow-x: clip;
+    word-break: break-word;
 }
 
 #playlist > a > div > h2 {
@@ -383,6 +385,7 @@ details.description {
     line-height: 150%;
     text-overflow: ellipsis;
     overflow-x: clip;
+    word-break: break-word;
 }
 
 #homeview > a > div > h2 {

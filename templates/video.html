@@ -10,19 +10,16 @@
     <body>
         <nav>
             <a href="/">Stube</a>
-            {{ if $playing.Album }}
             <a id="album" href="/m/{{ $playing.Ref }}">Album</a>
-            {{ end }}
         </nav>
         <main>
             <div id="player">
                 {{ if $playing.ID }}
                     {{ template "player.html" . }}
                     <h1>{{ $playing.Title }}</h1>
-                    {{ if $playing.Album }}
-                        <h2>{{ $playing.Album }}</h2>
-                    {{ end }}
+                    <h2>{{ $playing.Artist }}</h2>
                     <h2>{{ $playing.Modified }}</h2>
+                    <h2>{{ $playing.Album }}</h2>
                     <p class="description">{{ $playing.Description }}</p>
                     <details class="description">
                         <summary>Description</summary>
@@ -37,9 +34,9 @@
                 {{ if gt (len $playlist) 256 }}
                     {{ range $m := $playlist }}
                         {{ if eq $m.ID $playing.ID }}
-                        <a href="/v/{{ $m.Ref }}" title="{{ $m.Title }}" name="{{ $m.ID }}" class="playing">
+                        <a href="/v/{{ $m.Ref }}" title="{{ $m.Title }}" name="{{ $m.ID }}" {{ if $m.Album }} album="{{ $m.Album }}" {{ end }} {{ if $m.Artist }} artist="{{ $m.Artist }}" {{ end }} class="playing">
                         {{ else }}
-                        <a href="/v/{{ $m.Ref }}" title="{{ $m.Title }}" name="{{ $m.ID }}">
+                        <a href="/v/{{ $m.Ref }}" title="{{ $m.Title }}" name="{{ $m.ID }}" {{ if $m.Album }} album="{{ $m.Album }}" {{ end }} {{ if $m.Artist }} artist="{{ $m.Artist }}" {{ end }}>
                         {{ end }}
                             <div>
                                 <h1>{{ $m.Title }}</h1>
@@ -50,11 +47,11 @@
                 {{ else }}
                     {{ range $m := $playlist }}
                         {{ if eq $m.ID $playing.ID }}
-                        <a href="/v/{{ $m.Ref }}" title="{{ $m.Title }}" name="{{ $m.ID }}" class="playing">
+                        <a href="/v/{{ $m.Ref }}" title="{{ $m.Title }}" name="{{ $m.ID }}" {{ if $m.Album }} album="{{ $m.Album }}" {{ end }} {{ if $m.Artist }} artist="{{ $m.Artist }}" {{ end }} class="playing">
                         {{ else }}
-                        <a href="/v/{{ $m.Ref }}" title="{{ $m.Title }}" name="{{ $m.ID }}">
+                        <a href="/v/{{ $m.Ref }}" title="{{ $m.Title }}" name="{{ $m.ID }}" {{ if $m.Album }} album="{{ $m.Album }}" {{ end }} {{ if $m.Artist }} artist="{{ $m.Artist }}" {{ end }}>
                         {{ end }}
-                            <img {{ if $m.ThumbType }} src="/t/{{ $m.Ref }}" {{else}} src="/static/default.svg" class="invert-light" {{ end }}>
+                            <img {{ if $m.ThumbType }} src="/t/{{ $m.Ref }}" {{ else }} src="/static/default.svg" class="invert-light" {{ end }}>
                             <div>
                                 <h1>{{ $m.Title }}</h1>
                                 <h2>{{ $m.Modified }}</h2>

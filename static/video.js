@@ -21,10 +21,13 @@ const trackSorter = (v1, v2) => {
 }
 
 const searchKeyTable_0 = [
-    'ъ', 'ь', 'ー', 'ᄋ', '­'
+    'ъ', 'ь', 'ー', 'ᄋ', '­', '¿', '¡', '⸘'
 ]
 
 const searchKeyTable_1 = {
+    '‚': '\'', '„': '"', '‘': '\'', '’': '\'', '“': '"', '”': '"', '•': ' ', '–': '-', '—': '-',
+    '™': 'tm', 'æ': 'ae', 'œ': 'oe', 'ɶ': 'oe', 'þ': 'th', '«': '"', '»': '"', '×': '*', ';': ',',
+
     'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'yo', 'ж': 'zh',
     'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o',
     'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'kh', 'ц': 'ts',
@@ -68,7 +71,10 @@ const searchKeyTable_1 = {
     'パ': 'pa', 'ピ': 'pi', 'プ': 'pu', 'ペ': 'pe', 'ポ': 'po',
     'ッ': 't',
     'ァ': 'a', 'ィ': 'i', 'ゥ': 'u', 'ェ': 'e', 'ォ': 'o',
-    'ャ': 'ya', 'ュ': 'yu', 'ョ': 'yo', 'ヮ': 'wa'
+    'ャ': 'ya', 'ュ': 'yu', 'ョ': 'yo', 'ヮ': 'wa',
+
+    '　': ' ', '、': ',', '。': '.', '〇': '0', '〈': '\'', '〉': '\'', '《': '"', '》': '"',
+    '「': '\'', '」': '\'', '『': '"', '』': '"', '【': '[', '】': ']', '〜': '~', '゠': ' ', '・': ' ',
 }
 
 const searchKeyTable_2 = {
@@ -152,7 +158,7 @@ window.addEventListener('load', () => {
         }
     }
     let pointerWaitTime = 0
-    let musicLoopMode = false
+    let musicLoopMode = null
     const keyList = [
         " ", "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", ",", ".", ">", "<", "Home", "End",
         "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "/", "f", "c", "k", "m", "j", "l", "N", "P"
@@ -173,7 +179,7 @@ window.addEventListener('load', () => {
             return
         }
         document.querySelectorAll('#playlist > a').forEach((v)=>{
-            const shown = getSearchKey(v.title).includes(key) || getSearchKey(v.name).includes(key)
+            const shown = getSearchKey(v.title).includes(key) || getSearchKey(v.name).includes(key) || getSearchKey(v.getAttribute('album')).includes(key) || getSearchKey(v.getAttribute('artist')).includes(key)
             if (!v.className.includes('hidden') && !shown) v.classList.add('hidden')
             else if (v.className.includes('hidden') && shown) v.classList.remove('hidden')
         })
@@ -190,8 +196,10 @@ window.addEventListener('load', () => {
     const playOrPause = () => {
         if (!!(video.currentTime > 0 && !video.paused && !video.ended && video.readyState > 2)) {
             video.pause()
+            if (navigator.mediaSession && navigator.mediaSession.playbackState != 'paused') navigator.mediaSession.playbackState = 'paused'
         } else {
             video.play()
+            if (navigator.mediaSession && navigator.mediaSession.playbackState != 'playing') navigator.mediaSession.playbackState = 'playing'
         }
     }
     const getFullscreen = () => {
@@ -219,6 +227,7 @@ window.addEventListener('load', () => {
         target.classList.add('playing')
         toVideo(target, true)
         video.play()
+        if (navigator.mediaSession && navigator.mediaSession.playbackState != 'playing') navigator.mediaSession.playbackState = 'playing'
     }
 
     const toNext = () => {
@@ -229,6 +238,7 @@ window.addEventListener('load', () => {
         target.classList.add('playing')
         toVideo(target, true)
         video.play()
+        if (navigator.mediaSession && navigator.mediaSession.playbackState != 'playing') navigator.mediaSession.playbackState = 'playing'
     }
 
     const toRandom = () => {
@@ -241,31 +251,30 @@ window.addEventListener('load', () => {
         target.classList.add('playing')
         toVideo(target, true)
         video.play()
+        if (navigator.mediaSession && navigator.mediaSession.playbackState != 'playing') navigator.mediaSession.playbackState = 'playing'
     }
 
     const toVideo = (target, scroll=false, pushState=true) => {
         const { playbackRate } = video
         video.src = '/f/' + target.pathname.slice(3)
         video.playbackRate = playbackRate
-        if (scroll) {
-            target.scrollIntoView({behavior: "smooth"})
-            document.body.scrollIntoView()
-        }
+        if (scroll) document.querySelector('#playlist').scrollTo({behavior: "smooth", top:target.offsetTop-document.querySelector('#playlist').offsetTop})
         if (pushState) window.history.pushState(null, null, window.location.origin+target.pathname)
         document.querySelector('#player > h1').innerText = target.querySelector('h1').innerText
         document.querySelector('#mask > h1').innerText = target.querySelector('h1').innerText
         document.querySelectorAll('#player > h2')[0].innerText = target.getAttribute('artist')
-        document.querySelectorAll('#player > h2')[1].innerText = target.querySelector('h2').innerText
+        document.querySelectorAll('#player > h2')[1].innerText = target.querySelector('h2')?.innerText
+        if (!isMusic) document.querySelectorAll('#player > h2')[2].innerText = target.getAttribute('album')
         document.querySelector('p.description').innerText = target.getAttribute('description')
         document.querySelector('details.description > span').innerText = target.getAttribute('description')
         document.title = target.querySelector('h1').innerText + ' - Stube'
         video.poster = '/t/' + target.pathname.slice(3)
-        if (document.getElementById('album')) document.getElementById('album').pathname = '/v/' + target.pathname.slice(3)
+        document.getElementById('album').pathname = (isMusic ? '/v/' : '/m/') + target.pathname.slice(3)
         if (navigator.mediaSession) {
             navigator.mediaSession.metadata = new MediaMetadata({
                 title: target.querySelector('h1')?.innerText || target.pathname.split('/').pop(),
                 artist: target.getAttribute('artist') || undefined,
-                album: isMusic ? document.querySelectorAll('#player > h2')[2].innerText : undefined,
+                album: document.querySelectorAll('#player > h2')[2]?.innerText || undefined,
                 artwork: [  
                     {
                         src: window.location.origin + '/t/' + target.pathname.slice(3)
@@ -436,7 +445,7 @@ window.addEventListener('load', () => {
     }
     document.getElementById('loop').onclick = (e) => {
         if (e.pointerType == 'mouse' && e.button != 0) return
-        if (musicLoopMode == 'random') {
+        if (musicLoopMode == 'random' || video.loop && document.querySelector('.embed')) {
             if (isMusic) Array.from(document.querySelectorAll('#playlist > a')).sort(trackSorter).forEach((v)=>{
                 document.getElementById('playlist').appendChild(v)
             })
@@ -444,7 +453,7 @@ window.addEventListener('load', () => {
             video.loop = false
             document.getElementById("loop").style.backgroundImage = 'url(/static/icons/repeat-off.svg)'
             oneAlert('Repeat: Off')
-        } else if (musicLoopMode == 'repeat' || video.loop && !isMusic && !document.querySelector('.embed')) {
+        } else if (musicLoopMode == 'repeat') {
             if (isMusic) Array.from(document.querySelectorAll('#playlist > a:not(.playing)')).map((v)=>[v, Math.random()]).sort(([v1, a1], [v2, a2])=>a1-a2).map(([v])=>v).forEach((v)=>{
                 document.getElementById('playlist').appendChild(v)
             })
@@ -658,7 +667,7 @@ window.addEventListener('load', () => {
             }
         }
         if (!bt) bt = ct
-        document.getElementById("seeker").style.backgroundImage = `linear-gradient(to right, rgba(0,0,0,0) 6px, var(--main-color) 6px, var(--main-color) calc(6px + ${ct * 100}% - 12px * ${ct}), rgba(223,223,223,0.75) calc(6px + ${ct * 100}% - 12px * ${ct}), rgba(223,223,223,0.75) calc(6px + ${bt * 100}% - 12px * ${bt}), rgba(191,191,191,0.5) calc(6px + ${bt * 100}% - 12px * ${bt}), rgba(191,191,191,0.5) calc(100% - 6px), rgba(0,0,0,0) calc(100% - 6px))`
+        document.getElementById("seeker").style.backgroundImage = `linear-gradient(to right, rgba(0,0,0,0) 6px, var(--main-color) 6px calc(6px + ${ct * 100}% - 12px * ${ct}), rgba(223,223,223,0.75) calc(6px + ${ct * 100}% - 12px * ${ct}) calc(6px + ${bt * 100}% - 12px * ${bt}), rgba(191,191,191,0.5) calc(6px + ${bt * 100}% - 12px * ${bt}) calc(100% - 6px), rgba(0,0,0,0) calc(100% - 6px))`
         document.getElementById("current").innerText = getTimeString(video.currentTime) + ' / ' + getTimeString(video.duration)
         if (!!(video.currentTime > 0 && !video.paused && !video.ended && video.readyState > 2)) {
             document.getElementById("center").style.backgroundImage = 'url(/static/icons/pause.svg)'
@@ -706,17 +715,22 @@ window.addEventListener('load', () => {
             })
         })
     }
+    video.onplay = () => {
+        if (navigator.mediaSession && navigator.mediaSession.playbackState != 'playing') navigator.mediaSession.playbackState = 'playing'
+    }
+    video.onpause = () => {
+        if (navigator.mediaSession && navigator.mediaSession.playbackState != 'paused') navigator.mediaSession.playbackState = 'paused'
+    }
     video.onended = () => {
+        if (navigator.mediaSession) navigator.mediaSession.playbackState = 'none'
         if (video.currentTime == video.duration && !isMusic && musicLoopMode == 'random') {
             toRandom()
-            video.play()
         } else if (video.currentTime == video.duration && musicLoopMode) {
             toNext()
-            video.play()
         }
     }
     const updateVolume = () => {
-        document.getElementById("volume").style.backgroundImage = `linear-gradient(to right, rgba(0,0,0,0) 6px, var(--main-color) 6px, var(--main-color) calc(6px + ${video.volume * 100}% - 12px * ${video.volume}), rgba(191,191,191,0.5) calc(6px + ${video.volume * 100}% - 12px * ${video.volume}), rgba(191,191,191,0.5) calc(100% - 6px), rgba(0,0,0,0) calc(100% - 6px))`
+        document.getElementById("volume").style.backgroundImage = `linear-gradient(to right, rgba(0,0,0,0) 6px, var(--main-color) 6px calc(6px + ${video.volume * 100}% - 12px * ${video.volume}), rgba(191,191,191,0.5) calc(6px + ${video.volume * 100}% - 12px * ${video.volume}) calc(100% - 6px), rgba(0,0,0,0) calc(100% - 6px))`
         document.getElementById("volume").value = video.volume
         if (video.muted) {
             document.getElementById("volume-icon").style.backgroundImage = 'url(/static/icons/volume-off.svg)'
@@ -735,28 +749,31 @@ window.addEventListener('load', () => {
         navigator.mediaSession.metadata = new MediaMetadata({
             title: document.querySelector('#player > h1')?.innerText || document.querySelector('h1')?.innerText || location.pathname.split('/').pop(),
             artist: document.querySelector('#player > h2')?.innerText || undefined,
-            album: isMusic ? document.querySelectorAll('#player > h2')[2].innerText : undefined,
+            album: document.querySelectorAll('#player > h2')[2]?.innerText || undefined,
             artwork: [  
                 {
-                    src: video.poster
+                    src: window.location.origin + '/t/' + window.location.pathname.slice(3)
                 }
             ]
         })
         navigator.mediaSession.setActionHandler('play', ()=>{
             if (!(video.currentTime > 0 && !video.paused && !video.ended && video.readyState > 2)) {
                 video.play()
+                if (navigator.mediaSession && navigator.mediaSession.playbackState != 'playing') navigator.mediaSession.playbackState = 'playing'
             }
             // showMask()
         })
         navigator.mediaSession.setActionHandler('pause', ()=>{
             if (!!(video.currentTime > 0 && !video.paused && !video.ended && video.readyState > 2)) {
                 video.pause()
+                if (navigator.mediaSession && navigator.mediaSession.playbackState != 'paused') navigator.mediaSession.playbackState = 'paused'
             }
             // showMask()
         })
         navigator.mediaSession.setActionHandler('stop', ()=>{
             if (!!(video.currentTime > 0 && !video.paused && !video.ended && video.readyState > 2)) {
                 video.pause()
+                if (navigator.mediaSession && navigator.mediaSession.playbackState != 'none') navigator.mediaSession.playbackState = 'none'
             }
             video.currentTime = 0
             // showMask()
@@ -773,51 +790,68 @@ window.addEventListener('load', () => {
             video.currentTime = seekTime
             // showMask()
         })
+        navigator.mediaSession.setActionHandler('previoustrack', ()=>{
+            if (video.currentTime > 5) {
+                video.currentTime = 0
+            } else toPrev()
+            // showMask()
+        })
+        navigator.mediaSession.setActionHandler('nexttrack', ()=>{
+            if (!isMusic && musicLoopMode == 'random') {
+                toRandom()
+            } else toNext()
+            // showMask()
+        })
     }
+    Array.from(document.querySelectorAll('#playlist > a')).forEach((v)=>{
+        v.onclick = (e) => {
+            e.preventDefault()
+            document.querySelector('#playlist > a.playing').classList.remove('playing')
+            const target = v
+            target.classList.add('playing')
+            toVideo(target)
+            if (isMusic) {
+                video.play()
+                if (navigator.mediaSession && navigator.mediaSession.playbackState != 'playing') navigator.mediaSession.playbackState = 'playing'
+            }
+        }
+    })
     if (isMusic) {
         Array.from(document.querySelectorAll('#playlist > a')).sort(trackSorter).forEach((v)=>{
             document.getElementById('playlist').appendChild(v)
-            v.onclick = (e) => {
-                e.preventDefault()
-                document.querySelector('#playlist > a.playing').classList.remove('playing')
-                const target = v
-                target.classList.add('playing')
-                toVideo(target)
-                video.play()
-            }
         })
-        if (navigator.getAutoplayPolicy && navigator.getAutoplayPolicy("mediaelement") == 'allowed') video.play()
-        if (navigator.mediaSession && navigator.mediaSession.setActionHandler) {
-            navigator.mediaSession.setActionHandler('previoustrack', ()=>{
-                if (video.currentTime > 5) {
-                    video.currentTime = 0
-                } else toPrev()
-                // showMask()
-            })
-            navigator.mediaSession.setActionHandler('nexttrack', ()=>{
-                toNext()
-                // showMask()
-            })
+        if (navigator.getAutoplayPolicy && navigator.getAutoplayPolicy("mediaelement") == 'allowed') {
+            video.play()
+            if (navigator.mediaSession && navigator.mediaSession.playbackState != 'playing') navigator.mediaSession.playbackState = 'playing'
         }
-        document.getElementById('left').onpointerdown = (e) => {
-            if (e.pointerType == 'mouse' && e.button != 0) return
-            toPrev()
+    }
+    document.getElementById('left').onpointerdown = (e) => {
+        if (e.pointerType == 'mouse' && e.button != 0) return
+        toPrev()
+    }
+    document.getElementById('right').onpointerdown = (e) => {
+        if (e.pointerType == 'mouse' && e.button != 0) return
+        if (!isMusic && musicLoopMode == 'random') {
+            toRandom()
+            return
         }
-        document.getElementById('right').onpointerdown = (e) => {
-            if (e.pointerType == 'mouse' && e.button != 0) return
-            toNext()
-        }
-    } else {
-        document.getElementById('left').remove()
-        document.getElementById('right').remove()
+        toNext()
     }
     window.onpopstate = () => { 
-        if (location.href.replace('/v/', '/f/') != video.src) toVideo(Array.from(document.querySelectorAll('#playlist > a')).find(v=>v.pathname==location.pathname), false, false)
+        if (!isMusic && location.href.replace('/v/', '/f/') != video.src || isMusic && location.href.replace('/m/', '/f/') != video.src) {
+            document.querySelector('#playlist > a.playing').classList.remove('playing')
+            const target = Array.from(document.querySelectorAll('#playlist > a')).find(v=>v.pathname==location.pathname)
+            target.classList.add('playing')
+            toVideo(target, false, false)
+            if (isMusic && navigator.getAutoplayPolicy && navigator.getAutoplayPolicy("mediaelement") == 'allowed') {
+                video.play()
+                if (navigator.mediaSession && navigator.mediaSession.playbackState != 'playing') navigator.mediaSession.playbackState = 'playing'
+            }
+        }
     }
     tempStyle.remove()
     const current = document.querySelector('a.playing')
-    if (current) current.scrollIntoView()
-    document.body.scrollIntoView()
+    if (current) document.querySelector('#playlist').scrollTo({top:current.offsetTop-document.querySelector('#playlist').offsetTop})
     document.body.click()
     oneAlertHandler.push(null)
     const rd = document.createElement('a')
