@@ -31,33 +31,18 @@
             </div>
             <div id="playlist">
                 <input id="search" type="text" placeholder="Search...">
-                {{ if gt (len $playlist) 256 }}
-                    {{ range $m := $playlist }}
-                        {{ if eq $m.ID $playing.ID }}
-                        <a href="/v/{{ $m.Ref }}" title="{{ $m.Title }}" name="{{ $m.ID }}" {{ if $m.Album }} album="{{ $m.Album }}" {{ end }} {{ if $m.Artist }} artist="{{ $m.Artist }}" {{ end }} class="playing">
-                        {{ else }}
-                        <a href="/v/{{ $m.Ref }}" title="{{ $m.Title }}" name="{{ $m.ID }}" {{ if $m.Album }} album="{{ $m.Album }}" {{ end }} {{ if $m.Artist }} artist="{{ $m.Artist }}" {{ end }}>
-                        {{ end }}
-                            <div>
-                                <h1>{{ $m.Title }}</h1>
-                                <h2>{{ $m.Modified }}</h2>
-                            </div>
-                        </a>
+                {{ range $m := $playlist }}
+                    {{ if eq $m.ID $playing.ID }}
+                    <a href="/v/{{ $m.Ref }}" title="{{ $m.Title }}" name="{{ $m.ID }}" {{ if $m.Album }} album="{{ $m.Album }}" {{ end }} {{ if $m.Artist }} artist="{{ $m.Artist }}" {{ end }} class="playing">
+                    {{ else }}
+                    <a href="/v/{{ $m.Ref }}" title="{{ $m.Title }}" name="{{ $m.ID }}" {{ if $m.Album }} album="{{ $m.Album }}" {{ end }} {{ if $m.Artist }} artist="{{ $m.Artist }}" {{ end }}>
                     {{ end }}
-                {{ else }}
-                    {{ range $m := $playlist }}
-                        {{ if eq $m.ID $playing.ID }}
-                        <a href="/v/{{ $m.Ref }}" title="{{ $m.Title }}" name="{{ $m.ID }}" {{ if $m.Album }} album="{{ $m.Album }}" {{ end }} {{ if $m.Artist }} artist="{{ $m.Artist }}" {{ end }} class="playing">
-                        {{ else }}
-                        <a href="/v/{{ $m.Ref }}" title="{{ $m.Title }}" name="{{ $m.ID }}" {{ if $m.Album }} album="{{ $m.Album }}" {{ end }} {{ if $m.Artist }} artist="{{ $m.Artist }}" {{ end }}>
-                        {{ end }}
-                            <img {{ if $m.ThumbType }} src="/t/{{ $m.Ref }}" {{ else }} src="/static/default.svg" class="invert-light" {{ end }}>
-                            <div>
-                                <h1>{{ $m.Title }}</h1>
-                                <h2>{{ $m.Modified }}</h2>
-                            </div>
-                        </a>
-                    {{ end }}
+                        <img loading="lazy" {{ if $m.ThumbType }} src="/t/{{ $m.Ref }}" {{ else }} src="/static/default.svg" class="invert-light" {{ end }}>
+                        <div>
+                            <h1>{{ $m.Title }}</h1>
+                            <h2>{{ $m.Modified }}</h2>
+                        </div>
+                    </a>
                 {{ end }}
             </div>
         </main>

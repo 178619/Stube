@@ -11,7 +11,7 @@
             <div id="homeview">
                 {{ range $m := .Playlist }}
                     <a href="/v/{{ $m.Ref }}" title="{{ $m.Title }}" name="{{ $m.ID }}" key="{{ $m.ID }}￨{{ $m.Title }}￨{{ $m.Album }}￨{{ $m.Artist }}">
-                        <img {{ if $m.ThumbType }} src="/t/{{ $m.Ref }}" {{else}} src="/static/default.svg" class="invert-light" {{ end }}>
+                        <img loading="lazy" {{ if $m.ThumbType }} src="/t/{{ $m.Ref }}" {{else}} src="/static/default.svg" class="invert-light" {{ end }}>
                         <div>
                             <h1>{{ $m.Title }}</h1>
                             {{ if $m.Album }}

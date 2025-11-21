@@ -878,6 +878,8 @@ details.description {
         margin-top: 10px;
         margin-left: 0;
         display: block;
+        height: calc(100vh - 480px);
+        min-height: 240px;
     }
     p.description {
         display: none;
