@@ -180,8 +180,8 @@ window.addEventListener('load', () => {
         }
         document.querySelectorAll('#playlist > a').forEach((v)=>{
             const shown = getSearchKey(v.title).includes(key) || getSearchKey(v.name).includes(key) || getSearchKey(v.getAttribute('album')).includes(key) || getSearchKey(v.getAttribute('artist')).includes(key)
-            if (!v.className.includes('hidden') && !shown) v.classList.add('hidden')
-            else if (v.className.includes('hidden') && shown) v.classList.remove('hidden')
+            if (!v.classList.contains('hidden') && !shown) v.classList.add('hidden')
+            else if (v.classList.contains('hidden') && shown) v.classList.remove('hidden')
         })
     }
     const mask = document.getElementById("mask")
@@ -219,7 +219,7 @@ window.addEventListener('load', () => {
 
     const toPrev = () => {
         const playlist = Array.from(document.querySelectorAll('#playlist > a'))
-        const index = playlist.findIndex((v)=>{return v.className.includes('playing')})
+        const index = playlist.findIndex((v)=>{return v.classList.contains('playing')})
         playlist[index].classList.remove('playing')
         const target = playlist[(index-1+playlist.length)%playlist.length]
         target.classList.add('playing')
@@ -229,7 +229,7 @@ window.addEventListener('load', () => {
 
     const toNext = () => {
         const playlist = Array.from(document.querySelectorAll('#playlist > a'))
-        const index = playlist.findIndex((v)=>{return v.className.includes('playing')})
+        const index = playlist.findIndex((v)=>{return v.classList.contains('playing')})
         playlist[index].classList.remove('playing')
         const target = playlist[(index+1)%playlist.length]
         target.classList.add('playing')
@@ -239,7 +239,7 @@ window.addEventListener('load', () => {
 
     const toRandom = () => {
         const playlist = Array.from(document.querySelectorAll('#playlist > a'))
-        const index = playlist.findIndex((v)=>{return v.className.includes('playing')})
+        const index = playlist.findIndex((v)=>{return v.classList.contains('playing')})
         playlist[index].classList.remove('playing')
         let ni = Math.floor(Math.random()*(playlist.length-1))
         if (ni >= index) ni += 1
@@ -357,13 +357,13 @@ window.addEventListener('load', () => {
         updateSeeker()
     }
     mask.onmouseenter = (e) => {
-        if (!mask.className.includes('shown')) {
+        if (!mask.classList.contains('shown')) {
             updateSeeker()
             mask.classList.add('shown')
         }
     }
     mask.onmouseleave = (e) => {
-        if (mask.classList.value.includes('shown')) {
+        if (mask.classList.contains('shown')) {
             document.getElementById('center').style.transform = null
             mask.classList.remove('shown')
         }
@@ -371,7 +371,7 @@ window.addEventListener('load', () => {
     mask.onpointerdown = (e) => {
         if (e.target.id != 'mask' || e.pointerType == 'mouse' && e.button != 0) return
         if (e.pointerType == 'touch') {
-            if (mask.classList.value.includes('shown')) {
+            if (mask.classList.contains('shown')) {
                 mask.classList.remove('shown')
             } else {
                 updateSeeker()
@@ -885,7 +885,7 @@ window.addEventListener('load', () => {
         rd.textContent = 'Random'
         rd.onclick = isMusic ? toRandom : () => {
             const playlist = Array.from(document.querySelectorAll('#playlist > a'))
-            const index = playlist.findIndex((v)=>{return v.className.includes('playing')})
+            const index = playlist.findIndex((v)=>{return v.classList.contains('playing')})
             let ni = Math.floor(Math.random()*(playlist.length-1))
             if (ni >= index) ni += 1
             const target = playlist[ni%playlist.length]

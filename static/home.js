@@ -7,7 +7,7 @@ window.addEventListener('load', () => {
     input.oninput = () => {
         const key = input.value.toLocaleLowerCase()
         document.querySelectorAll('#homeview > a').forEach((v)=>{
-            if (v.getAttribute('key').toLocaleLowerCase().includes(key)) v.className = ''; else v.className = 'hidden';
+            v.classList.toggle('hidden', !v.getAttribute('key').toLocaleLowerCase().includes(key))
         })
     }
     document.querySelector('nav').appendChild(input)
