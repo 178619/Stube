@@ -169,7 +169,7 @@ window.addEventListener('load', () => {
         + (((Math.floor(v % 3600 / 60) < 10 ? '0' : '') + Math.floor(v % 3600 / 60)) || '00') + ':'
         + (((Math.floor(v % 60) < 10 ? '0' : '') + Math.floor(v % 60)) || '00')
     }
-    const languageNames = new Intl.DisplayNames(navigator.languages, { type: 'language' })
+    const languageNames = window.Intl?.DisplayNames ? new Intl.DisplayNames(navigator.languages, { type: 'language' }) : undefined
     if (document.getElementById('search')) document.getElementById('search').oninput = () => {
         const key = getSearchKey(document.getElementById('search').value)
         if (!key) {
@@ -184,15 +184,15 @@ window.addEventListener('load', () => {
             else if (v.classList.contains('hidden') && shown) v.classList.remove('hidden')
         })
     }
-    const mask = document.getElementById("mask")
+    const mask = document.getElementById('mask')
     if (!mask) {
         tempStyle.remove()
         return
     }
     mask.style.display = 'block'
-    const video = document.getElementById("video")
+    const video = document.getElementById('video')
     if (video.hasAttribute('controls')) video.removeAttribute('controls')
-    const player = document.getElementById("player")
+    const player = document.getElementById('player')
     const playOrPause = () => {
         if (!!(video.currentTime > 0 && !video.paused && !video.ended && video.readyState > 2)) {
             video.pause()
@@ -253,7 +253,7 @@ window.addEventListener('load', () => {
         const { playbackRate } = video
         video.src = '/f/' + target.pathname.slice(3)
         video.playbackRate = playbackRate
-        if (scroll) document.querySelector('#playlist').scrollTo({behavior: "smooth", top:target.offsetTop-document.querySelector('#playlist').offsetTop})
+        if (scroll) document.querySelector('#playlist').scrollTo({behavior: 'smooth', top:target.offsetTop-document.querySelector('#playlist').offsetTop})
         if (pushState) window.history.pushState(null, null, location.origin+target.pathname)
         document.querySelector('#player > h1').textContent = target.querySelector('h1').textContent
         document.querySelector('#mask > h1').textContent = target.querySelector('h1').textContent
@@ -265,6 +265,7 @@ window.addEventListener('load', () => {
         document.title = target.querySelector('h1').textContent + ' - Stube'
         video.poster = '/t/' + target.pathname.slice(3)
         document.getElementById('album').pathname = (isMusic ? '/v/' : '/m/') + target.pathname.slice(3)
+        document.getElementById('filelink').setAttribute('href', '/f/' + target.pathname.slice(3))
         if (navigator.mediaSession) {
             navigator.mediaSession.metadata = new MediaMetadata({
                 title: target.querySelector('h1')?.textContent || target.pathname.split('/').pop(),
@@ -412,7 +413,7 @@ window.addEventListener('load', () => {
     document.querySelector('#mask h1').onclick = (e) => {
         if (e.pointerType == 'mouse' && e.button != 0) return
         if (!document.querySelector('.embed')) return
-        open(location.origin + location.pathname.replace('/e/', '/v/'))
+        open(location.origin + '/v/' + location.pathname.slice(3))
     }
     document.getElementById('center').onpointerdown = (e) => {
         if (e.pointerType == 'mouse' && e.button != 0) return
@@ -421,12 +422,30 @@ window.addEventListener('load', () => {
     document.getElementById('seeker').onwheel = (e) => {
         if (e.ctrlKey) return
         e.preventDefault()
-        addTime(e.wheelDeltaY / 100)
+        let delta = -e.deltaY
+        if (delta) {
+            switch (e.deltaMode) {
+                case 2:
+                    delta *= 24
+                case 1:
+                    delta *= 40
+            }
+        } else delta = e.wheelDeltaY
+        addTime(delta / 100)
     }
     mask.onwheel = (e) => {
         if (e.ctrlKey || e.target.nodeName == 'LI' || e.target.nodeName == 'INPUT' || e.target.nodeName == 'BUTTON' && e.target.id != 'left' && e.target.id != 'center' && e.target.id != 'right') return
         e.preventDefault()
-        addTime(e.wheelDeltaY / 100)
+        let delta = -e.deltaY
+        if (delta) {
+            switch (e.deltaMode) {
+                case 2:
+                    delta *= 24
+                case 1:
+                    delta *= 40
+            }
+        } else delta = e.wheelDeltaY
+        addTime(delta / 100)
     }
     document.getElementById('seeker').oninput = () => {
         video.currentTime = document.getElementById('seeker').value / 1000
@@ -601,11 +620,11 @@ window.addEventListener('load', () => {
     }
     document.getElementById('embedlink').onclick = (e) => {
         if (e.pointerType == 'mouse' && e.button == 1) {
-            open(location.origin + location.pathname.replace('/v/', '/e/'))
+            open(location.origin + '/e/' + location.pathname.slice(3))
             return
         }
         if (e.pointerType == 'mouse' && e.button != 0) return
-        navigator.clipboard.writeText('<iframe src="'+location.origin+location.pathname.replace('/v/', '/e/')+'" width=320 height=180 allowfullscreen></iframe>')
+        navigator.clipboard.writeText('<iframe src="' + location.origin + '/e/' + location.pathname.slice(3) + '" width=320 height=180 allowfullscreen></iframe>')
         oneAlert('HTML code Copied to Clipboard.')
     }
     document.getElementById('filelink').onclick = (e) => {

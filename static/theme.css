@@ -94,7 +94,8 @@ nav > #search {
     height: 30px;
     width: 40%;
     max-width: 320px;
-    padding-inline: 8px;
+    padding-left: 8px;
+    padding-right: 8px;
     background: var(--background-sub-color);
     border: 1px solid #7F7F7F;
     color: var(--text-color);
@@ -106,9 +107,11 @@ nav > #search {
 }
 
 main {
+    width: -moz-fit-content;
     width: fit-content;
     max-width: 1200px;
-    margin-inline: auto;
+    margin-left: auto;
+    margin-right: auto;
     margin-top: 15px;
     white-space: nowrap;
 }
@@ -226,6 +229,7 @@ main {
 #player > details {
     margin-top: 10px;
     font-size: 80%;
+    width: -moz-fit-content;
     width: fit-content;
     transition: width 200ms;
     white-space: normal;
@@ -253,7 +257,8 @@ details > summary {
     height: 30px;
     width: inherit;
     max-width: inherit;
-    padding-inline: 8px;
+    padding-left: 8px;
+    padding-right: 8px;
     background: var(--background-sub-color);
     box-shadow: 0 0 0 1px rgb(127, 127, 127), 0 0 2px 2px rgba(0, 0, 0, 0.25);
     color: var(--text-color);
@@ -492,7 +497,8 @@ details.description {
     bottom: 0;
     height: 80px;
     width: 100%;
-    padding-inline: 12px;
+    padding-left: 12px;
+    padding-right: 12px;
     background: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0.75), rgba(0,0,0,1));
     display: none;
     justify-content: space-between;
@@ -618,7 +624,8 @@ details.description {
 
 #mask #control #current {
     align-self: center;
-    margin-inline: 4px;
+    margin-left: 4px;
+    margin-right: 4px;
     font-family: 'Roboto Mono', 'Consolas', 'Lucida Console', monospace;
     color: #DFDFDF;
 }
@@ -674,7 +681,8 @@ details.description {
 
 .fullscreen #mask #control {
     padding-bottom: 8px;
-    padding-inline: 24px;
+    padding-left: 24px;
+    padding-right: 24px;
 }
 
 .fullscreen #mask #control #fullscreen {
@@ -778,8 +786,10 @@ details.description {
     position: absolute;
     margin: auto;
     text-shadow: 1px 1px 0 #000000, 0px 1px 0 #000000, -1px 1px 0 #000000, 1px 0px 0 #000000, -1px 0px 0 #000000, 1px -1px 0 #000000, 0px -1px 0 #000000, -1px -1px 0 #000000, 0 0 4px #1F1F1F, 0 0 4px #1F1F1F;
+    width: -moz-fit-content;
     width: fit-content;
-    padding-inline: 2px;
+    padding-left: 2px;
+    padding-right: 2px;
     white-space: pre;
     font-size: 2.5cqi;
     z-index: -1;
@@ -1011,7 +1021,8 @@ nav > #range {
     height: 30px;
     width: 40%;
     max-width: 320px;
-    padding-inline: 8px;
+    padding-left: 8px;
+    padding-right: 8px;
     color: var(--text-color);
     position: absolute;
     top: 10px;
