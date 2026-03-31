@@ -724,7 +724,7 @@ window.addEventListener('load', () => {
                     c.style.right = (cue.position * 2).toString() + '%'
                 }
                 c.style.textAlign = cue.align
-                document.querySelector('#mask').append(c)
+                document.querySelector('#mask').appendChild(c)
             })
         })
     }
