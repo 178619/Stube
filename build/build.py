@@ -1,7 +1,10 @@
+#! /usr/bin/python3
+
 # Build Go project for different platforms and create zip archive of project
 # directory structure.
 
 import os
+import subprocess
 import zipfile
 
 def listdir(a):
@@ -15,23 +18,14 @@ def listdir(a):
     return t
 
 def build(pkg, bin, env):
-    
     src = 'github.com/178619/stube'
-    
-    e = ''
-    if os.name == 'nt':
-        for y in env.split(' '):
-            e += 'set '+y+'&&'
-    else:
-        e = env
-        
-    x = os.system('{env} go build -o bin/{bin} {src}'.format(
-        env=e,
-        bin=bin,
-        src=src,
-    ))
-    
-    if x != 0:
+    try:
+        subprocess.run(
+            ['go', 'build', '-o', f'bin/{bin}', src],
+            env=env,
+            check=True
+        )
+    except subprocess.CalledProcessError:
         print('Error building ' + pkg)
         return
     
@@ -57,24 +51,44 @@ def build(pkg, bin, env):
     print('Built ' + pkg)
 
 if __name__ == "__main__":
-    build(
-        pkg='tube_linux.zip',
-        bin='tube',
-        env='GOOS=linux GOARCH=amd64',
-    )
-    build(
-        pkg='tube_windows.zip',
-        bin='tube.exe',
-        env='GOOS=windows GOARCH=amd64',
-    )
-    build(
-        pkg='tube_osx.zip',
-        bin='tube',
-        env='GOOS=darwin GOARCH=amd64',
-    )
-    build(
-        pkg='tube_arm6.zip',
-        bin='tube',
-        env='GOOS=linux GOARCH=arm GOARM=6',
-    )
+    current_env = os.environ.copy()
+
+    targets = [
+        ('freebsd', '386'),
+        ('freebsd', 'amd64'),
+        ('freebsd', 'arm'),
+        ('freebsd', 'arm64'),
+        ('netbsd', '386'),
+        ('netbsd', 'amd64'),
+        ('netbsd', 'arm'),
+        ('netbsd', 'arm64'),
+        ('openbsd', '386'),
+        ('openbsd', 'amd64'),
+        ('openbsd', 'arm'),
+        ('openbsd', 'arm64'),
+        ('linux', '386'),
+        ('linux', 'amd64'),
+        ('linux', 'arm'),
+        ('linux', 'arm64'),
+        ('linux', 'riscv64'),
+        ('darwin', 'amd64'),
+        ('darwin', 'arm64'),
+        ('windows', '386'),
+        ('windows', 'amd64'),
+        ('windows', 'arm64')
+    ]
+
+    for OS, ARCH in targets:
+        env = current_env | {'CGO_ENABLED': '0', 'GOOS': OS, 'GOARCH': ARCH}
+        if ARCH == 'arm':
+            ARCH = 'armv6'
+            env['GOARM'] = '6'
+        elif ARCH == '386': ARCH = 'i386'
+        if OS == 'darwin': OS = 'macos'
+        build(
+            pkg=f'tube_{OS}_{ARCH}.zip',
+            bin='tube.exe' if OS == 'windows' else 'tube',
+            env=env
+        )
+        
     print('Done.')
