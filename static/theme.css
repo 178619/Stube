@@ -1030,3 +1030,42 @@ nav > #range {
     font-size: 13px;
     font-weight: normal;
 }
+
+#player #listBar {
+    display: flex;
+    justify-content: flex-end;
+}
+
+#player #listBar button {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    background-color: transparent;
+    background-size: contain;
+    background-repeat: no-repeat;
+    transition: background 250ms, transform 100ms;
+    cursor: pointer;
+    margin-left: 4px;
+    margin-right: 4px;
+    opacity: 0.5;
+}
+
+#player #listBar button.listed {
+    opacity: 1;
+}
+
+#player #listBar button:active {
+    transform: scale(0.875);
+}
+
+#player #listBar button#like {
+    background-image: url(/static/icons/thumb-up.svg);
+}
+
+#player #listBar button#dislike {
+    background-image: url(/static/icons/thumb-down.svg);
+}
+
+#player #listBar button#editPlaylist {
+    background-image: url(/static/icons/playlist-edit.svg);
+}

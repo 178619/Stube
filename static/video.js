@@ -919,6 +919,74 @@ window.addEventListener('load', () => {
         rd.style.textIndent = '0'
         document.querySelector('nav').appendChild(rd)
     }
+
+    const getUUID = () => 'xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+        const r = Math.random() * 16 | 0
+        return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16)
+    })
+
+    const createPlaylist = (name) => {
+        const uuid = getUUID()
+        const timestamp = +new Date
+        localStorage.setItem(uuid, JSON.stringify({
+            name,
+            videos: [],
+            lastModification: timestamp,
+            creation: timestamp
+        }))
+        return uuid
+    }
+
+    if (!localStorage.getItem('User')) {
+        const likeListID = createPlaylist()
+        const dislikeListID = createPlaylist()
+        localStorage.setItem('User', JSON.stringify({
+            like: likeListID,
+            dislike: dislikeListID,
+            playlists: []
+        }))
+    }
+
+    const listBar = document.createElement('div')
+    listBar.id = 'listBar'
+    const likeButton = document.createElement('button')
+    likeButton.id = 'like'
+    likeButton.classList.toggle('listed', JSON.parse(localStorage.getItem(JSON.parse(localStorage.getItem('User')).like)).videos.includes(location.pathname.slice(3)))
+    likeButton.onclick = () => {
+        const ref = location.pathname.slice(3)
+        const likeListID = JSON.parse(localStorage.getItem('User')).like
+        const likeList = JSON.parse(localStorage.getItem(likeListID))
+        if (!likeList.videos.includes(ref)) {
+            likeList.videos.push(ref)
+            likeButton.classList.add('listed')
+        } else {
+            likeList.videos.splice(likeList.videos.indexOf(ref), 1)
+            likeButton.classList.remove('listed')
+        }
+        localStorage.setItem(likeListID, JSON.stringify(likeList))
+    }
+    const dislikeButton = document.createElement('button')
+    dislikeButton.id = 'dislike'
+    dislikeButton.classList.toggle('listed', JSON.parse(localStorage.getItem(JSON.parse(localStorage.getItem('User')).dislike)).videos.includes(location.pathname.slice(3)))
+    dislikeButton.onclick = () => {
+        const ref = location.pathname.slice(3)
+        const dislikeListID = JSON.parse(localStorage.getItem('User')).dislike
+        const dislikeList = JSON.parse(localStorage.getItem(dislikeListID))
+        if (!dislikeList.videos.includes(ref)) {
+            dislikeList.videos.push(ref)
+            dislikeButton.classList.add('listed')
+        } else {
+            dislikeList.videos.splice(dislikeList.videos.indexOf(ref), 1)
+            dislikeButton.classList.remove('listed')
+        }
+        localStorage.setItem(dislikeListID, JSON.stringify(dislikeList))
+    }
+    const playlistButton = document.createElement('button')
+    playlistButton.id = 'editPlaylist'
+    listBar.appendChild(likeButton)
+    listBar.appendChild(dislikeButton)
+    // listBar.appendChild(playlistButton)
+    player.appendChild(listBar)
     repeat()
 })
 
