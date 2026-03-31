@@ -885,7 +885,7 @@ details.description {
     #playlist {
         width: 100%;
         max-width: 426px;
-        margin-top: 10px;
+        margin-top: 36px;
         margin-left: 0;
         display: block;
         height: calc(100vh - 480px);
@@ -1043,14 +1043,13 @@ nav > #range {
     background-color: transparent;
     background-size: contain;
     background-repeat: no-repeat;
-    transition: background 250ms, transform 100ms;
+    transition: opacity 250ms, transform 100ms;
     cursor: pointer;
-    margin-left: 4px;
-    margin-right: 4px;
+    margin-right: 12px;
     opacity: 0.5;
 }
 
-#player #listBar button.listed {
+#player #listBar button.listed:not(:active) {
     opacity: 1;
 }
 

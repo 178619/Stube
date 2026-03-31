@@ -949,10 +949,11 @@ window.addEventListener('load', () => {
 
     const listBar = document.createElement('div')
     listBar.id = 'listBar'
+    listBar.classList.add('invert-dark')
     const likeButton = document.createElement('button')
     likeButton.id = 'like'
     likeButton.classList.toggle('listed', JSON.parse(localStorage.getItem(JSON.parse(localStorage.getItem('User')).like)).videos.includes(location.pathname.slice(3)))
-    likeButton.onclick = () => {
+    likeButton.onpointerdown = () => {
         const ref = location.pathname.slice(3)
         const likeListID = JSON.parse(localStorage.getItem('User')).like
         const likeList = JSON.parse(localStorage.getItem(likeListID))
@@ -968,7 +969,7 @@ window.addEventListener('load', () => {
     const dislikeButton = document.createElement('button')
     dislikeButton.id = 'dislike'
     dislikeButton.classList.toggle('listed', JSON.parse(localStorage.getItem(JSON.parse(localStorage.getItem('User')).dislike)).videos.includes(location.pathname.slice(3)))
-    dislikeButton.onclick = () => {
+    dislikeButton.onpointerdown = () => {
         const ref = location.pathname.slice(3)
         const dislikeListID = JSON.parse(localStorage.getItem('User')).dislike
         const dislikeList = JSON.parse(localStorage.getItem(dislikeListID))
@@ -984,8 +985,8 @@ window.addEventListener('load', () => {
     const playlistButton = document.createElement('button')
     playlistButton.id = 'editPlaylist'
     listBar.appendChild(likeButton)
+    listBar.appendChild(playlistButton)
     listBar.appendChild(dislikeButton)
-    // listBar.appendChild(playlistButton)
     player.appendChild(listBar)
     repeat()
 })
