@@ -33,11 +33,7 @@
                 <input id="search" type="text" placeholder="Search...">
                 {{ range $m := $playlist }}
                     {{ if eq $m.Album $playing.Album }}
-                        {{ if eq $m.ID $playing.ID }}
-                        <a href="/m/{{ $m.Ref }}" title="{{ $m.Title }}" name="{{ $m.ID }}" artist="{{ $m.Artist }}" description="{{ $m.Description }}" {{ if $m.Disc }} disc="{{ $m.Disc }}" {{ end }} track="{{ $m.Track }}" class="playing">
-                        {{ else }}
-                        <a href="/m/{{ $m.Ref }}" title="{{ $m.Title }}" name="{{ $m.ID }}" artist="{{ $m.Artist }}" description="{{ $m.Description }}" {{ if $m.Disc }} disc="{{ $m.Disc }}" {{ end }} track="{{ $m.Track }}">
-                        {{ end }}
+                        <a href="/m/{{ $m.Ref }}" title="{{ $m.Title }}" name="{{ $m.ID }}" artist="{{ $m.Artist }}" description="{{ $m.Description }}" {{ if $m.Disc }} disc="{{ $m.Disc }}" {{ end }} track="{{ $m.Track }}" {{ if eq $m.ID $playing.ID }} class="playing" {{ end }}>
                             <img loading="lazy" {{ if $m.ThumbType }} src="/t/{{ $m.Ref }}" {{ else }} src="/static/default.svg" class="invert-light" {{ end }}>
                             <div>
                                 <h1>{{ if $m.Disc }}{{ $m.Disc }}-{{ end }}{{ $m.Track }}.&#xA0;{{ $m.Title }}</h1>
