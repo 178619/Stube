@@ -10,19 +10,23 @@ import (
 	"github.com/178619/stube/pkg/media"
 )
 
+type MediaData struct {
+	ID          string           `json:"id,omitempty"`
+	Ref         string           `json:"ref,omitempty"`
+	Title       string           `json:"title,omitempty"`
+	Album       string           `json:"album"`
+	Disc        int              `json:"disc"`
+	Track       int              `json:"track"`
+	Description string           `json:"description"`
+	Modified    string           `json:"modified"`
+	Size        int64            `json:"size"`
+	MIMEType    string           `json:"mimeType"`
+	Captions    []CaptionSummary `json:"captions"`
+}
+
 type InfoResponse struct {
-    Status      string           `json:"status"`
-    ID          string           `json:"id,omitempty"`
-    Ref         string           `json:"ref,omitempty"`
-    Title       string           `json:"title,omitempty"`
-    Album       string           `json:"album"`
-    Disc        int              `json:"disc"`
-    Track       int              `json:"track"`
-    Description string           `json:"description"`
-    Modified    string           `json:"modified"`
-    Size        int64            `json:"size"`
-    MIMEType    string           `json:"mimeType"`
-    Captions    []CaptionSummary `json:"captions"`
+    Status string    `json:"status"`
+	Data   MediaData `json:"data"`
 }
 
 type CaptionSummary struct {
@@ -281,18 +285,20 @@ func (a *App) infoHandler(w http.ResponseWriter, r *http.Request) {
     }
 
     json.NewEncoder(w).Encode(InfoResponse{
-        Status:      "success",
-        ID:          playing.ID,
-        Ref:         playing.Ref,
-        Title:       playing.Title,
-        Album:       playing.Album,
-        Disc:        playing.Disc,
-        Track:       playing.Track,
-        Description: playing.Description,
-        Modified:    playing.Modified,
-        Size:        playing.Size,
-        MIMEType:    playing.MIMEType,
-        Captions:    matchedCaptions,
+        Status: "success",
+		Data: MediaData{
+			ID:          playing.ID,
+			Ref:         playing.Ref,
+			Title:       playing.Title,
+			Album:       playing.Album,
+			Disc:        playing.Disc,
+			Track:       playing.Track,
+			Description: playing.Description,
+			Modified:    playing.Modified,
+			Size:        playing.Size,
+			MIMEType:    playing.MIMEType,
+			Captions:    matchedCaptions,
+		},
     })
 }
 
