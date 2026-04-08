@@ -11,6 +11,8 @@ cueJSStyle.innerHTML = '::cue {visibility: hidden;}'
 document.head.appendChild(cueJSStyle)
 let cueJS = true
 
+let currentPlaylist = null
+
 const trackSorter = (v1, v2) => {
     let e1 = 0, e2 = 0
     if (v1.hasAttribute('disc')) e1 += parseInt(v1.getAttribute('disc')) << 16
@@ -170,20 +172,19 @@ window.addEventListener('load', () => {
         + (((Math.floor(v % 60) < 10 ? '0' : '') + Math.floor(v % 60)) || '00')
     }
     const languageNames = window.Intl?.DisplayNames ? new Intl.DisplayNames(navigator.languages, { type: 'language' }) : undefined
-    if (document.getElementById('search')) document.getElementById('search').oninput = () => {
-        const key = getSearchKey(document.getElementById('search').value)
-        if (!key) {
-            document.querySelectorAll('#playlist > a.hidden').forEach((v)=>{
-                v.classList.remove('hidden')
-            })
-            return
-        }
+    const updateVisibility = () => {
+        const key = getSearchKey(document.getElementById('search')?.value)
         document.querySelectorAll('#playlist > a').forEach((v)=>{
-            const shown = getSearchKey(v.title).includes(key) || getSearchKey(v.name).includes(key) || getSearchKey(v.getAttribute('album')).includes(key) || getSearchKey(v.getAttribute('artist')).includes(key)
-            if (!v.classList.contains('hidden') && !shown) v.classList.add('hidden')
-            else if (v.classList.contains('hidden') && shown) v.classList.remove('hidden')
+            v.classList.toggle('hidden', !(!key ||
+                getSearchKey(v.title).includes(key) ||
+                getSearchKey(v.name).includes(key) ||
+                getSearchKey(v.getAttribute('album')).includes(key) ||
+                getSearchKey(v.getAttribute('artist')).includes(key)
+            ))
+            v.classList.toggle('ousted', !(!currentPlaylist || currentPlaylist.includes(v.pathname.slice(3))))
         })
     }
+    if (document.getElementById('search')) document.getElementById('search').oninput = updateVisibility
     const mask = document.getElementById('mask')
     if (!mask) {
         tempStyle.remove()
@@ -218,9 +219,9 @@ window.addEventListener('load', () => {
     }
 
     const toPrev = () => {
-        const playlist = Array.from(document.querySelectorAll('#playlist > a'))
+        const playlist = Array.from(document.querySelectorAll('#playlist > a:not(.ousted)'))
         const index = playlist.findIndex((v)=>{return v.classList.contains('playing')})
-        playlist[index].classList.remove('playing')
+        document.querySelector('.playing')?.classList.remove('playing')
         const target = playlist[(index-1+playlist.length)%playlist.length]
         target.classList.add('playing')
         toVideo(target, true)
@@ -228,9 +229,9 @@ window.addEventListener('load', () => {
     }
 
     const toNext = () => {
-        const playlist = Array.from(document.querySelectorAll('#playlist > a'))
+        const playlist = Array.from(document.querySelectorAll('#playlist > a:not(.ousted)'))
         const index = playlist.findIndex((v)=>{return v.classList.contains('playing')})
-        playlist[index].classList.remove('playing')
+        document.querySelector('.playing')?.classList.remove('playing')
         const target = playlist[(index+1)%playlist.length]
         target.classList.add('playing')
         toVideo(target, true)
@@ -238,9 +239,9 @@ window.addEventListener('load', () => {
     }
 
     const toRandom = () => {
-        const playlist = Array.from(document.querySelectorAll('#playlist > a'))
+        const playlist = Array.from(document.querySelectorAll('#playlist > a:not(.ousted)'))
         const index = playlist.findIndex((v)=>{return v.classList.contains('playing')})
-        playlist[index].classList.remove('playing')
+        document.querySelector('.playing')?.classList.remove('playing')
         let ni = Math.floor(Math.random()*(playlist.length-1))
         if (ni >= index) ni += 1
         const target = playlist[ni%playlist.length]
@@ -930,7 +931,7 @@ window.addEventListener('load', () => {
         const timestamp = +new Date
         localStorage.setItem(uuid, JSON.stringify({
             name,
-            videos: [],
+            items: [],
             lastModification: timestamp,
             creation: timestamp
         }))
@@ -952,42 +953,165 @@ window.addEventListener('load', () => {
     listBar.classList.add('invert-dark')
     const likeButton = document.createElement('button')
     likeButton.id = 'like'
-    likeButton.classList.toggle('listed', JSON.parse(localStorage.getItem(JSON.parse(localStorage.getItem('User')).like)).videos.includes(location.pathname.slice(3)))
+    likeButton.classList.toggle('listed', JSON.parse(localStorage.getItem(JSON.parse(localStorage.getItem('User')).like)).items.includes(location.pathname.slice(3)))
     likeButton.onpointerdown = () => {
         const ref = location.pathname.slice(3)
         const likeListID = JSON.parse(localStorage.getItem('User')).like
         const likeList = JSON.parse(localStorage.getItem(likeListID))
-        if (!likeList.videos.includes(ref)) {
-            likeList.videos.push(ref)
+        if (!likeList.items.includes(ref)) {
+            likeList.items.push(ref)
             likeButton.classList.add('listed')
         } else {
-            likeList.videos.splice(likeList.videos.indexOf(ref), 1)
+            likeList.items.splice(likeList.items.indexOf(ref), 1)
             likeButton.classList.remove('listed')
         }
+        likeList.lastModification = +new Date
         localStorage.setItem(likeListID, JSON.stringify(likeList))
     }
     const dislikeButton = document.createElement('button')
     dislikeButton.id = 'dislike'
-    dislikeButton.classList.toggle('listed', JSON.parse(localStorage.getItem(JSON.parse(localStorage.getItem('User')).dislike)).videos.includes(location.pathname.slice(3)))
+    dislikeButton.classList.toggle('listed', JSON.parse(localStorage.getItem(JSON.parse(localStorage.getItem('User')).dislike)).items.includes(location.pathname.slice(3)))
     dislikeButton.onpointerdown = () => {
         const ref = location.pathname.slice(3)
         const dislikeListID = JSON.parse(localStorage.getItem('User')).dislike
         const dislikeList = JSON.parse(localStorage.getItem(dislikeListID))
-        if (!dislikeList.videos.includes(ref)) {
-            dislikeList.videos.push(ref)
+        if (!dislikeList.items.includes(ref)) {
+            dislikeList.items.push(ref)
             dislikeButton.classList.add('listed')
         } else {
-            dislikeList.videos.splice(dislikeList.videos.indexOf(ref), 1)
+            dislikeList.items.splice(dislikeList.items.indexOf(ref), 1)
             dislikeButton.classList.remove('listed')
         }
+        dislikeList.lastModification = +new Date
         localStorage.setItem(dislikeListID, JSON.stringify(dislikeList))
+    }
+    const playlistNavigator = document.createElement('div')
+    playlistNavigator.id = 'playlistNavigator'
+    playlistNavigator.classList.add('hidden')
+    playlistNavigator.onclick = (event) => event.target == playlistNavigator && playlistNavigator.classList.add('hidden')
+    const navView = document.createElement('div')
+    const listNavBar = document.createElement('div')
+    listNavBar.id = 'playlistNavigatorBar'
+    const listNavView = document.createElement('div')
+    listNavView.id = 'playlistNavigatorView'
+    const listText = document.createElement('h1')
+    listText.innerHTML = 'Playlist'
+    const listbuttonView = document.createElement('div')
+    const clearButton = document.createElement('button')
+    clearButton.classList.add('button-clear')
+    clearButton.onclick = () => {
+        if (!window.confirm("Are you sure you want to delete all of your playlists?")) return
+        const userData = JSON.parse(localStorage.getItem('User'))
+        userData.playlists = []
+        localStorage.setItem('User', JSON.stringify(userData))
+        updatePlaylists(listNavView)
+    }
+    const createButton = document.createElement('button')
+    createButton.classList.add('button-create')
+    createButton.onclick = () => {
+        const newListId = createPlaylist()
+        const userData = JSON.parse(localStorage.getItem('User'))
+        userData.playlists.push(newListId)
+        localStorage.setItem('User', JSON.stringify(userData))
+        updatePlaylists(listNavView)
+    }
+    const unfilterButton = document.createElement('button')
+    unfilterButton.classList.add('button-unfilter')
+    unfilterButton.onclick = () => {
+        currentPlaylist = null
+        updateVisibility()
+    }
+    const closeButton = document.createElement('button')
+    closeButton.classList.add('button-close')
+    closeButton.onclick = () => playlistNavigator.classList.add('hidden')
+    listbuttonView.appendChild(clearButton)
+    listbuttonView.appendChild(createButton)
+    listbuttonView.appendChild(unfilterButton)
+    listbuttonView.appendChild(closeButton)
+    listNavBar.appendChild(listText)
+    listNavBar.appendChild(listbuttonView)
+    navView.appendChild(listNavBar)
+    navView.appendChild(listNavView)
+    playlistNavigator.appendChild(navView)
+    const getListView = (listId, removable = true, altName = undefined) => {
+        const listData = JSON.parse(localStorage.getItem(listId))
+        if (!listData) {
+            const itemView = document.createElement('div')
+            itemView.innerText = 'Playlist Not Found'
+            return itemView
+        }
+        const {name, creation, lastModification, items} = listData
+        const itemView = document.createElement('div')
+        const textView = document.createElement('div')
+        const itemTitle = document.createElement('h1')
+        itemTitle.textContent = name || altName || 'An Unnamed Playlist'
+        const itemDate = document.createElement('h2')
+        itemDate.textContent = lastModification ? new Date(lastModification).toLocaleString() : 'Unknown'
+        textView.appendChild(itemTitle)
+        textView.appendChild(itemDate)
+        const deleteButton = document.createElement('button')
+        deleteButton.classList.add('button-delete')
+        deleteButton.onclick = () => {
+            if (!window.confirm("Are you sure you want to delete this playlist?")) return
+            const userData = JSON.parse(localStorage.getItem('User'))
+            userData.playlists = userData.playlists.filter((lid) => lid != listId)
+            localStorage.setItem('User', JSON.stringify(userData))
+            localStorage.removeItem(listId)
+            updatePlaylists(listNavView)
+        }
+        const editButton = document.createElement('button')
+        editButton.onclick = () => {
+            listData.name = window.prompt("Set Playlist Name", listData.name || '') ?? listData.name ?? null
+            listData.lastModification = +new Date
+            localStorage.setItem(listId, JSON.stringify(listData))
+            updatePlaylists(listNavView)
+        }
+        editButton.classList.add('button-edit')
+        const addOrRemoveButton = document.createElement('button')
+        addOrRemoveButton.classList.add(items.includes(location.pathname.slice(3)) ? 'button-remove' : 'button-add')
+        addOrRemoveButton.onclick = () => {
+            if (!items.includes(location.pathname.slice(3))) {
+                items.push(location.pathname.slice(3))
+            } else {
+                items.splice(items.indexOf(location.pathname.slice(3)), 1)
+            }
+            listData.lastModification = +new Date
+            localStorage.setItem(listId, JSON.stringify(listData))
+            updatePlaylists(listNavView)
+        }
+        const playButton = document.createElement('button')
+        playButton.classList.add('button-play')
+        playButton.onclick = () => {
+            currentPlaylist = items
+            updateVisibility()
+        }
+        itemView.appendChild(textView)
+        if (removable) itemView.appendChild(deleteButton)
+        itemView.appendChild(editButton)
+        itemView.appendChild(addOrRemoveButton)
+        itemView.appendChild(playButton)
+        return itemView
+    }
+    const updatePlaylists = (view) => {
+        view.innerHTML = ''
+        const { like, dislike, playlists } = JSON.parse(localStorage.getItem('User'))
+        view.appendChild(getListView(like, false, "Liked Videos"))
+        playlists.forEach((listId) => {
+            view.appendChild(getListView(listId, true))
+        })
+        view.appendChild(getListView(dislike, false, "Disliked Videos"))
     }
     const playlistButton = document.createElement('button')
     playlistButton.id = 'editPlaylist'
+    playlistButton.onpointerdown = () => {
+        updatePlaylists(listNavView)
+        playlistNavigator.classList.remove('hidden')
+    }
     listBar.appendChild(likeButton)
     listBar.appendChild(playlistButton)
     listBar.appendChild(dislikeButton)
     player.appendChild(listBar)
+    document.body.appendChild(playlistNavigator)
     repeat()
 })
 
