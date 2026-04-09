@@ -968,11 +968,12 @@ window.addEventListener('load', () => {
     listBar.classList.add('invert-dark')
     const likeButton = document.createElement('button')
     likeButton.id = 'like'
-    likeButton.classList.toggle('listed', JSON.parse(localStorage.getItem(JSON.parse(localStorage.getItem('User')).like)).items.includes(location.pathname.slice(3)))
+    likeButton.classList.toggle('listed', JSON.parse(localStorage.getItem(JSON.parse(localStorage.getItem('User')).like)).items?.includes(location.pathname.slice(3)))
     likeButton.onpointerdown = () => {
         const ref = location.pathname.slice(3)
         const likeListID = JSON.parse(localStorage.getItem('User')).like
         const likeList = JSON.parse(localStorage.getItem(likeListID))
+        if (!likeList.items) likeList.items = []
         if (!likeList.items.includes(ref)) {
             likeList.items.push(ref)
             likeButton.classList.add('listed')
@@ -985,11 +986,12 @@ window.addEventListener('load', () => {
     }
     const dislikeButton = document.createElement('button')
     dislikeButton.id = 'dislike'
-    dislikeButton.classList.toggle('listed', JSON.parse(localStorage.getItem(JSON.parse(localStorage.getItem('User')).dislike)).items.includes(location.pathname.slice(3)))
+    dislikeButton.classList.toggle('listed', JSON.parse(localStorage.getItem(JSON.parse(localStorage.getItem('User')).dislike)).items?.includes(location.pathname.slice(3)))
     dislikeButton.onpointerdown = () => {
         const ref = location.pathname.slice(3)
         const dislikeListID = JSON.parse(localStorage.getItem('User')).dislike
         const dislikeList = JSON.parse(localStorage.getItem(dislikeListID))
+        if (!dislikeList.items) dislikeList.items = []
         if (!dislikeList.items.includes(ref)) {
             dislikeList.items.push(ref)
             dislikeButton.classList.add('listed')
@@ -1055,6 +1057,7 @@ window.addEventListener('load', () => {
             itemView.innerText = 'Playlist Not Found'
             return itemView
         }
+        if (!listData.items) listData.items = []
         const {name, creation, lastModification, items} = listData
         const itemView = document.createElement('div')
         const textView = document.createElement('div')
