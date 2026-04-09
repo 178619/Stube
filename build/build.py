@@ -6,6 +6,7 @@
 import os
 import subprocess
 import zipfile
+import tarfile
 
 def listdir(a):
     t = []
@@ -21,30 +22,42 @@ def build(pkg, bin, env):
     src = 'github.com/178619/stube'
     try:
         subprocess.run(
-            ['go', 'build', '-o', f'bin/{bin}', src],
+            ['go', 'build', '-ldflags', '-s -w', '-o', f'bin/{bin}', src],
             env=env,
             check=True
         )
     except subprocess.CalledProcessError:
         print('Error building ' + pkg)
         return
-    
-    with zipfile.ZipFile('bin/patch_' + pkg, mode='w') as f:
-        f.write('bin/' + bin, arcname=bin)
-        for filename in listdir('../static'):
-            f.write('../static/' + filename, 'static/' + filename)
-        for filename in listdir('../templates'):
-            f.write('../templates/' + filename, 'templates/' + filename)
-            
-    with zipfile.ZipFile('bin/' + pkg, mode='w') as z:
-        z.write('bin/' + bin, bin)
-        z.write('../config.json', 'config.json')
-        z.write('../README.md', 'README.md')
-        z.write('../videos/README.md', 'videos/README.md')
-        for filename in listdir('../static'):
-            z.write('../static/' + filename, 'static/' + filename)
-        for filename in listdir('../templates'):
-            z.write('../templates/' + filename, 'templates/' + filename)
+
+    if pkg.endswith('.zip'):
+        with zipfile.ZipFile('bin/patch_' + pkg, mode='w') as f:
+            f.write('bin/' + bin, arcname=bin)
+            for filename in listdir('../static'):
+                f.write('../static/' + filename, 'static/' + filename)
+            for filename in listdir('../templates'):
+                f.write('../templates/' + filename, 'templates/' + filename)
+        with zipfile.ZipFile('bin/' + pkg, mode='w') as z:
+            z.write('bin/' + bin, bin)
+            z.write('../config.json', 'config.json')
+            z.write('../README.md', 'README.md')
+            z.write('../videos/README.md', 'videos/README.md')
+            for filename in listdir('../static'):
+                z.write('../static/' + filename, 'static/' + filename)
+            for filename in listdir('../templates'):
+                z.write('../templates/' + filename, 'templates/' + filename)
+    else:
+        with tarfile.open('bin/patch_' + pkg, mode='w:gz') as f:
+            f.add('bin/' + bin, arcname=bin)
+            f.add('../static', 'static')
+            f.add('../templates', 'templates')
+        with tarfile.open('bin/' + pkg, mode='w:gz') as z:
+            z.add('bin/' + bin, bin)
+            z.add('../config.json', 'config.json')
+            z.add('../README.md', 'README.md')
+            z.add('../videos/README.md', 'videos/README.md')
+            z.add('../static', 'static')
+            z.add('../templates', 'templates')
 
     # cleanup executable
     os.remove('bin/' + bin)
@@ -86,7 +99,7 @@ if __name__ == "__main__":
         elif ARCH == '386': ARCH = 'i386'
         if OS == 'darwin': OS = 'macos'
         build(
-            pkg=f'tube_{OS}_{ARCH}.zip',
+            pkg=f'tube_{OS}_{ARCH}{'.zip' if OS == 'windows' else '.tar.gz'}',
             bin='tube.exe' if OS == 'windows' else 'tube',
             env=env
         )
