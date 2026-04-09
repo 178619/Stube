@@ -1005,7 +1005,7 @@ window.addEventListener('load', () => {
     const playlistNavigator = document.createElement('div')
     playlistNavigator.id = 'playlistNavigator'
     playlistNavigator.classList.add('hidden')
-    playlistNavigator.onclick = (event) => event.target == playlistNavigator && playlistNavigator.classList.add('hidden')
+    playlistNavigator.onpointerdown = (event) => event.target == playlistNavigator && playlistNavigator.classList.add('hidden')
     const navView = document.createElement('div')
     const listNavBar = document.createElement('div')
     listNavBar.id = 'playlistNavigatorBar'
@@ -1016,7 +1016,7 @@ window.addEventListener('load', () => {
     const listbuttonView = document.createElement('div')
     const clearButton = document.createElement('button')
     clearButton.classList.add('button-clear')
-    clearButton.onclick = () => {
+    clearButton.onpointerdown = () => {
         if (!window.confirm("Are you sure you want to delete all of your playlists?")) return
         const userData = JSON.parse(localStorage.getItem('User'))
         userData.playlists = []
@@ -1025,7 +1025,7 @@ window.addEventListener('load', () => {
     }
     const createButton = document.createElement('button')
     createButton.classList.add('button-create')
-    createButton.onclick = () => {
+    createButton.onpointerdown = () => {
         const newListId = createPlaylist()
         const userData = JSON.parse(localStorage.getItem('User'))
         userData.playlists.push(newListId)
@@ -1034,13 +1034,13 @@ window.addEventListener('load', () => {
     }
     const unfilterButton = document.createElement('button')
     unfilterButton.classList.add('button-unfilter')
-    unfilterButton.onclick = () => {
+    unfilterButton.onpointerdown = () => {
         currentPlaylist = null
         updateVisibility()
     }
     const closeButton = document.createElement('button')
     closeButton.classList.add('button-close')
-    closeButton.onclick = () => playlistNavigator.classList.add('hidden')
+    closeButton.onpointerdown = () => playlistNavigator.classList.add('hidden')
     listbuttonView.appendChild(clearButton)
     listbuttonView.appendChild(createButton)
     listbuttonView.appendChild(unfilterButton)
@@ -1069,7 +1069,7 @@ window.addEventListener('load', () => {
         textView.appendChild(itemDate)
         const deleteButton = document.createElement('button')
         deleteButton.classList.add('button-delete')
-        deleteButton.onclick = () => {
+        deleteButton.onpointerdown = () => {
             if (!window.confirm("Are you sure you want to delete this playlist?")) return
             const userData = JSON.parse(localStorage.getItem('User'))
             userData.playlists = userData.playlists.filter((lid) => lid != listId)
@@ -1078,7 +1078,7 @@ window.addEventListener('load', () => {
             updatePlaylists(listNavView)
         }
         const editButton = document.createElement('button')
-        editButton.onclick = () => {
+        editButton.onpointerdown = () => {
             listData.name = window.prompt("Set Playlist Name", listData.name || '') ?? listData.name ?? null
             listData.lastModification = +new Date
             localStorage.setItem(listId, JSON.stringify(listData))
@@ -1087,7 +1087,7 @@ window.addEventListener('load', () => {
         editButton.classList.add('button-edit')
         const addOrRemoveButton = document.createElement('button')
         addOrRemoveButton.classList.add(items.includes(location.pathname.slice(3)) ? 'button-remove' : 'button-add')
-        addOrRemoveButton.onclick = () => {
+        addOrRemoveButton.onpointerdown = () => {
             if (!items.includes(location.pathname.slice(3))) {
                 items.push(location.pathname.slice(3))
             } else {
@@ -1099,7 +1099,7 @@ window.addEventListener('load', () => {
         }
         const playButton = document.createElement('button')
         playButton.classList.add('button-play')
-        playButton.onclick = () => {
+        playButton.onpointerdown = () => {
             currentPlaylist = items
             updateVisibility()
         }
