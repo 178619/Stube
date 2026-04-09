@@ -785,6 +785,7 @@ details.description {
     pointer-events: none;
     position: absolute;
     margin: auto;
+    color: #FFFFFF;
     text-shadow: 1px 1px 0 #000000, 0px 1px 0 #000000, -1px 1px 0 #000000, 1px 0px 0 #000000, -1px 0px 0 #000000, 1px -1px 0 #000000, 0px -1px 0 #000000, -1px -1px 0 #000000, 0 0 4px #1F1F1F, 0 0 4px #1F1F1F;
     width: -moz-fit-content;
     width: fit-content;

@@ -279,6 +279,21 @@ window.addEventListener('load', () => {
                 ]
             })
         }
+        fetch('/n/' + target.pathname.slice(3)).then(data => data.json()).then(({status, data}) => {
+            if (status != 'success') return
+            video.querySelectorAll('track').forEach(track => track.remove())
+            if (data.captions?.length) {
+                document.getElementById('captions').style.display = ''
+                data.captions?.forEach(({ref, srcLang}) => {
+                    const track = document.createElement('track')
+                    track.src = ref
+                    track.srclang = srcLang
+                    track.kind = 'captions'
+                    track.label = srcLang
+                    video.appendChild(track)
+                })
+            } else document.getElementById('captions').style.display = 'none'
+        })
     }
 
     // const locationOptions = Object.fromEntries(location.search.slice(1).split('&').filter((v)=>{return v.length}).map((v)=>{return [v.split('=')[0], v.split('=').slice(1).join('=')]}))
